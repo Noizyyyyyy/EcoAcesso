@@ -26,19 +26,18 @@ export default async (req, res) => {
         }
 
         // --- LÓGICA DE SEGURANÇA CRÍTICA: HASH DA SENHA ---
-        // O custo de hash (saltRounds) deve ser de pelo menos 10.
         const salt = await bcrypt.genSalt(10);
         const senhaHash = await bcrypt.hash(data.senha, salt);
         // --------------------------------------------------
 
-        // 3. Mapeia os dados do formulário para o formato da tabela 'cadastros'
+        // 3. Mapeia os dados do formulário para o formato da tabela 'cadastro'
         const cadastroData = {
-            nome_completo: data.nome,
+            nome_completo: data.nome_completo || data.nome,
             email: data.email,
             telefone: data.telefone,
             data_nascimento: data['data-nascimento'] || null, 
-            cpf: data.cpf, // <-- AGORA INCLUINDO O CPF
-            senha_hash: senhaHash, // <-- SALVANDO O HASH, NÃO A SENHA PURA
+            cpf: data.cpf,
+            senha_hash: senhaHash, 
             cep: data.cep,
             logradouro: data.logradouro,
             numero: data.numero,
@@ -47,20 +46,18 @@ export default async (req, res) => {
             cidade: data.cidade,
             estado: data.estado,
             termos_aceitos: data.termos_aceitos,
-            receber_newsletter: data.receber_newsletter,
-            receber_eventos: data.receber_eventos,
-            // O campo 'interesses' não está no HTML, mas mantemos o tratamento caso seja adicionado no futuro.
-            interesses: data.interesses ? data.interesses.split(',') : [],
+            
+            // CORREÇÃO FINAL: As colunas 'receber_newsletter' e 'receber_eventos' 
+            // e 'interesses' foram removidas para corresponder ao esquema atual do Supabase.
         };
 
         // 4. Insere os dados no Supabase
         const { error } = await supabase
-            .from('cadastro')
+            .from('cadastro') 
             .insert([cadastroData]);
 
         if (error) {
             console.error('Erro no Supabase:', error);
-            // Erro 23505 é o código de erro padrão do PostgreSQL para violação de UNIQUE (ex: e-mail duplicado)
             if (error.code === '23505') {
                  res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
             } else {
@@ -77,7 +74,6 @@ export default async (req, res) => {
 
     } catch (e) {
         console.error('Erro na Serverless Function:', e);
-        res.status(500).json({ error: 'Erro interno no servidor.' });
+        res.status(500).json({ error: 'Falha no processamento da API de cadastro.' });
     }
-
 };
