@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoAcesso</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --verde-principal: #66bb6a;
+            --verde-escuro: #4caf50;
+            --verde-claro: #81c784;
+            --verde-muito-claro: #c8e6c9;
+            --verde-super-claro: #e8f5e9;
+            --branco: #ffffff;
+            --cinza-claro: #f5f5f5;
+            --cinza-escuro: #424242;
+            --azul: #42a5f5;
+            --laranja: #ffb74d;
+        }
+        
+        body {
+            background-color: var(--verde-super-claro);
+            color: var(--cinza-escuro);
+            line-height: 1.6;
+        }
+        
+        /* Cabeçalho */
+        header {
+            background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
+            color: var(--branco);
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .slogan {
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        /* Navegação por abas */
+        .tabs {
+            display: flex;
+            background-color: var(--verde-claro);
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            margin-top: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            background-color: var(--verde-claro);
+            color: var(--branco);
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .tab:hover {
+            background-color: var(--verde-principal);
+        }
+        
+        .tab.active {
+            background-color: var(--branco);
+            color: var(--verde-escuro);
+            font-weight: bold;
+        }
+        
+        /* Conteúdo das abas */
+        .tab-content {
+            display: none;
+            padding: 2.5rem;
+            background-color: var(--branco);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 550px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Títulos das seções */
+        h2 {
+            color: var(--verde-escuro);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--verde-muito-claro);
+        }
+        
+        h3 {
+            color: var(--verde-principal);
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        /* Grid de cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .card {
+            background-color: var(--branco);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid var(--verde-claro);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-clientes {
+            border-left-color: var(--azul);
+        }
+        
+        .card-medicamentos {
+            border-left-color: var(--verde-claro);
+        }
+        
+        .card-alimentos {
+            border-left-color: var(--laranja);
+        }
+        
+        .card-titulo {
+            font-weight: bold;
+            color: var(--cinza-escuro);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .card-descricao {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .card-preco {
+            font-weight: bold;
+            color: var(--verde-principal);
+            font-size: 1.2rem;
+        }
+        
+        .card-categoria {
+            display: inline-block;
+            background-color: var(--verde-muito-claro);
+            color: var(--verde-escuro);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .categoria-azul {
+            background-color: #e3f2fd;
+            color: var(--azul);
+        }
+        
+        .categoria-laranja {
+            background-color: #fff3e0;
+            color: var(--laranja);
+        }
+        
+        /* Formulários */
+        .form-container {
+            background-color: var(--verde-super-claro);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            border: 1px solid var(--verde-muito-claro);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--cinza-escuro);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--verde-claro);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.2);
+        }
+        
+        button {
+            background-color: var(--verde-principal);
+            color: var(--branco);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            background-color: var(--verde-escuro);
+        }
+        
+        .btn-azul {
+            background-color: var(--azul);
+        }
+        
+        .btn-azul:hover {
+            background-color: #1976d2;
+        }
+        
+        .btn-laranja {
+            background-color: var(--laranja);
+        }
+        
+        .btn-laranja:hover {
+            background-color: #f57c00;
+        }
+        
+        /* Tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--verde-muito-claro);
+        }
+        
+        th {
+            background-color: var(--verde-muito-claro);
+            color: var(--verde-escuro);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: var(--verde-super-claro);
+        }
+        
+        /* Rodapé */
+        footer {
+            background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
+            color: var(--branco);
+            text-align: center;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--branco);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .tab-content {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Utilitários */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-2 {
+            margin-top: 2rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .info-box {
+            background-color: var(--verde-super-claro);
+            border-left: 4px solid var(--verde-claro);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i>💊</i> EcoAcesso
+                </div>
+                <div class="slogan">
+                    <p>Transformanfo sustentabilidade em oportunidades</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="clientes">👥 Clientes</div>
+            <div class="tab" data-tab="medicamentos">💊 Medicamentos</div>
+            <div class="tab" data-tab="alimentos">🍎 Alimentos</div>
+        </div>
+        
+        <!-- Aba de Clientes -->
+        <div class="tab-content active" id="clientes">
+            <h2>Gerenciamento de Clientes</h2>
+            <p>Cadastre e gerencie os clientes da farmácia.</p>
+            
+            <div class="info-box">
+                <p>Aqui você pode cadastrar novos clientes, visualizar informações e gerenciar o histórico de compras.</p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Cadastrar Novo Cliente</h3>
+                <form id="form-cliente">
+                    <div class="form-group">
+                        <label for="nome-cliente">Nome Completo</label>
+                        <input type="text" id="nome-cliente" name="nome-cliente" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email-cliente">E-mail</label>
+                        <input type="email" id="email-cliente" name="email-cliente" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefone-cliente">Telefone</label>
+                        <input type="tel" id="telefone-cliente" name="telefone-cliente">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="endereco-cliente">Endereço</label>
+                        <textarea id="endereco-cliente" name="endereco-cliente" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-azul">Cadastrar Cliente</button>
+                </form>
+            </div>
+            
+            <h3>Clientes Cadastrados</h3>
+            <table id="tabela-clientes">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão inseridos via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Aba de Medicamentos -->
+        <div class="tab-content" id="medicamentos">
+            <h2>Catálogo de Medicamentos</h2>
+            <p>Gerencie o estoque de medicamentos da farmácia.</p>
+            
+            <div class="info-box">
+                <p>Cadastre novos medicamentos, atualize estoque e preços, e gerencie o catálogo de produtos.</p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Cadastrar Novo Medicamento</h3>
+                <form id="form-medicamento">
+                    <div class="form-group">
+                        <label for="nome-medicamento">Nome do Medicamento</label>
+                        <input type="text" id="nome-medicamento" name="nome-medicamento" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria-medicamento">Categoria</label>
+                        <select id="categoria-medicamento" name="categoria-medicamento" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="analgesico">Analgésico</option>
+                            <option value="antibiotico">Antibiótico</option>
+                            <option value="anti-inflamatorio">Anti-inflamatório</option>
+                            <option value="cardiovascular">Cardiovascular</option>
+                            <option value="gastrico">Gástrico</option>
+                            <option value="dermatologico">Dermatológico</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preco-medicamento">Preço (R$)</label>
+                        <input type="number" id="preco-medicamento" name="preco-medicamento" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao-medicamento">Descrição</label>
+                        <textarea id="descricao-medicamento" name="descricao-medicamento" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit">Cadastrar Medicamento</button>
+                </form>
+            </div>
+            
+            <h3>Medicamentos em Estoque</h3>
+            <div class="grid" id="grid-medicamentos">
+                <!-- Cards de medicamentos serão inseridos via JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Aba de Alimentos -->
+        <div class="tab-content" id="alimentos">
+            <h2>Seção de Alimentos e Suplementos</h2>
+            <p>Gerencie produtos alimentícios, suplementos e produtos naturais.</p>
+            
+            <div class="info-box">
+                <p>Cadastre alimentos dietéticos, suplementos vitamínicos, produtos naturais e outros itens da seção de alimentos.</p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Cadastrar Novo Alimento</h3>
+                <form id="form-alimento">
+                    <div class="form-group">
+                        <label for="nome-alimento">Nome do Produto</label>
+                        <input type="text" id="nome-alimento" name="nome-alimento" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoria-alimento">Categoria</label>
+                        <select id="categoria-alimento" name="categoria-alimento" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="suplemento">Suplemento</option>
+                            <option value="vitamina">Vitamina</option>
+                            <option value="produto-natural">Produto Natural</option>
+                            <option value="alimento-dietetico">Alimento Dietético</option>
+                            <option value="bebida">Bebida</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preco-alimento">Preço (R$)</label>
+                        <input type="number" id="preco-alimento" name="preco-alimento" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descricao-alimento">Descrição</label>
+                        <textarea id="descricao-alimento" name="descricao-alimento" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-laranja">Cadastrar Alimento</button>
+                </form>
+            </div>
+            
+            <h3>Produtos Alimentícios</h3>
+            <div class="grid" id="grid-alimentos">
+                <!-- Cards de alimentos serão inseridos via JavaScript -->
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Farmácia Verde Vida</h3>
+                    <p>Cuidando da sua saúde com produtos de qualidade e atendimento especializado.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>Telefone: (11) 3456-7890</p>
+                    <p>E-mail: contato@farmaciaverdevida.com.br</p>
+                    <p>Endereço: Rua das Flores, 123 - Centro</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Horário de Funcionamento</h3>
+                    <p>Segunda a Sexta: 8h às 22h</p>
+                    <p>Sábados: 9h às 20h</p>
+                    <p>Domingos: 9h às 18h</p>
+                </div>
+            </div>
+            <div class="text-center mt-2">
+                <p>&copy; 2023 Farmácia Verde Vida - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dados iniciais
+        let clientes = [
+            { id: 1, nome: "Maria Silva", email: "maria.silva@email.com", telefone: "(11) 98765-4321", endereco: "Rua A, 123" },
+            { id: 2, nome: "João Santos", email: "joao.santos@email.com", telefone: "(11) 91234-5678", endereco: "Av. B, 456" },
+            { id: 3, nome: "Ana Oliveira", email: "ana.oliveira@email.com", telefone: "(11) 94567-8901", endereco: "Travessa C, 789" }
+        ];
+        
+        let medicamentos = [
+            { id: 1, nome: "Paracetamol 500mg", categoria: "analgesico", preco: 12.90, descricao: "Analgésico e antitérmico para alívio de dores e febre." },
+            { id: 2, nome: "Amoxicilina 500mg", categoria: "antibiotico", preco: 28.50, descricao: "Antibiótico para tratamento de infecções bacterianas." },
+            { id: 3, nome: "Omeprazol 20mg", categoria: "gastrico", preco: 18.75, descricao: "Inibidor de bomba de prótons para problemas gástricos." },
+            { id: 4, nome: "Losartana 50mg", categoria: "cardiovascular", preco: 22.40, descricao: "Anti-hipertensivo para controle da pressão arterial." }
+        ];
+        
+        let alimentos = [
+            { id: 1, nome: "Whey Protein", categoria: "suplemento", preco: 89.90, descricao: "Suplemento proteico para ganho de massa muscular." },
+            { id: 2, nome: "Vitamina C 1000mg", categoria: "vitamina", preco: 24.50, descricao: "Suplemento de vitamina C para fortalecimento imunológico." },
+            { id: 3, nome: "Chá Verde em Cápsulas", categoria: "produto-natural", preco: 32.75, descricao: "Produto natural com propriedades antioxidantes." },
+            { id: 4, nome: "Barra de Cereal Diet", categoria: "alimento-dietetico", preco: 5.90, descricao: "Barra de cereal sem açúcar para dietas especiais." }
+        ];
+        
+        // Funcionalidade das abas
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove a classe active de todas as abas e conteúdos
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Adiciona a classe active à aba clicada
+                    tab.classList.add('active');
+                    
+                    // Mostra o conteúdo correspondente
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Inicializar dados
+            renderizarClientes();
+            renderizarMedicamentos();
+            renderizarAlimentos();
+            
+            // Formulário de Clientes
+            const formCliente = document.getElementById('form-cliente');
+            formCliente.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nome = document.getElementById('nome-cliente').value;
+                const email = document.getElementById('email-cliente').value;
+                const telefone = document.getElementById('telefone-cliente').value;
+                const endereco = document.getElementById('endereco-cliente').value;
+                
+                if (nome && email) {
+                    const novoCliente = {
+                        id: clientes.length + 1,
+                        nome,
+                        email,
+                        telefone,
+                        endereco
+                    };
+                    
+                    clientes.push(novoCliente);
+                    renderizarClientes();
+                    formCliente.reset();
+                    
+                    alert('Cliente cadastrado com sucesso!');
+                } else {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                }
+            });
+            
+            // Formulário de Medicamentos
+            const formMedicamento = document.getElementById('form-medicamento');
+            formMedicamento.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nome = document.getElementById('nome-medicamento').value;
+                const categoria = document.getElementById('categoria-medicamento').value;
+                const preco = parseFloat(document.getElementById('preco-medicamento').value);
+                const descricao = document.getElementById('descricao-medicamento').value;
+                
+                if (nome && categoria && preco) {
+                    const novoMedicamento = {
+                        id: medicamentos.length + 1,
+                        nome,
+                        categoria,
+                        preco,
+                        descricao
+                    };
+                    
+                    medicamentos.push(novoMedicamento);
+                    renderizarMedicamentos();
+                    formMedicamento.reset();
+                    
+                    alert('Medicamento cadastrado com sucesso!');
+                } else {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                }
+            });
+            
+            // Formulário de Alimentos
+            const formAlimento = document.getElementById('form-alimento');
+            formAlimento.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nome = document.getElementById('nome-alimento').value;
+                const categoria = document.getElementById('categoria-alimento').value;
+                const preco = parseFloat(document.getElementById('preco-alimento').value);
+                const descricao = document.getElementById('descricao-alimento').value;
+                
+                if (nome && categoria && preco) {
+                    const novoAlimento = {
+                        id: alimentos.length + 1,
+                        nome,
+                        categoria,
+                        preco,
+                        descricao
+                    };
+                    
+                    alimentos.push(novoAlimento);
+                    renderizarAlimentos();
+                    formAlimento.reset();
+                    
+                    alert('Alimento cadastrado com sucesso!');
+                } else {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                }
+            });
+        });
+        
+        // Funções para renderizar dados
+        function renderizarClientes() {
+            const tabelaClientes = document.querySelector('#tabela-clientes tbody');
+            tabelaClientes.innerHTML = '';
+            
+            clientes.forEach(cliente => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${cliente.nome}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.telefone}</td>
+                    <td>
+                        <button onclick="editarCliente(${cliente.id})" class="btn-azul" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Editar</button>
+                        <button onclick="excluirCliente(${cliente.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    </td>
+                `;
+                tabelaClientes.appendChild(tr);
+            });
+        }
+        
+        function renderizarMedicamentos() {
+            const gridMedicamentos = document.getElementById('grid-medicamentos');
+            gridMedicamentos.innerHTML = '';
+            
+            medicamentos.forEach(medicamento => {
+                const card = document.createElement('div');
+                card.className = 'card card-medicamentos';
+                card.innerHTML = `
+                    <div class="card-titulo">${medicamento.nome}</div>
+                    <div class="card-descricao">${medicamento.descricao}</div>
+                    <div class="card-categoria">${formatarCategoria(medicamento.categoria)}</div>
+                    <div class="card-info">
+                        <div class="card-preco">R$ ${medicamento.preco.toFixed(2)}</div>
+                        <button onclick="excluirMedicamento(${medicamento.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    </div>
+                `;
+                gridMedicamentos.appendChild(card);
+            });
+        }
+        
+        function renderizarAlimentos() {
+            const gridAlimentos = document.getElementById('grid-alimentos');
+            gridAlimentos.innerHTML = '';
+            
+            alimentos.forEach(alimento => {
+                const card = document.createElement('div');
+                card.className = 'card card-alimentos';
+                card.innerHTML = `
+                    <div class="card-titulo">${alimento.nome}</div>
+                    <div class="card-descricao">${alimento.descricao}</div>
+                    <div class="card-categoria categoria-laranja">${formatarCategoriaAlimento(alimento.categoria)}</div>
+                    <div class="card-info">
+                        <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
+                        <button onclick="excluirAlimento(${alimento.id})" class="btn-laranja" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    </div>
+                `;
+                gridAlimentos.appendChild(card);
+            });
+        }
+        
+        // Funções auxiliares
+        function formatarCategoria(categoria) {
+            const categorias = {
+                'analgesico': 'Analgésico',
+                'antibiotico': 'Antibiótico',
+                'anti-inflamatorio': 'Anti-inflamatório',
+                'cardiovascular': 'Cardiovascular',
+                'gastrico': 'Gástrico',
+                'dermatologico': 'Dermatológico'
+            };
+            
+            return categorias[categoria] || categoria;
+        }
+        
+        function formatarCategoriaAlimento(categoria) {
+            const categorias = {
+                'suplemento': 'Suplemento',
+                'vitamina': 'Vitamina',
+                'produto-natural': 'Produto Natural',
+                'alimento-dietetico': 'Alimento Dietético',
+                'bebida': 'Bebida'
+            };
+            
+            return categorias[categoria] || categoria;
+        }
+        
+        // Funções de exclusão (simuladas)
+        function excluirCliente(id) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                clientes = clientes.filter(cliente => cliente.id !== id);
+                renderizarClientes();
+                alert('Cliente excluído com sucesso!');
+            }
+        }
+        
+        function excluirMedicamento(id) {
+            if (confirm('Tem certeza que deseja excluir este medicamento?')) {
+                medicamentos = medicamentos.filter(medicamento => medicamento.id !== id);
+                renderizarMedicamentos();
+                alert('Medicamento excluído com sucesso!');
+            }
+        }
+        
+        function excluirAlimento(id) {
+            if (confirm('Tem certeza que deseja excluir este alimento?')) {
+                alimentos = alimentos.filter(alimento => alimento.id !== id);
+                renderizarAlimentos();
+                alert('Alimento excluído com sucesso!');
+            }
+        }
+        
+        function editarCliente(id) {
+            alert(`Funcionalidade de edição para o cliente ID ${id} será implementada em breve.`);
+        }
+    </script>
+</body>
+</html>
