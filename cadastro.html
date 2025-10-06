@@ -1041,10 +1041,12 @@
                 delete data.newsletter;
                 delete data.eventos;
 
+                // Variável declarada fora do try para ser acessível no finally
+                let response; 
 
                 try {
                     // 2. Envio REAL dos dados para a Serverless Function
-                    const response = await fetch('/api/cadastrar', { // Caminho para a Serverless Function
+                    response = await fetch('/api/cadastrar', { // Caminho para a Serverless Function
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1055,24 +1057,19 @@
                     // 3. Processa a resposta do servidor
                     const result = await response.json();
 
-                    if (response.ok) { // Status 200-299
-                        // Ação de Sucesso
+                    if (response.ok) { // Status 200-299 (Sucesso)
+                        // Ação de Sucesso: Exibe a mensagem e prepara o redirecionamento
                         btnLoading.style.display = 'none';
                         btnSuccess.style.display = 'inline-block';
 
+                        // 1. Exibir a mensagem de sucesso e rolar para o topo
+                        successMessage.style.display = 'block';
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // 2. Redirecionar para a página inicial após 3 segundos
                         setTimeout(() => {
-                            successMessage.style.display = 'block';
-                            form.reset();
-                            progressBar.style.width = '0%';
-                            progressText.textContent = '0% completo';
-
-                            // Resetar botão
-                            btnSuccess.style.display = 'none';
-                            btnText.style.display = 'inline';
-                            submitBtn.disabled = false;
-
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }, 1000);
+                            window.location.href = '/'; // **<-- Redirecionamento principal**
+                        }, 3000); // 3000ms = 3 segundos de espera
 
                     } else { // Status 400 ou 500 (Erro)
                         console.error('Erro no servidor:', result.error);
@@ -1088,7 +1085,7 @@
                     errorMessage.style.display = 'block';
 
                 } finally {
-                    // Garantir que o botão volte ao estado normal em caso de erro
+                    // Garantir que o botão volte ao estado normal em caso de erro (quando não houve sucesso/redirecionamento)
                     if (!response || !response.ok) {
                         btnLoading.style.display = 'none';
                         btnText.style.display = 'inline';
@@ -1096,7 +1093,7 @@
                     }
                 }
             });
-
+            
             // Inicializar barra de progresso
             updateProgressBar();
         });
@@ -1104,3 +1101,4 @@
 </body>
 
 </html>
+
