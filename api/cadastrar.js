@@ -26,20 +26,18 @@ export default async (req, res) => {
         }
 
         // --- LÓGICA DE SEGURANÇA CRÍTICA: HASH DA SENHA ---
-        // O custo de hash (saltRounds) deve ser de pelo menos 10.
         const salt = await bcrypt.genSalt(10);
         const senhaHash = await bcrypt.hash(data.senha, salt);
         // --------------------------------------------------
 
         // 3. Mapeia os dados do formulário para o formato da tabela 'cadastro'
         const cadastroData = {
-            nome_completo: data.nome_completo || data.nome, // Usando 'nome' como fallback
+            nome_completo: data.nome_completo || data.nome,
             email: data.email,
             telefone: data.telefone,
-            // Certifique-se de que o campo 'data-nascimento' do formulário corresponde ao nome da coluna no DB
             data_nascimento: data['data-nascimento'] || null, 
             cpf: data.cpf,
-            senha_hash: senhaHash, // <-- SALVANDO O HASH
+            senha_hash: senhaHash, 
             cep: data.cep,
             logradouro: data.logradouro,
             numero: data.numero,
@@ -49,15 +47,11 @@ export default async (req, res) => {
             estado: data.estado,
             termos_aceitos: data.termos_aceitos,
             
-            // CORREÇÃO DOS BOOLEANOS REMOVIDOS (forçados a 'false')
-            receber_newsletter: false,
-            receber_eventos: false,
-            
-            // CORREÇÃO FINAL: O campo 'interesses' foi removido para resolver o erro 'PGRST204'.
+            // CORREÇÃO FINAL: As colunas 'receber_newsletter' e 'receber_eventos' 
+            // e 'interesses' foram removidas para corresponder ao esquema atual do Supabase.
         };
 
         // 4. Insere os dados no Supabase
-        // NOME DA TABELA CORRIGIDO: 'cadastro'
         const { error } = await supabase
             .from('cadastro') 
             .insert([cadastroData]);
