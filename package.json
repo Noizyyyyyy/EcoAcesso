@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "api/cadastrar.js",
+  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.58.0",
     "bcryptjs": "^3.0.2",
+    "node-cpf": "^1.2.4",
     "tr46": "^0.0.3",
     "undici-types": "^7.14.0",
     "webidl-conversions": "^3.0.1",
