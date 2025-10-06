@@ -31,14 +31,15 @@ export default async (req, res) => {
         const senhaHash = await bcrypt.hash(data.senha, salt);
         // --------------------------------------------------
 
-        // 3. Mapeia os dados do formulário para o formato da tabela 'cadastros'
+        // 3. Mapeia os dados do formulário para o formato da tabela 'cadastro'
         const cadastroData = {
-            nome_completo: data.nome,
+            nome_completo: data.nome_completo || data.nome, // Usando 'nome' como fallback
             email: data.email,
             telefone: data.telefone,
+            // Certifique-se de que o campo 'data-nascimento' do formulário corresponde ao nome da coluna no DB
             data_nascimento: data['data-nascimento'] || null, 
-            cpf: data.cpf, // <-- AGORA INCLUINDO O CPF
-            senha_hash: senhaHash, // <-- SALVANDO O HASH, NÃO A SENHA PURA
+            cpf: data.cpf,
+            senha_hash: senhaHash, // <-- SALVANDO O HASH
             cep: data.cep,
             logradouro: data.logradouro,
             numero: data.numero,
@@ -47,20 +48,22 @@ export default async (req, res) => {
             cidade: data.cidade,
             estado: data.estado,
             termos_aceitos: data.termos_aceitos,
-            receber_newsletter: data.receber_newsletter,
-            receber_eventos: data.receber_eventos,
-            // O campo 'interesses' não está no HTML, mas mantemos o tratamento caso seja adicionado no futuro.
-            interesses: data.interesses ? data.interesses.split(',') : [],
+            
+            // CORREÇÃO DOS BOOLEANOS REMOVIDOS (forçados a 'false')
+            receber_newsletter: false,
+            receber_eventos: false,
+            
+            // CORREÇÃO FINAL: O campo 'interesses' foi removido para resolver o erro 'PGRST204'.
         };
 
         // 4. Insere os dados no Supabase
+        // NOME DA TABELA CORRIGIDO: 'cadastro'
         const { error } = await supabase
-            .from('cadastro')
+            .from('cadastro') 
             .insert([cadastroData]);
 
         if (error) {
             console.error('Erro no Supabase:', error);
-            // Erro 23505 é o código de erro padrão do PostgreSQL para violação de UNIQUE (ex: e-mail duplicado)
             if (error.code === '23505') {
                  res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
             } else {
@@ -77,7 +80,6 @@ export default async (req, res) => {
 
     } catch (e) {
         console.error('Erro na Serverless Function:', e);
-        res.status(500).json({ error: 'Erro interno no servidor.' });
+        res.status(500).json({ error: 'Falha no processamento da API de cadastro.' });
     }
-
 };
