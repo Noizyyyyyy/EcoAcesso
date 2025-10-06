@@ -170,13 +170,14 @@
             margin-top: 1.5rem;
         }
 
+        /* Cards */
         .card {
             background-color: var(--branco);
             border-radius: 10px;
-            padding: 1.5rem;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             transition: all 0.3s;
-            border-left: 4px solid var(--verde-claro);
+            border: 1px solid var(--verde-muito-claro);
+            overflow: hidden;
         }
 
         .card:hover {
@@ -184,21 +185,42 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        /* Imagem do Card - ALTURA AUMENTADA PARA 250PX */
+        .card-image {
+            width: 100%;
+            height: 500px; /* Alterado de 200px para 250px */
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+            display: block;
+        }
+
+        /* Conteúdo do Card - ALTURA MÍNIMA ADICIONADA PARA 140PX */
+        .card-content {
+            padding: 1.5rem;
+            padding-top: 0.5rem;
+            min-height: 140px; /* Alterado de 120px para 140px */
+        }
+
+
         /* Cores de Card Personalizadas */
         .card-medicamentos {
-            border-left-color: var(--verde-claro);
+            border-top: 4px solid var(--verde-claro);
         }
 
         .card-alimentos {
-            border-left-color: var(--laranja);
+            border-top: 4px solid var(--laranja);
         }
 
         .card-variados {
-            border-left-color: var(--roxo);
+            border-top: 4px solid var(--roxo);
         }
 
         .card-doacao {
-            border-left-color: var(--amarelo);
+            border-top: 4px solid var(--amarelo);
+        }
+
+        .card-feedback {
+            border-top: 4px solid var(--rosa);
         }
 
 
@@ -207,6 +229,7 @@
             color: var(--cinza-escuro);
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
+            padding-top: 0.5rem;
         }
 
         .card-descricao {
@@ -218,6 +241,7 @@
         .card-info {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-top: 1rem;
         }
 
@@ -248,13 +272,13 @@
         }
 
 
-        /* Formulários */
+        /* --- ESTILOS DE FORMULÁRIO --- */
         .form-container {
-            background-color: var(--verde-super-claro);
-            padding: 1.5rem;
+            background-color: var(--cinza-claro);
+            padding: 2rem;
             border-radius: 10px;
-            margin-top: 1.5rem;
-            border: 1px solid var(--verde-muito-claro);
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--amarelo); /* Destaque para doação */
         }
 
         .form-group {
@@ -302,7 +326,7 @@
         button:hover {
             background-color: var(--verde-escuro);
         }
-
+        
         .btn-laranja {
             background-color: var(--laranja);
         }
@@ -318,7 +342,7 @@
         .btn-roxo:hover {
             background-color: #7b1fa2;
         }
-
+        
         .btn-doacao {
             background-color: var(--amarelo);
             color: var(--cinza-escuro);
@@ -328,42 +352,8 @@
         .btn-doacao:hover {
             background-color: #fbc02d;
         }
+        /* --- FIM ESTILOS DE FORMULÁRIO --- */
 
-        .btn-feedback {
-            background-color: var(--rosa);
-        }
-
-        .btn-feedback:hover {
-            background-color: #d81b60;
-        }
-
-
-        /* Tabelas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 0.8rem;
-            text-align: left;
-            border-bottom: 1px solid var(--verde-muito-claro);
-        }
-
-        th {
-            background-color: var(--verde-muito-claro);
-            color: var(--verde-escuro);
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background-color: var(--verde-super-claro);
-        }
 
         /* Rodapé */
         footer {
@@ -447,14 +437,6 @@
             border-radius: 0 8px 8px 0;
             margin-bottom: 1.5rem;
         }
-
-        .doacao-card {
-            background-color: #fff9c4;
-            border: 1px solid #ffeb3b;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
 
@@ -469,7 +451,7 @@
                     <p>Dashboard de Vendas e Gerenciamento de Estoque</p>
                 </div>
                 <div>
-                    <a href="loginmermo.html"
+                    <a href="login.html"
                         style="color: var(--branco); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border: 1px solid var(--branco); border-radius: 5px;">
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </a>
@@ -492,44 +474,7 @@
             <p>Gerencie o estoque de medicamentos da farmácia.</p>
 
             <div class="info-box">
-                <p>Cadastre novos medicamentos, atualize estoque e preços. **Este é o foco principal para suas vendas!**
-                </p>
-            </div>
-
-            <div class="form-container">
-                <h3>Cadastrar Novo Medicamento (Inventário)</h3>
-                <form id="form-medicamento">
-                    <div class="form-group">
-                        <label for="nome-medicamento">Nome do Medicamento</label>
-                        <input type="text" id="nome-medicamento" name="nome-medicamento" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="categoria-medicamento">Categoria</label>
-                        <select id="categoria-medicamento" name="categoria-medicamento" required>
-                            <option value="">Selecione uma categoria</option>
-                            <option value="analgesico">Analgésico</option>
-                            <option value="antibiotico">Antibiótico</option>
-                            <option value="anti-inflamatorio">Anti-inflamatório</option>
-                            <option value="cardiovascular">Cardiovascular</option>
-                            <option value="gastrico">Gástrico</option>
-                            <option value="dermatologico">Dermatológico</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="preco-medicamento">Preço (R$)</label>
-                        <input type="number" id="preco-medicamento" name="preco-medicamento" step="0.01" min="0"
-                            required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao-medicamento">Descrição</label>
-                        <textarea id="descricao-medicamento" name="descricao-medicamento" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit">Cadastrar Medicamento</button>
-                </form>
+                <p>Visualize o catálogo completo de medicamentos, preços e informações de estoque.</p>
             </div>
 
             <h3>Medicamentos em Estoque</h3>
@@ -542,42 +487,7 @@
             <p>Gerencie produtos alimentícios, suplementos e produtos naturais.</p>
 
             <div class="info-box">
-                <p>Cadastre alimentos dietéticos, suplementos vitamínicos, produtos naturais e outros itens da seção de
-                    alimentos.</p>
-            </div>
-
-            <div class="form-container">
-                <h3>Cadastrar Novo Alimento (Inventário)</h3>
-                <form id="form-alimento">
-                    <div class="form-group">
-                        <label for="nome-alimento">Nome do Produto</label>
-                        <input type="text" id="nome-alimento" name="nome-alimento" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="categoria-alimento">Categoria</label>
-                        <select id="categoria-alimento" name="categoria-alimento" required>
-                            <option value="">Selecione uma categoria</option>
-                            <option value="suplemento">Suplemento</option>
-                            <option value="vitamina">Vitamina</option>
-                            <option value="produto-natural">Produto Natural</option>
-                            <option value="alimento-dietetico">Alimento Dietético</option>
-                            <option value="bebida">Bebida</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="preco-alimento">Preço (R$)</label>
-                        <input type="number" id="preco-alimento" name="preco-alimento" step="0.01" min="0" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao-alimento">Descrição</label>
-                        <textarea id="descricao-alimento" name="descricao-alimento" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-laranja">Cadastrar Alimento</button>
-                </form>
+                <p>Visualize todos os produtos alimentícios disponíveis, como suplementos e itens naturais.</p>
             </div>
 
             <h3>Produtos Alimentícios</h3>
@@ -590,41 +500,8 @@
             <p>Gerencie produtos de higiene, beleza, primeiros socorros e outros.</p>
 
             <div class="info-box" style="border-left-color: var(--roxo);">
-                <p>Esta seção é destinada a itens que não são estritamente medicamentos ou alimentos, como cosméticos,
-                    curativos e itens de conveniência.</p>
-            </div>
-
-            <div class="form-container">
-                <h3>Cadastrar Novo Produto Variado (Inventário)</h3>
-                <form id="form-variado">
-                    <div class="form-group">
-                        <label for="nome-variado">Nome do Produto</label>
-                        <input type="text" id="nome-variado" name="nome-variado" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="categoria-variado">Categoria</label>
-                        <select id="categoria-variado" name="categoria-variado" required>
-                            <option value="">Selecione uma categoria</option>
-                            <option value="higiene">Higiene Pessoal</option>
-                            <option value="beleza">Beleza / Cosméticos</option>
-                            <option value="primeiros-socorros">Primeiros Socorros</option>
-                            <option value="conveniencia">Conveniência</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="preco-variado">Preço (R$)</label>
-                        <input type="number" id="preco-variado" name="preco-variado" step="0.01" min="0" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao-variado">Descrição</label>
-                        <textarea id="descricao-variado" name="descricao-variado" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-roxo">Cadastrar Produto</button>
-                </form>
+                <p>Visualize itens que não são estritamente medicamentos ou alimentos, como cosméticos, curativos e
+                    itens de conveniência.</p>
             </div>
 
             <h3>Produtos em Estoque</h3>
@@ -641,44 +518,30 @@
                     carentes. Garanta a rastreabilidade e o uso correto dos recursos.</p>
             </div>
 
-            <div class="doacao-card">
-                <h3>Registro de Nova Doação</h3>
+            <h3 style="color: var(--amarelo);"><i class="fas fa-plus-circle"></i> Registrar Nova Doação</h3>
+            
+            <div class="form-container">
                 <form id="form-doacao">
                     <div class="form-group">
-                        <label for="item-doacao">Item Doados</label>
-                        <input type="text" id="item-doacao" name="item-doacao" required
-                            placeholder="Ex: Cestas Básicas, Kits de Higiene">
+                        <label for="item-doacao">Item Doado (Ex: Cesta Básica, Agasalho)</label>
+                        <input type="text" id="item-doacao" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="origem-doacao">Origem da Doação</label>
-                        <input type="text" id="origem-doacao" name="origem-doacao" required
-                            placeholder="Ex: Comunidade X, Empresa Y, Anônimo">
+                        <label for="origem-doacao">Origem / Doador (Ex: Comunidade Sol, Empresa XYZ)</label>
+                        <input type="text" id="origem-doacao" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="quantidade-doacao">Quantidade / Volume</label>
-                        <input type="text" id="quantidade-doacao" name="quantidade-doacao" required
-                            placeholder="Ex: 10 und, 5L, 20kg">
+                        <label for="quantidade-doacao">Quantidade / Descrição Breve</label>
+                        <input type="text" id="quantidade-doacao" required placeholder="Ex: 10 und, 50kg, Variada">
                     </div>
-
-                    <button type="submit" class="btn-doacao">Registrar Doação</button>
+                    <button type="submit" class="btn-doacao">
+                        <i class="fas fa-hand-holding-heart"></i> Registrar Doação
+                    </button>
                 </form>
             </div>
-
             <h3>Doações Recentes</h3>
-            <table id="tabela-doacoes">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Origem</th>
-                        <th>Quantidade</th>
-                        <th>Data Registro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="grid" id="grid-doacoes">
+            </div>
         </div>
 
         <div class="tab-content" id="feedback">
@@ -690,53 +553,9 @@
                     negócio dependem da escuta ativa da sua comunidade.</p>
             </div>
 
-            <div class="form-container">
-                <h3>Novo Feedback (Simulação de Recebimento)</h3>
-                <form id="form-feedback">
-                    <div class="form-group">
-                        <label for="assunto-feedback">Assunto</label>
-                        <input type="text" id="assunto-feedback" name="assunto-feedback" required
-                            placeholder="Ex: Sugestão sobre embalagens, Reclamação sobre atendimento">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="mensagem-feedback">Mensagem Detalhada</label>
-                        <textarea id="mensagem-feedback" name="mensagem-feedback" rows="4" required></textarea>
-                    </div>
-
-                    <div class="form-group" style="display: flex; gap: 1rem;">
-                        <div style="flex: 1;">
-                            <label for="nome-feedback">Nome (Opcional)</label>
-                            <input type="text" id="nome-feedback" name="nome-feedback" placeholder="Nome do Cliente">
-                        </div>
-                        <div style="flex: 1;">
-                            <label for="prioridade-feedback">Prioridade</label>
-                            <select id="prioridade-feedback" name="prioridade-feedback">
-                                <option value="baixa">Baixa</option>
-                                <option value="media" selected>Média</option>
-                                <option value="alta">Alta</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-feedback">Registrar Feedback</button>
-                </form>
-            </div>
-
             <h3>Feedbacks Pendentes</h3>
-            <table id="tabela-feedback">
-                <thead>
-                    <tr>
-                        <th>Assunto</th>
-                        <th>Prioridade</th>
-                        <th>Enviado Por</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="grid" id="grid-feedback">
+            </div>
         </div>
     </main>
 
@@ -768,35 +587,59 @@
     </footer>
 
     <script>
-        // Dados iniciais (Clientes REMOVIDOS)
+        // Dados iniciais (mantidos com 5 itens)
         let medicamentos = [
-            { id: 1, nome: "Paracetamol 500mg", categoria: "analgesico", preco: 12.90, descricao: "Analgésico e antitérmico para alívio de dores e febre." },
-            { id: 2, nome: "Amoxicilina 500mg", categoria: "antibiotico", preco: 28.50, descricao: "Antibiótico para tratamento de infecções bacterianas." },
+            { id: 1, nome: "Paracetamol 500mg", categoria: "analgesico", preco: 11.00, descricao: "Analgésico e antitérmico para alívio de dores e febre.", foto: "https://www.drogasil.com.br/_next/image?url=https%3A%2F%2Fproduct-data.raiadrogasil.io%2Fimages%2F3555709.webp&w=828&q=75" },
+            { id: 2, nome: "Amoxicilina 500mg", categoria: "antibiotico", preco: 15.00, descricao: "Antibiótico para tratamento de infecções bacterianas.", foto: "https://io.convertiez.com.br/m/morifarma/shop/products/images/277450/large/amoxicilina-500mg-ems-com-15-capsulas_9884.jpg" },
+            { id: 3, nome: "Ibuprofeno 400mg", categoria: "anti-inflamatorio", preco: 10.00, descricao: "Alivia dor, febre e inflamação.", foto: "https://www.drogasil.com.br/_next/image?url=https%3A%2F%2Fproduct-data.raiadrogasil.io%2Fimages%2F16727535.webp&w=3840&q=40" },
+            { id: 4, nome: "Losartana 50mg", categoria: "cardiovascular", preco: 9.90, descricao: "Tratamento para hipertensão arterial.", foto: "https://portal.riomeddistribuicao.com.br/12262-thickbox_default/losartana-potassica-50mg-30com-geolab.webp" },
+            { id: 5, nome: "Omeprazol 20mg", categoria: "gastrico", preco: 5.99, descricao: "Inibidor de bomba de prótons para refluxo e úlcera.", foto: "https://d1jgmae0hcnr1i.cloudfront.net/Custom/Content/Products/98/93/98938_omeprazol-20mg-c-56-cpr-p91645_m1_638404129072131579.webp" },
+            { id: 6, nome: "Dipirona", categoria: "Analgésico ", preco: 4.99, descricao: "Analgésico e antipirético usado para aliviar dores e reduzir febre", foto: "https://www.drogarianovaesperanca.com.br/imagens/600x600/dipirona-500mg-com-30-comprimidos-4d0eeb1305.jpg" },
+            { id: 7, nome: "Cetirizina", categoria: "anti-alérgico", preco: 8.99, descricao: "Antialérgico (antihistamínico) utilizado para tratar sintomas de rinite alérgica", foto: "https://atuafarmacia.pt/cdn/shop/files/cetirizina-bluepharma-10mg-20-comprimidos.webp?v=1687451193" },
+            { id: 8, nome: "Diazepam", categoria: "gastrico", preco: 6.99, descricao: "Benzodiazepínico usado para tratar ansiedade, insônia, convulsões e espasmos musculares.", foto: "https://medicina.ribeirao.br/wp-content/uploads/2023/10/image-24.png.webp" },
+            { id: 9, nome: "Metformina", categoria: "gastrico", preco: 7.99, descricao: "Medicamento oral usado no tratamento do diabetes tipo 2.", foto: "https://d1jgmae0hcnr1i.cloudfront.net/Custom/Content/Products/98/93/98938_omeprazol-20mg-c-56-cpr-p91645_m1_638404129072131579.webp" },
+            { id: 10, nome: "Salbutamol", categoria: "gastrico", preco: 8.99, descricao: "Broncodilatador usado em crises de asma ou bronquite.", foto: "https://portal.riomeddistribuicao.com.br/13129-thickbox_default/salbutamol-xarope-04mg-ml-120ml-geolab.webp" },
         ];
 
         let alimentos = [
-            { id: 1, nome: "Whey Protein", categoria: "suplemento", preco: 89.90, descricao: "Suplemento proteico para ganho de massa muscular." },
-            { id: 2, nome: "Vitamina C 1000mg", categoria: "vitamina", preco: 24.50, descricao: "Suplemento de vitamina C para fortalecimento imunológico." },
+            { id: 1, nome: "Arroz", categoria: "Alimento", preco: 10.00, descricao: "Fonte primária de carboidratos em muitas culturas, é energético e fácil de preparar", foto: "https://www.arenaatacado.com.br/on/demandware.static/-/Sites-storefront-catalog-sv/default/dw2d3d50da/Produtos/535311-7896290300714-arroz%20tipo%201%20integral%20prato%20fino%20pacote%201kg-prato%20fino-1.jpg" },
+            { id: 2, nome: "Feijão", categoria: "ALimento", preco: 8.50, descricao: "Rico em proteínas vegetais, fibras, ferro e outros minerais.", foto: "https://ibassets.com.br/ib.item.image.large/l-b15349c79e694c919b8d0e86514a5c24.jpeg" },
+            { id: 3, nome: "Pão", categoria: "Alimento", preco: 4.00, descricao: "Fonte rápida de carboidratos.", foto: "https://www.distribuidoracaue.com.br/media/catalog/product/cache/a65d2b67834c4584ec9c01d883900305/p/_/p_o_de_forma_visconti.jpg" },
+            { id: 4, nome: "Leite", categoria: "Bebida", preco: 2.50, descricao: "Rico em cálcio, proteínas e vitaminas.", foto: "https://phygital-files.mercafacil.com/catalogo/uploads/produto/leite_uht_integral_piracanjuba_caixa_com_tampa_1l_3eb13313-6dc6-4333-9356-a27464fd69b5.jpg" },
+            { id: 5, nome: "Ovo", categoria: "Comida", preco: 9.90, descricao: "Alimento acessível, rico em proteínas, gorduras boas e vários micronutrientes.", foto: "https://tauste.com.br/media/catalog/product/cache/85088212981f4c4416a405773fd6849a/1/3/1313121758079068.jpg" },
+            { id: 6, nome: "Batata", categoria: "Comida", preco: 8.90, descricao: "Fonte de carboidratos, potássio e fibras.", foto: "https://www.petz.com.br/blog/wp-content/uploads/2022/08/como-plantar-batata.jpg" },
+            { id: 7, nome: "carnes(bovina, frango e peixes)", categoria: "Comida", preco: 9.90, descricao: "onte importante de proteína completa, ferro e vitamina B12.", foto: "https://static.todamateria.com.br/upload/ca/rn/carnes.jpg" },
+            { id: 8, nome: "Macarrão", categoria: "Comida", preco: 7.90, descricao: "Alimento feito geralmente de trigo, é uma fonte de carboidrato e muito versátil", foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZV1zqLBigQ6uDXDd14rqHVUAODrvNBaEA9g&s" },
+            { id: 9, nome: "Banana", categoria: "Comida", preco: 5.90, descricao: "Fruta rica em potássio, carboidratos e fibras.", foto: "https://www.hortifrutiorganico.com.br/121-large_default/banana-organica-prata-1-kg.jpg" },
+            { id: 10, nome: "Tomate", categoria: "Comida", preco: 4.90, descricao: "Muito usado em saladas, molhos e cozidos.", foto: "https://52586.cdn.lojaquevende.com.br/static/52586/sku/legumes-Tomate-Andrea-1586283695804.png" },
         ];
 
         let produtosVariados = [
-            { id: 1, nome: "Shampoo Sólido Natural", categoria: "beleza", preco: 35.00, descricao: "Vegano, sem sulfato, zero plástico." },
-            { id: 2, nome: "Curativo Ecológico", categoria: "primeiros-socorros", preco: 8.50, descricao: "Hipoalergênico e biodegradável." },
+            { id: 1, nome: "Shampoo Sólido Natural", categoria: "beleza", preco: 10.00, descricao: "Vegano, sem sulfato, zero plástico.", foto: "https://cdn.awsli.com.br/2500x2500/2081/2081619/produto/150894966/sabonaria--2--0onb5z1bwt.jpg" },
+            { id: 2, nome: "Moletom", categoria: "Roupa", preco: 17.50, descricao: "Ótimo para o frio", foto: "https://akapanda.com.br/wp-content/uploads/2023/05/capa-moletom-canguru-com-capuz-moletom-moletom-branco-moletom-feminino-moletom-preto-moletom-roxo-moletom-vermelho-moletons-aka-panda.jpg" },
+            { id: 3, nome: "Sabonete Artesanal", categoria: "higiene", preco: 7.00, descricao: "Com extratos naturais e óleo de coco.", foto: "https://www.artesanatopassoapassoja.com.br/wp-content/uploads/2021/08/embalagens-para-sabonetes-artesanais.jpg" },
+            { id: 4, nome: "Protetor Solar FPS 50", categoria: "beleza", preco: 8.90, descricao: "Fórmula não oleosa, proteção UVA/UVB.", foto: "https://lojacoty.vteximg.com.br/arquivos/ids/189910-1000-1000/7896108560330_1.jpg?v=638702082513700000" },
+            { id: 5, nome: "Escova de Dentes Bambu", categoria: "higiene", preco: 4.90, descricao: "Alternativa sustentável para higiene bucal.", foto: "https://cdn.awsli.com.br/2626/2626263/produto/228017591eea08192de.jpg" },
         ];
 
         let doacoes = [
-            { id: 1, item: "Cesta Básica", origem: "Comunidade Sol", quantidade: "50 und", data: "01/10/2023" },
-            { id: 2, item: "Kits de Higiene", origem: "Empresa Amiga", quantidade: "100 und", data: "05/10/2023" },
+            { id: 1, item: "Cesta Básica", origem: "Comunidade Sol", quantidade: "50 und", data: "01/10/2023", icone: "fas fa-box" },
+            { id: 2, item: "Kits de Higiene", origem: "Empresa Amiga", quantidade: "100 und", data: "05/10/2023", icone: "fas fa-hands-wash" },
+            { id: 3, item: "Agasalhos e Cobertores", origem: "Igreja Local", quantidade: "75 und", data: "15/09/2023", icone: "fas fa-tshirt" },
+            { id: 4, item: "Medicamentos Sem Uso", origem: "Farmácia Solidária", quantidade: "Variada", data: "20/09/2023", icone: "fas fa-pills" },
+            { id: 5, item: "Brinquedos Educativos", origem: "Doação Anônima", quantidade: "30 und", data: "03/10/2023", icone: "fas fa-puzzle-piece" },
         ];
 
         let feedbacks = [
-            { id: 1, assunto: "Sugestão de Produto", prioridade: "Média", nome: "Carlos", data: "28/09/2023", status: "Novo" },
-            { id: 2, assunto: "Elogio ao Atendimento", prioridade: "Baixa", nome: "Anônimo", data: "03/10/2023", status: "Novo" },
-            { id: 3, assunto: "Reclamação - Embalagem", prioridade: "Alta", nome: "Joana", data: "04/10/2023", status: "Novo" },
+            { id: 1, assunto: "Sugestão de Produto", prioridade: "Média", nome: "Carlos", data: "28/09/2023", status: "Novo", icone: "fas fa-lightbulb" },
+            { id: 2, assunto: "Elogio ao Atendimento", prioridade: "Baixa", nome: "Anônimo", data: "03/10/2023", status: "Novo", icone: "fas fa-smile" },
+            { id: 3, assunto: "Reclamação - Embalagem", prioridade: "Alta", nome: "Joana", data: "04/10/2023", status: "Novo", icone: "fas fa-exclamation-triangle" },
+            { id: 4, assunto: "Dúvida sobre Descarte", prioridade: "Média", nome: "Mariana S.", data: "06/10/2023", status: "Novo", icone: "fas fa-recycle" },
+            { id: 5, assunto: "Problema com Entrega", prioridade: "Alta", nome: "Roberto A.", data: "06/10/2023", status: "Novo", icone: "fas fa-truck-loading" },
         ];
 
 
-        // Funções de Renderização (Apenas produtos, doações e feedback)
+        // Funções de Renderização
         function renderizarMedicamentos() {
             const gridMedicamentos = document.getElementById('grid-medicamentos');
             gridMedicamentos.innerHTML = '';
@@ -805,12 +648,15 @@
                 const card = document.createElement('div');
                 card.className = 'card card-medicamentos';
                 card.innerHTML = `
-                    <div class="card-titulo"><i class="fas fa-pills"></i> ${medicamento.nome}</div>
-                    <div class="card-descricao">${medicamento.descricao}</div>
-                    <div class="card-categoria">${formatarCategoriaMedicamento(medicamento.categoria)}</div>
-                    <div class="card-info">
-                        <div class="card-preco">R$ ${medicamento.preco.toFixed(2)}</div>
-                        <button onclick="excluirMedicamento(${medicamento.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    <img src="${medicamento.foto}" alt="${medicamento.nome}" class="card-image">
+                    <div class="card-content">
+                        <div class="card-titulo"><i class="fas fa-pills"></i> ${medicamento.nome}</div>
+                        <div class="card-descricao">${medicamento.descricao}</div>
+                        <div class="card-categoria">${formatarCategoriaMedicamento(medicamento.categoria)}</div>
+                        <div class="card-info">
+                            <div class="card-preco">R$ ${medicamento.preco.toFixed(2)}</div>
+                            <button onclick="excluirMedicamento(${medicamento.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                        </div>
                     </div>
                 `;
                 gridMedicamentos.appendChild(card);
@@ -825,12 +671,15 @@
                 const card = document.createElement('div');
                 card.className = 'card card-alimentos';
                 card.innerHTML = `
-                    <div class="card-titulo"><i class="fas fa-apple-alt"></i> ${alimento.nome}</div>
-                    <div class="card-descricao">${alimento.descricao}</div>
-                    <div class="card-categoria categoria-laranja">${formatarCategoriaAlimento(alimento.categoria)}</div>
-                    <div class="card-info">
-                        <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
-                        <button onclick="excluirAlimento(${alimento.id})" class="btn-laranja" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    <img src="${alimento.foto}" alt="${alimento.nome}" class="card-image">
+                    <div class="card-content">
+                        <div class="card-titulo"><i class="fas fa-apple-alt"></i> ${alimento.nome}</div>
+                        <div class="card-descricao">${alimento.descricao}</div>
+                        <div class="card-categoria categoria-laranja">${formatarCategoriaAlimento(alimento.categoria)}</div>
+                        <div class="card-info">
+                            <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
+                            <button onclick="excluirAlimento(${alimento.id})" class="btn-laranja" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                        </div>
                     </div>
                 `;
                 gridAlimentos.appendChild(card);
@@ -845,12 +694,15 @@
                 const card = document.createElement('div');
                 card.className = 'card card-variados';
                 card.innerHTML = `
-                    <div class="card-titulo"><i class="fas fa-box-open"></i> ${produto.nome}</div>
-                    <div class="card-descricao">${produto.descricao}</div>
-                    <div class="card-categoria categoria-roxo">${formatarCategoriaVariado(produto.categoria)}</div>
-                    <div class="card-info">
-                        <div class="card-preco" style="color: var(--roxo);">R$ ${produto.preco.toFixed(2)}</div>
-                        <button onclick="excluirVariado(${produto.id})" class="btn-roxo" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                    <img src="${produto.foto}" alt="${produto.nome}" class="card-image">
+                    <div class="card-content">
+                        <div class="card-titulo"><i class="fas fa-box-open"></i> ${produto.nome}</div>
+                        <div class="card-descricao">${produto.descricao}</div>
+                        <div class="card-categoria categoria-roxo">${formatarCategoriaVariado(produto.categoria)}</div>
+                        <div class="card-info">
+                            <div class="card-preco" style="color: var(--roxo);">R$ ${produto.preco.toFixed(2)}</div>
+                            <button onclick="excluirVariado(${produto.id})" class="btn-roxo" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                        </div>
                     </div>
                 `;
                 gridVariados.appendChild(card);
@@ -858,44 +710,64 @@
         }
 
         function renderizarDoacoes() {
-            const tabelaDoacoes = document.querySelector('#tabela-doacoes tbody');
-            tabelaDoacoes.innerHTML = '';
+            const gridDoacoes = document.getElementById('grid-doacoes');
+            gridDoacoes.innerHTML = '';
 
             doacoes.forEach(doacao => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${doacao.item}</td>
-                    <td>${doacao.origem}</td>
-                    <td>${doacao.quantidade}</td>
-                    <td>${doacao.data}</td>
+                const card = document.createElement('div');
+                card.className = 'card card-doacao';
+                card.innerHTML = `
+                    <div class="card-content">
+                        <div class="card-titulo" style="font-size: 1.3rem; color: var(--amarelo);"><i class="${doacao.icone}"></i> ${doacao.item}</div>
+                        <div class="card-descricao"><strong>Origem:</strong> ${doacao.origem}</div>
+                        <div class="card-info" style="align-items: flex-start; flex-direction: column;">
+                            <div class="card-preco" style="color: var(--cinza-escuro); font-size: 1.2rem; font-weight: bold;">
+                                <i class="fas fa-sort-amount-up-alt"></i> ${doacao.quantidade}
+                            </div>
+                            <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                                <i class="fas fa-calendar-alt"></i> Registro: ${doacao.data}
+                            </div>
+                        </div>
+                    </div>
                 `;
-                tabelaDoacoes.appendChild(tr);
+                gridDoacoes.appendChild(card);
             });
         }
 
         function renderizarFeedback() {
-            const tabelaFeedback = document.querySelector('#tabela-feedback tbody');
-            tabelaFeedback.innerHTML = '';
+            const gridFeedback = document.getElementById('grid-feedback');
+            gridFeedback.innerHTML = '';
 
             feedbacks.forEach(f => {
-                const tr = document.createElement('tr');
+                const card = document.createElement('div');
+                card.className = 'card card-feedback';
                 let prioridadeCor = '';
-                if (f.prioridade === 'Alta') prioridadeCor = 'color: #f44336; font-weight: bold;';
-                if (f.prioridade === 'Média') prioridadeCor = 'color: #ff9800;';
+                if (f.prioridade === 'Alta') prioridadeCor = 'color: #f44336; border: 1px solid #f44336;';
+                if (f.prioridade === 'Média') prioridadeCor = 'color: #ff9800; border: 1px solid #ff9800;';
 
-                tr.innerHTML = `
-                    <td>${f.assunto}</td>
-                    <td style="${prioridadeCor}">${f.prioridade}</td>
-                    <td>${f.nome}</td>
-                    <td>${f.data}</td>
-                    <td><span style="background-color: var(--verde-muito-claro); padding: 0.2rem 0.5rem; border-radius: 5px;">${f.status}</span></td>
+                card.innerHTML = `
+                    <div class="card-content">
+                        <div class="card-titulo" style="font-size: 1.3rem; color: var(--rosa);"><i class="${f.icone}"></i> ${f.assunto}</div>
+                        <div class="card-descricao"><strong>Mensagem de:</strong> ${f.nome}</div>
+                        <div class="card-info" style="align-items: flex-start; flex-direction: column;">
+                            <div class="card-categoria" style="${prioridadeCor} background-color: var(--branco); font-size: 0.9rem; margin-top: 10px;">
+                                Prioridade: ${f.prioridade}
+                            </div>
+                            <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                                <i class="fas fa-clock"></i> Data: ${f.data}
+                            </div>
+                            <div style="font-size: 0.9rem; color: var(--verde-escuro); margin-top: 5px;">
+                                Status: ${f.status}
+                            </div>
+                        </div>
+                    </div>
                 `;
-                tabelaFeedback.appendChild(tr);
+                gridFeedback.appendChild(card);
             });
         }
 
 
-        // Funções de Formatação
+        // Funções de Formatação (Mantidas)
         function formatarCategoriaMedicamento(categoria) {
             const categorias = {
                 'analgesico': 'Analgésico',
@@ -929,7 +801,6 @@
             return categorias[categoria] || categoria;
         }
 
-        // Funções de Exclusão (Simuladas)
         function excluirMedicamento(id) {
             if (confirm('Tem certeza que deseja excluir este medicamento?')) {
                 medicamentos = medicamentos.filter(medicamento => medicamento.id !== id);
@@ -974,147 +845,48 @@
                 });
             });
 
-            // Inicializar todos os dados
+            // Inicializar todos os dados com o novo formato de cards
             renderizarMedicamentos();
             renderizarAlimentos();
             renderizarProdutosVariados();
             renderizarDoacoes();
             renderizarFeedback();
-
-
-            // Formulário de Medicamentos
-            const formMedicamento = document.getElementById('form-medicamento');
-            formMedicamento.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const nome = document.getElementById('nome-medicamento').value;
-                const categoria = document.getElementById('categoria-medicamento').value;
-                const preco = parseFloat(document.getElementById('preco-medicamento').value);
-                const descricao = document.getElementById('descricao-medicamento').value;
-
-                if (nome && categoria && preco) {
-                    const novoMedicamento = {
-                        id: medicamentos.length + 1,
-                        nome,
-                        categoria,
-                        preco,
-                        descricao
-                    };
-
-                    medicamentos.push(novoMedicamento);
-                    renderizarMedicamentos();
-                    formMedicamento.reset();
-                    alert('Medicamento cadastrado com sucesso!');
-                } else {
-                    alert('Por favor, preencha os campos obrigatórios.');
-                }
-            });
-
-            // Formulário de Alimentos
-            const formAlimento = document.getElementById('form-alimento');
-            formAlimento.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const nome = document.getElementById('nome-alimento').value;
-                const categoria = document.getElementById('categoria-alimento').value;
-                const preco = parseFloat(document.getElementById('preco-alimento').value);
-                const descricao = document.getElementById('descricao-alimento').value;
-
-                if (nome && categoria && preco) {
-                    const novoAlimento = {
-                        id: alimentos.length + 1,
-                        nome,
-                        categoria,
-                        preco,
-                        descricao
-                    };
-
-                    alimentos.push(novoAlimento);
-                    renderizarAlimentos();
-                    formAlimento.reset();
-                    alert('Alimento cadastrado com sucesso!');
-                } else {
-                    alert('Por favor, preencha os campos obrigatórios.');
-                }
-            });
-
-            // Formulário de Produtos Variados
-            const formVariado = document.getElementById('form-variado');
-            formVariado.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const nome = document.getElementById('nome-variado').value;
-                const categoria = document.getElementById('categoria-variado').value;
-                const preco = parseFloat(document.getElementById('preco-variado').value);
-                const descricao = document.getElementById('descricao-variado').value;
-
-                if (nome && categoria && preco) {
-                    const novoProduto = {
-                        id: produtosVariados.length + 1,
-                        nome,
-                        categoria,
-                        preco,
-                        descricao
-                    };
-
-                    produtosVariados.push(novoProduto);
-                    renderizarProdutosVariados();
-                    formVariado.reset();
-                    alert('Produto Variado cadastrado com sucesso!');
-                } else {
-                    alert('Por favor, preencha os campos obrigatórios.');
-                }
-            });
-
-            // Formulário de Doação
+            
+            // Lógica do Formulário de Doação
             const formDoacao = document.getElementById('form-doacao');
-            formDoacao.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const item = document.getElementById('item-doacao').value;
-                const origem = document.getElementById('origem-doacao').value;
-                const quantidade = document.getElementById('quantidade-doacao').value;
+            if (formDoacao) {
+                formDoacao.addEventListener('submit', function (e) {
+                    e.preventDefault();
 
-                if (item && origem && quantidade) {
-                    const novaDoacao = {
-                        id: doacoes.length + 1,
-                        item,
-                        origem,
-                        quantidade,
-                        data: new Date().toLocaleDateString('pt-BR')
-                    };
+                    const item = document.getElementById('item-doacao').value;
+                    const origem = document.getElementById('origem-doacao').value;
+                    const quantidade = document.getElementById('quantidade-doacao').value;
+                    
+                    if (item && origem && quantidade) {
+                        // Lógica simples para definir um ícone baseado no item
+                        let novoIcone = 'fas fa-hand-holding-heart';
+                        if (item.toLowerCase().includes('cesta')) novoIcone = 'fas fa-box';
+                        if (item.toLowerCase().includes('higiene')) novoIcone = 'fas fa-hands-wash';
+                        if (item.toLowerCase().includes('agasalho') || item.toLowerCase().includes('cobertor')) novoIcone = 'fas fa-tshirt';
 
-                    doacoes.push(novaDoacao);
-                    renderizarDoacoes();
-                    formDoacao.reset();
-                    alert('Doação registrada com sucesso!');
-                } else {
-                    alert('Por favor, preencha os campos obrigatórios.');
-                }
-            });
+                        const novaDoacao = {
+                            id: doacoes.length + 1,
+                            item: item,
+                            origem: origem,
+                            quantidade: quantidade,
+                            data: new Date().toLocaleDateString('pt-BR'),
+                            icone: novoIcone
+                        };
 
-            // Formulário de Feedback
-            const formFeedback = document.getElementById('form-feedback');
-            formFeedback.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const assunto = document.getElementById('assunto-feedback').value;
-                const prioridade = document.getElementById('prioridade-feedback').value;
-                const nome = document.getElementById('nome-feedback').value || 'Anônimo';
-
-                if (assunto) {
-                    const novoFeedback = {
-                        id: feedbacks.length + 1,
-                        assunto,
-                        prioridade: prioridade.charAt(0).toUpperCase() + prioridade.slice(1), // Capitaliza
-                        nome,
-                        data: new Date().toLocaleDateString('pt-BR'),
-                        status: 'Novo'
-                    };
-
-                    feedbacks.push(novoFeedback);
-                    renderizarFeedback();
-                    formFeedback.reset();
-                    alert('Feedback registrado com sucesso!');
-                } else {
-                    alert('Por favor, preencha o campo Assunto.');
-                }
-            });
+                        doacoes.unshift(novaDoacao); // Adiciona no início da lista
+                        renderizarDoacoes();
+                        formDoacao.reset();
+                        alert('Doação registrada com sucesso!');
+                    } else {
+                        alert('Por favor, preencha todos os campos da doação.');
+                    }
+                });
+            }
         });
     </script>
 </body>
