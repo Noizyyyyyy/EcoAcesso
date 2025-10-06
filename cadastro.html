@@ -590,9 +590,9 @@
         </div>
 
         <div class="message success" id="success-message">
-        <strong><i class="fas fa-check-circle"></i> Cadastro realizado com sucesso!</strong><br>
-    Sua conta foi ativada automaticamente. Você será redirecionado para a página inicial.
-</div>
+            <strong><i class="fas fa-check-circle"></i> Cadastro realizado com sucesso!</strong><br>
+            Em breve você receberá um e-mail de confirmação.
+        </div>
 
         <div class="message error" id="error-message">
             <strong><i class="fas fa-exclamation-circle"></i> Erro no cadastro!</strong><br>
@@ -1000,7 +1000,6 @@
             });
 
             // Envio do formulário
-            // Envio do formulário
             form.addEventListener('submit', async function (e) { // Adicionado 'async' aqui
                 e.preventDefault();
 
@@ -1042,11 +1041,10 @@
                 delete data.newsletter;
                 delete data.eventos;
 
-                let response; // Declarar a variável fora do try/catch
 
                 try {
                     // 2. Envio REAL dos dados para a Serverless Function
-                    response = await fetch('/api/cadastrar', { // Caminho para a Serverless Function
+                    const response = await fetch('/api/cadastrar', { // Caminho para a Serverless Function
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1057,19 +1055,24 @@
                     // 3. Processa a resposta do servidor
                     const result = await response.json();
 
-                    if (response.ok) { // Status 200-299 (Sucesso)
-                        // Ação de Sucesso: Exibe a mensagem e prepara o redirecionamento
+                    if (response.ok) { // Status 200-299
+                        // Ação de Sucesso
                         btnLoading.style.display = 'none';
                         btnSuccess.style.display = 'inline-block';
 
-                        // 1. Exibir a mensagem de sucesso e rolar para o topo
-                        successMessage.style.display = 'block';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                        // 2. Redirecionar para a página inicial após 3 segundos
                         setTimeout(() => {
-                            window.location.href = '/'; // <<-- AQUI ESTÁ O REDIRECIONAMENTO
-                        }, 3000); // 3000ms = 3 segundos de espera
+                            successMessage.style.display = 'block';
+                            form.reset();
+                            progressBar.style.width = '0%';
+                            progressText.textContent = '0% completo';
+
+                            // Resetar botão
+                            btnSuccess.style.display = 'none';
+                            btnText.style.display = 'inline';
+                            submitBtn.disabled = false;
+
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 1000);
 
                     } else { // Status 400 ou 500 (Erro)
                         console.error('Erro no servidor:', result.error);
@@ -1085,7 +1088,7 @@
                     errorMessage.style.display = 'block';
 
                 } finally {
-                    // Garantir que o botão volte ao estado normal em caso de erro (quando não houve sucesso/redirecionamento)
+                    // Garantir que o botão volte ao estado normal em caso de erro
                     if (!response || !response.ok) {
                         btnLoading.style.display = 'none';
                         btnText.style.display = 'inline';
@@ -1093,4 +1096,11 @@
                     }
                 }
             });
-        })
+
+            // Inicializar barra de progresso
+            updateProgressBar();
+        });
+    </script>
+</body>
+
+</html>
