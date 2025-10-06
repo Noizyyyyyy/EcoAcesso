@@ -1,42 +1,44 @@
+// **ATENÇÃO: Este deve ser o código final no seu api/cadastrar.js**
 import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs'; // Importa a biblioteca de hash
+import bcrypt from 'bcryptjs';
+import { cpf } from 'node-cpf';
 
-// As credenciais do Supabase (lidas das variáveis de ambiente do Vercel)
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-// Inicializa o cliente Supabase.
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// A função handler é o que o Vercel executa.
 export default async (req, res) => {
-    // 1. Apenas aceita requisições POST
     if (req.method !== 'POST') {
         res.status(405).json({ error: 'Método não permitido. Use POST.' });
         return;
     }
-
     try {
         const data = req.body;
 
-        // Validação básica para campos obrigatórios (além da validação do front-end)
-        if (!data.email || !data.senha || !data.termos_aceitos) {
-            res.status(400).json({ error: 'Dados essenciais (e-mail, senha e termos) ausentes.' });
+        if (!data.email || !data.senha || !data.termos_aceitos || !data.cpf) {
+            res.status(400).json({ error: 'Dados essenciais (e-mail, senha, termos e CPF) ausentes.' });
             return;
         }
-
-        // --- LÓGICA DE SEGURANÇA CRÍTICA: HASH DA SENHA ---
+        if (!emailRegex.test(data.email)) {
+            res.status(400).json({ error: 'O formato do e-mail é inválido. Verifique o endereço.' });
+            return;
+        }
+        const cpfLimpo = data.cpf.replace(/\D/g, '');
+        if (!cpf.validate(cpfLimpo)) {
+            res.status(400).json({ error: 'O CPF fornecido é inválido. Verifique os números.' });
+            return;
+        }
+        
         const salt = await bcrypt.genSalt(10);
         const senhaHash = await bcrypt.hash(data.senha, salt);
-        // --------------------------------------------------
 
-        // 3. Mapeia os dados do formulário para o formato da tabela 'cadastro'
         const cadastroData = {
             nome_completo: data.nome_completo || data.nome,
             email: data.email,
             telefone: data.telefone,
             data_nascimento: data['data-nascimento'] || null, 
-            cpf: data.cpf,
+            cpf: cpfLimpo,
             senha_hash: senhaHash, 
             cep: data.cep,
             logradouro: data.logradouro,
@@ -47,14 +49,11 @@ export default async (req, res) => {
             estado: data.estado,
             termos_aceitos: data.termos_aceitos,
             
-            // CORREÇÃO FINAL: As colunas 'receber_newsletter' e 'receber_eventos' 
-            // e 'interesses' foram removidas para corresponder ao esquema atual do Supabase.
+            // O e-mail é considerado confirmado para permitir o cadastro sem verificação
+            email_confirmado: true, 
         };
 
-        // 4. Insere os dados no Supabase
-        const { error } = await supabase
-            .from('cadastro') 
-            .insert([cadastroData]);
+        const { error } = await supabase.from('cadastro').insert([cadastroData]);
 
         if (error) {
             console.error('Erro no Supabase:', error);
@@ -65,10 +64,9 @@ export default async (req, res) => {
             }
             return;
         }
-
-        // 5. Retorna sucesso para o Front-end
+        
         res.status(201).json({ 
-            message: 'Cadastro realizado com sucesso!', 
+            message: 'Cadastro realizado com sucesso! Redirecionando...', 
             email: data.email
         });
 
