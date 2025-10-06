@@ -584,78 +584,90 @@
             });
 
             // Envio do formulário
-            form.addEventListener('submit', function (e) {
+            // Envio do formulário
+            form.addEventListener('submit', async function (e) { // Adicionado 'async' aqui
                 e.preventDefault();
 
+                // Esconder mensagens
                 successMessage.style.display = 'none';
                 errorMessage.style.display = 'none';
 
+                // --- 1. Validação do Frontend ---
                 if (!validateForm()) {
+                    // Adiciona a mensagem de erro padrão
+                    errorMessage.querySelector('strong').textContent = "Credenciais inválidas!";
                     errorMessage.querySelector('br').nextSibling.textContent = " Verifique os campos destacados.";
                     errorMessage.style.display = 'block';
                     return;
                 }
 
+                // --- 2. Mostrar estado de carregamento ---
                 btnText.style.display = 'none';
                 btnLoading.style.display = 'inline-block';
                 submitBtn.disabled = true;
 
-                // --- SIMULAÇÃO DE LOGIN ---
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('senha').value;
+                // 3. Coleta dos dados
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
 
-                // Dados de exemplo de um usuário cadastrado
-                const dummyUser = {
-                    email: 'ecoacesso2025@gmail.com',
-                    password: 'EcoAcesso2025**'
-                };
+                let response;
 
-                setTimeout(() => {
-                    if (email === dummyUser.email && password === dummyUser.password) {
-                        // Sucesso
+                try {
+                    // --- 4. Envio REAL dos dados para a Serverless Function ---
+                    response = await fetch('/api/login', { // Chamada para a nova API de login
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) { // Status 200 (Sucesso)
+                        // Ação de Sucesso
                         btnLoading.style.display = 'none';
                         btnSuccess.style.display = 'inline-block';
 
+                        // 1. Exibir a mensagem de sucesso
+                        successMessage.style.display = 'block';
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                        // 2. Redirecionar após 2 segundos
                         setTimeout(() => {
-                            successMessage.style.display = 'block';
-                            form.reset();
-                            window.scrollTo({
-                                top: 0,
-                                behavior: 'smooth'
-                            });
+                            // Redireciona para o Front-Page.html (conforme seu vercel.json)
+                            window.location.href = '/'; 
+                        }, 2000); 
 
-                            // Remove a classe de erro caso existam
-                            document.getElementById('email').classList.remove('error');
-                            document.getElementById('senha').classList.remove('error');
-
-                            // Resetar botão
-                            btnSuccess.style.display = 'none';
-                            btnText.style.display = 'inline';
-                            submitBtn.disabled = false;
-
-                            // **REDIRECIONAMENTO APÓS O SUCESSO**
-                            window.location.href = 'homepage.html';
-                        }, 1000); // 1 segundo para mostrar a animação de sucesso
-                    } else {
-                        // Erro
-                        errorMessage.querySelector('br').nextSibling.textContent = " Verifique seu e-mail e senha.";
+                    } else { // Status 400, 401, 500 (Erro)
+                        console.error('Erro no servidor/API:', result.error);
+                        
+                        // Atualiza a mensagem de erro específica
+                        errorMessage.querySelector('strong').textContent = "Falha no Login!";
+                        errorMessage.querySelector('br').nextSibling.textContent = ` ${result.error || 'Ocorreu um erro desconhecido.'}`;
+                        
                         errorMessage.style.display = 'block';
+
+                        // Limpa a senha para segurança
+                        document.getElementById('senha').value = ''; 
+                    }
+
+                } catch (error) {
+                    console.error('Erro na requisição (rede ou CORS):', error);
+                    errorMessage.querySelector('strong').textContent = `Falha na Conexão!`;
+                    errorMessage.querySelector('br').nextSibling.textContent = ` Não foi possível conectar ao servidor.`;
+                    errorMessage.style.display = 'block';
+
+                } finally {
+                    // Garantir que o botão volte ao estado normal se a requisição falhou (e não redirecionou)
+                    if (!response || !response.ok) {
                         btnLoading.style.display = 'none';
                         btnText.style.display = 'inline';
                         submitBtn.disabled = false;
-                        document.getElementById('senha').value = ''; // Limpa a senha
-                        document.getElementById('email').classList.add('error');
-                        document.getElementById('senha').classList.add('error');
                     }
-                }, 1500); // Simula o tempo de resposta do servidor
+                }
             });
         });
     </script>
 </body>
-
-
 </html>
-
-
-
-
