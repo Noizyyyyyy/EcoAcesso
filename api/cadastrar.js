@@ -55,7 +55,7 @@ export default async (req, res) => {
 
         // 4. Insere os dados no Supabase
         const { error } = await supabase
-            .from('cadastros')
+            .from('cadastro')
             .insert([cadastroData]);
 
         if (error) {
@@ -79,4 +79,5 @@ export default async (req, res) => {
         console.error('Erro na Serverless Function:', e);
         res.status(500).json({ error: 'Erro interno no servidor.' });
     }
+
 };
