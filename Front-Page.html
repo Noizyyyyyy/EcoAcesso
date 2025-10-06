@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Acesso - Bem-vindo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos baseados no seu arquivo de cadastro */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --verde-principal: #2e7d32;
+            --verde-escuro: #1b5e20;
+            --verde-claro: #4caf50;
+            --verde-muito-claro: #c8e6c9;
+            --verde-super-claro: #e8f5e9;
+            --branco: #ffffff;
+            --cinza-escuro: #424242;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--verde-super-claro), var(--verde-muito-claro));
+            color: var(--cinza-escuro);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Container principal para centralizar o conteúdo */
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Cabeçalho reutilizado */
+        header {
+            background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
+            color: var(--branco);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            margin-bottom: 2.5rem;
+            /* Aumentado o espaçamento inferior */
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2.5rem;
+        }
+
+        .slogan {
+            font-style: italic;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* Título de boas-vindas */
+        .welcome-title {
+            margin-bottom: 2rem;
+            color: var(--verde-escuro);
+        }
+
+        .welcome-title h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-title p {
+            font-size: 1.1rem;
+        }
+
+        /* Container para os botões de ação */
+        .action-buttons {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            /* Espaço entre os botões */
+        }
+
+        /* Estilo do botão aplicado a links (<a>) */
+        .btn {
+            background: linear-gradient(135deg, var(--verde-principal), var(--verde-escuro));
+            color: var(--branco);
+            text-decoration: none;
+            /* Remove sublinhado do link */
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            /* Fonte um pouco maior */
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Rodapé reutilizado */
+        footer {
+            background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
+            color: var(--branco);
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2.5rem;
+            /* Aumentado o espaçamento superior */
+            border-radius: 12px;
+            width: 100%;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-seedling"></i> Eco Acesso
+            </div>
+            <div class="slogan">
+                <p>Conectando pessoas à sustentabilidade</p>
+            </div>
+        </header>
+
+        <div class="welcome-title">
+            <h1>Bem-vindo!</h1>
+            <p>Acesse sua conta ou junte-se à nossa comunidade.</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="loginmermo.html" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="cadastro.html" class="btn">
+                <i class="fas fa-user-plus"></i> Cadastre-se
+            </a>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Eco Acesso - Todos os direitos reservados</p>
+            <p>ecoacesso2025@gmail.com| (11) 3456-7890</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcryptjs'; // Importa a biblioteca de hash
+
+// As credenciais do Supabase (lidas das variáveis de ambiente do Vercel)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+// Inicializa o cliente Supabase.
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// A função handler é o que o Vercel executa.
+export default async (req, res) => {
+    // 1. Apenas aceita requisições POST
+    if (req.method !== 'POST') {
+        res.status(405).json({ error: 'Método não permitido. Use POST.' });
+        return;
+    }
+
+    try {
+        const data = req.body;
+
+        // Validação básica para campos obrigatórios (além da validação do front-end)
+        if (!data.email || !data.senha || !data.termos_aceitos) {
+            res.status(400).json({ error: 'Dados essenciais (e-mail, senha e termos) ausentes.' });
+            return;
+        }
+
+        // --- LÓGICA DE SEGURANÇA CRÍTICA: HASH DA SENHA ---
+        // O custo de hash (saltRounds) deve ser de pelo menos 10.
+        const salt = await bcrypt.genSalt(10);
+        const senhaHash = await bcrypt.hash(data.senha, salt);
+
+        // 3. Monta o objeto de dados para o Supabase
+        const cadastroData = {
+            nome_completo: data.nome_completo,
+            email: data.email,
+            // A senha criptografada
+            senha_hash: senhaHash, 
+            cpf: data.cpf,
+            telefone: data.telefone,
+            // Endereço
+            cep: data.cep,
+            logradouro: data.logradouro,
+            numero: data.numero,
+            complemento: data.complemento,
+            bairro: data.bairro,
+            cidade: data.cidade,
+            estado: data.estado,
+            termos_aceitos: data.termos_aceitos,
+            
+            // CORREÇÃO CRÍTICA DOS BOOLEANOS REMOVIDOS: 
+            // Forçados a 'false' para evitar que o Supabase receba 'undefined'.
+            receber_newsletter: false,
+            receber_eventos: false,
+            
+            // O campo 'interesses' (mantido com tratamento)
+            interesses: data.interesses ? data.interesses.split(',') : [],
+        };
+
+        // 4. Insere os dados no Supabase
+        // CORREÇÃO CRÍTICA DO NOME DA TABELA: 'cadastros' -> 'cadastro'
+        const { error } = await supabase
+            .from('cadastro') 
+            .insert([cadastroData]);
+
+        if (error) {
+            console.error('Erro no Supabase:', error);
+            // Erro 23505 é o código de erro padrão do PostgreSQL para violação de UNIQUE (ex: e-mail duplicado)
+            if (error.code === '23505') {
+                 res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
+            } else {
+                 res.status(500).json({ error: 'Erro interno ao salvar os dados.' });
+            }
+            return;
+        }
+
+        // 5. Retorna sucesso para o Front-end
+        res.status(201).json({ 
+            message: 'Cadastro realizado com sucesso!', 
+            // Opcional: Não retorne a senhaHash por segurança em um app real.
+        });
+
+    } catch (error) {
+        console.error('Erro no processamento da requisição:', error);
+        res.status(500).json({ error: 'Falha no processamento da API de cadastro.' });
+    }
+};
