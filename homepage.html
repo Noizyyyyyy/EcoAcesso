@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoAcesso - Transformando sustentabilidade em oportunidades</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
     <style>
         /* Reset e estilos gerais */
         * {
@@ -51,12 +50,18 @@
             flex-direction: column;
         }
 
-        /* Cabeçalho */
+        /* Cabeçalho - MODIFICAÇÃO PARA INTEGRAR O BANNER */
         header {
-            background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
+            background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
-            padding: 1.5rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            /* MUDANÇA: Padding removido para o banner preencher */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            margin-bottom: 2.5rem;
+            width: 100%;
+            overflow: hidden;
+            /* MUDANÇA: Garante que o banner respeite o border-radius */
         }
 
         .container {
@@ -66,11 +71,23 @@
             flex-grow: 1;
         }
 
+        /* ESTILO PARA O BANNER - REDUZIDO EM 70% */
+        .header-banner {
+            width: 30%; /* Reduzido de 100% para 30% (70% de redução) */
+            height: auto;
+            display: block;
+            margin: 0 auto; /* Centraliza o banner */
+            padding: 10px 0; /* Adiciona um pequeno espaçamento vertical */
+        }
+
+        /* Container do conteúdo do header (logo, slogan, botão sair) */
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            padding: 1rem 0;
+            background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
         }
 
         .logo {
@@ -416,6 +433,17 @@
             .tab-content {
                 padding: 1.5rem;
             }
+            
+            /* Ajuste do banner para telas menores */
+            .header-banner {
+                width: 60%; /* Um pouco maior em telas pequenas para melhor legibilidade */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-banner {
+                width: 80%; /* Ainda maior em telas muito pequenas */
+            }
         }
 
         /* Utilitários */
@@ -443,14 +471,10 @@
 
 <body>
     <header>
+        <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-seedling"></i> EcoAcesso
-                </div>
-                <div class="slogan">
-                    <p>Transformando sustentabilidade em oportunidades</p>
-                </div>
+                
                 <div>
                     <a href="loginmermo.html"
                         style="color: var(--branco); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border: 1px solid var(--branco); border-radius: 5px;">
@@ -676,7 +700,7 @@
                     <div class="card-content">
                         <div class="card-titulo"><i class="fas fa-apple-alt"></i> ${alimento.nome}</div>
                         <div class="card-descricao">${alimento.descricao}</div>
-                        <div class="card-categoria categoria-laranja">${formatarCategoriaAlimento(alimento.categoria)}</div>
+                        <div class="card-categoria categoria-laranja">${alimento.categoria}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
                             <button onclick="excluirAlimento(${alimento.id})" class="btn-laranja" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
@@ -699,10 +723,10 @@
                     <div class="card-content">
                         <div class="card-titulo"><i class="fas fa-box-open"></i> ${produto.nome}</div>
                         <div class="card-descricao">${produto.descricao}</div>
-                        <div class="card-categoria categoria-roxo">${formatarCategoriaVariado(produto.categoria)}</div>
+                        <div class="card-categoria categoria-roxo">${produto.categoria}</div>
                         <div class="card-info">
-                            <div class="card-preco" style="color: var(--roxo);">R$ ${produto.preco.toFixed(2)}</div>
-                            <button onclick="excluirVariado(${produto.id})" class="btn-roxo" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                            <div class="card-preco">R$ ${produto.preco.toFixed(2)}</div>
+                            <button onclick="excluirProdutoVariado(${produto.id})" class="btn-roxo" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
                         </div>
                     </div>
                 `;
@@ -719,15 +743,12 @@
                 card.className = 'card card-doacao';
                 card.innerHTML = `
                     <div class="card-content">
-                        <div class="card-titulo" style="font-size: 1.3rem; color: var(--amarelo);"><i class="${doacao.icone}"></i> ${doacao.item}</div>
-                        <div class="card-descricao"><strong>Origem:</strong> ${doacao.origem}</div>
-                        <div class="card-info" style="align-items: flex-start; flex-direction: column;">
-                            <div class="card-preco" style="color: var(--cinza-escuro); font-size: 1.2rem; font-weight: bold;">
-                                <i class="fas fa-sort-amount-up-alt"></i> ${doacao.quantidade}
-                            </div>
-                            <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
-                                <i class="fas fa-calendar-alt"></i> Registro: ${doacao.data}
-                            </div>
+                        <div class="card-titulo"><i class="${doacao.icone}"></i> ${doacao.item}</div>
+                        <div class="card-descricao">Doado por: ${doacao.origem}</div>
+                        <div class="card-categoria">${doacao.quantidade}</div>
+                        <div class="card-info">
+                            <div>${doacao.data}</div>
+                            <button onclick="excluirDoacao(${doacao.id})" class="btn-doacao" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
                         </div>
                     </div>
                 `;
@@ -735,31 +756,21 @@
             });
         }
 
-        function renderizarFeedback() {
+        function renderizarFeedbacks() {
             const gridFeedback = document.getElementById('grid-feedback');
             gridFeedback.innerHTML = '';
 
-            feedbacks.forEach(f => {
+            feedbacks.forEach(feedback => {
                 const card = document.createElement('div');
                 card.className = 'card card-feedback';
-                let prioridadeCor = '';
-                if (f.prioridade === 'Alta') prioridadeCor = 'color: #f44336; border: 1px solid #f44336;';
-                if (f.prioridade === 'Média') prioridadeCor = 'color: #ff9800; border: 1px solid #ff9800;';
-
                 card.innerHTML = `
                     <div class="card-content">
-                        <div class="card-titulo" style="font-size: 1.3rem; color: var(--rosa);"><i class="${f.icone}"></i> ${f.assunto}</div>
-                        <div class="card-descricao"><strong>Mensagem de:</strong> ${f.nome}</div>
-                        <div class="card-info" style="align-items: flex-start; flex-direction: column;">
-                            <div class="card-categoria" style="${prioridadeCor} background-color: var(--branco); font-size: 0.9rem; margin-top: 10px;">
-                                Prioridade: ${f.prioridade}
-                            </div>
-                            <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
-                                <i class="fas fa-clock"></i> Data: ${f.data}
-                            </div>
-                            <div style="font-size: 0.9rem; color: var(--verde-escuro); margin-top: 5px;">
-                                Status: ${f.status}
-                            </div>
+                        <div class="card-titulo"><i class="${feedback.icone}"></i> ${feedback.assunto}</div>
+                        <div class="card-descricao">Enviado por: ${feedback.nome}</div>
+                        <div class="card-categoria" style="background-color: ${getCorPrioridade(feedback.prioridade)}; color: white;">${feedback.prioridade}</div>
+                        <div class="card-info">
+                            <div>${feedback.data}</div>
+                            <button onclick="excluirFeedback(${feedback.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background-color: var(--rosa);">Excluir</button>
                         </div>
                     </div>
                 `;
@@ -767,134 +778,113 @@
             });
         }
 
-
-        // Funções de Formatação (Mantidas)
+        // Funções Auxiliares
         function formatarCategoriaMedicamento(categoria) {
             const categorias = {
                 'analgesico': 'Analgésico',
                 'antibiotico': 'Antibiótico',
                 'anti-inflamatorio': 'Anti-inflamatório',
                 'cardiovascular': 'Cardiovascular',
-                'gastrico': 'Gástrico',
-                'dermatologico': 'Dermatológico'
+                'gastrico': 'Gástrico'
             };
             return categorias[categoria] || categoria;
         }
 
-        function formatarCategoriaAlimento(categoria) {
-            const categorias = {
-                'suplemento': 'Suplemento',
-                'vitamina': 'Vitamina',
-                'produto-natural': 'Produto Natural',
-                'alimento-dietetico': 'Alimento Dietético',
-                'bebida': 'Bebida'
+        function getCorPrioridade(prioridade) {
+            const cores = {
+                'Baixa': '#66bb6a',
+                'Média': '#ffb74d',
+                'Alta': '#f44336'
             };
-            return categorias[categoria] || categoria;
+            return cores[prioridade] || '#66bb6a';
         }
 
-        function formatarCategoriaVariado(categoria) {
-            const categorias = {
-                'higiene': 'Higiene Pessoal',
-                'beleza': 'Beleza / Cosméticos',
-                'primeiros-socorros': 'Primeiros Socorros',
-                'conveniencia': 'Conveniência'
-            };
-            return categorias[categoria] || categoria;
-        }
-
+        // Funções de Exclusão
         function excluirMedicamento(id) {
             if (confirm('Tem certeza que deseja excluir este medicamento?')) {
-                medicamentos = medicamentos.filter(medicamento => medicamento.id !== id);
+                medicamentos = medicamentos.filter(med => med.id !== id);
                 renderizarMedicamentos();
-                alert('Medicamento excluído com sucesso!');
             }
         }
 
         function excluirAlimento(id) {
             if (confirm('Tem certeza que deseja excluir este alimento?')) {
-                alimentos = alimentos.filter(alimento => alimento.id !== id);
+                alimentos = alimentos.filter(ali => ali.id !== id);
                 renderizarAlimentos();
-                alert('Alimento excluído com sucesso!');
             }
         }
 
-        function excluirVariado(id) {
-            if (confirm('Tem certeza que deseja excluir este produto variado?')) {
-                produtosVariados = produtosVariados.filter(produto => produto.id !== id);
+        function excluirProdutoVariado(id) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                produtosVariados = produtosVariados.filter(prod => prod.id !== id);
                 renderizarProdutosVariados();
-                alert('Produto excluído com sucesso!');
             }
         }
 
-        // Inicialização de Funções e Event Listeners
-        document.addEventListener('DOMContentLoaded', function () {
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
+        function excluirDoacao(id) {
+            if (confirm('Tem certeza que deseja excluir este registro de doação?')) {
+                doacoes = doacoes.filter(doa => doa.id !== id);
+                renderizarDoacoes();
+            }
+        }
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    // Remove a classe active de todas as abas e conteúdos
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
+        function excluirFeedback(id) {
+            if (confirm('Tem certeza que deseja excluir este feedback?')) {
+                feedbacks = feedbacks.filter(fb => fb.id !== id);
+                renderizarFeedbacks();
+            }
+        }
 
-                    // Adiciona a classe active à aba clicada
-                    tab.classList.add('active');
+        // Sistema de Abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remover classe ativa de todas as abas
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-                    // Mostra o conteúdo correspondente
-                    const tabId = tab.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
+                // Adicionar classe ativa à aba clicada
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
             });
+        });
 
-            // Inicializar todos os dados com o novo formato de cards
+        // Formulário de Doação
+        document.getElementById('form-doacao').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const item = document.getElementById('item-doacao').value;
+            const origem = document.getElementById('origem-doacao').value;
+            const quantidade = document.getElementById('quantidade-doacao').value;
+
+            // Adicionar nova doação
+            const novaDoacao = {
+                id: doacoes.length + 1,
+                item: item,
+                origem: origem,
+                quantidade: quantidade,
+                data: new Date().toLocaleDateString('pt-BR'),
+                icone: 'fas fa-box'
+            };
+
+            doacoes.unshift(novaDoacao);
+            renderizarDoacoes();
+
+            // Limpar formulário
+            document.getElementById('form-doacao').reset();
+
+            // Mostrar mensagem de sucesso
+            alert('Doação registrada com sucesso!');
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function () {
             renderizarMedicamentos();
             renderizarAlimentos();
             renderizarProdutosVariados();
             renderizarDoacoes();
-            renderizarFeedback();
-            
-            // Lógica do Formulário de Doação
-            const formDoacao = document.getElementById('form-doacao');
-            if (formDoacao) {
-                formDoacao.addEventListener('submit', function (e) {
-                    e.preventDefault();
-
-                    const item = document.getElementById('item-doacao').value;
-                    const origem = document.getElementById('origem-doacao').value;
-                    const quantidade = document.getElementById('quantidade-doacao').value;
-                    
-                    if (item && origem && quantidade) {
-                        // Lógica simples para definir um ícone baseado no item
-                        let novoIcone = 'fas fa-hand-holding-heart';
-                        if (item.toLowerCase().includes('cesta')) novoIcone = 'fas fa-box';
-                        if (item.toLowerCase().includes('higiene')) novoIcone = 'fas fa-hands-wash';
-                        if (item.toLowerCase().includes('agasalho') || item.toLowerCase().includes('cobertor')) novoIcone = 'fas fa-tshirt';
-
-                        const novaDoacao = {
-                            id: doacoes.length + 1,
-                            item: item,
-                            origem: origem,
-                            quantidade: quantidade,
-                            data: new Date().toLocaleDateString('pt-BR'),
-                            icone: novoIcone
-                        };
-
-                        doacoes.unshift(novaDoacao); // Adiciona no início da lista
-                        renderizarDoacoes();
-                        formDoacao.reset();
-                        alert('Doação registrada com sucesso!');
-                    } else {
-                        alert('Por favor, preencha todos os campos da doação.');
-                    }
-                });
-            }
+            renderizarFeedbacks();
         });
     </script>
 </body>
 
 </html>
-
-
-
-
-
