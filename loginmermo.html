@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
     <style>
         /* Reset e estilos gerais */
         * {
@@ -57,7 +56,8 @@
         header {
             background: linear-gradient(135deg, #3e8e41, #2e7d32, #1b5e20);
             color: var(--branco);
-            padding: 2rem 2.5rem;
+            padding: 0;
+            /* MUDANÇA: Padding removido para o banner preencher */
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             border-radius: 18px;
             margin-bottom: 2rem;
@@ -65,7 +65,17 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            /* MUDANÇA: Garante que o banner respeite o border-radius */
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* ESTILO PARA O BANNER (IMAGEM) */
+        .header-banner {
+            width: 100%;
+            /* Ocupa a largura total do header */
+            height: auto;
+            /* Mantém a proporção */
+            display: block;
         }
 
         /* Efeito de textura orgânica no cabeçalho */
@@ -81,6 +91,7 @@
                 radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 2%, transparent 10%);
             background-size: 300px 300px;
             z-index: 1;
+            /* **OBS: O banner (z-index 3) ficará por cima, sobrepondo este efeito.** */
         }
 
         .header-content {
@@ -435,7 +446,8 @@
             }
 
             header {
-                padding: 1.2rem 1.5rem;
+                padding: 0;
+                /* MUDANÇA: Ajuste de padding para o banner em telas pequenas */
             }
 
             .logo {
@@ -458,20 +470,9 @@
 <body>
     <div class="main-container">
         <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-seedling"></i> Eco Acesso
-                </div>
-                <div class="slogan">
-                    <p>Conectando pessoas à sustentabilidade</p>
-                </div>
-                <div class="organic-decoration">
-                    <div class="leaf"></div>
-                    <div class="leaf"></div>
-                    <div class="leaf"></div>
-                </div>
-            </div>
-        </header>
+            <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
+            
+            </header>
 
         <div class="page-title">
             <h1>Acesse sua Conta</h1>
@@ -656,4 +657,3 @@
 </body>
 
 </html>
-
