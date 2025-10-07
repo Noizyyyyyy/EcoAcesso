@@ -1,11 +1,8 @@
 // api/cadastrar.js
 
-// Importa os módulos usando a sintaxe de Módulos ES (import)
-import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs';
-
-// CORREÇÃO DEFINITIVA: Usa a sintaxe CommonJS (require) para o 'node-cpf'.
-// Esta linha substitui a linha problemática 'import { cpf } from "node-cpf";'
+// Usa a sintaxe CommonJS 'require' para máxima compatibilidade em Serverless.
+const { createClient } = require('@supabase/supabase-js');
+const bcrypt = require('bcryptjs');
 const { cpf } = require('node-cpf'); 
 
 // Variáveis de ambiente
@@ -16,7 +13,7 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default async (req, res) => {
+module.exports = async (req, res) => {
     // Garante que é uma requisição POST
     if (req.method !== 'POST') {
         res.status(405).json({ error: 'Método não permitido. Use POST.' });
@@ -74,6 +71,7 @@ export default async (req, res) => {
 
         if (error) {
             console.error('Erro no Supabase:', error);
+            // Trata erro de duplicidade (e-mail/CPF já cadastrado)
             if (error.code === '23505') {
                  res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
             } else {
