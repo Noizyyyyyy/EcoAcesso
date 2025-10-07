@@ -1,9 +1,12 @@
-// **ATENÇÃO: Este deve ser o código final no seu api/cadastrar.js**
+// api/cadastrar.js
+
+// Importa os módulos usando a sintaxe de Módulos ES (import)
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
-// CORREÇÃO: Importa o módulo completo e desestrutura a função 'cpf'
-import pkg from 'node-cpf';
-const { cpf } = pkg; 
+
+// CORREÇÃO DEFINITIVA: Usa a sintaxe CommonJS (require) para o 'node-cpf'.
+// Esta linha substitui a linha problemática 'import { cpf } from "node-cpf";'
+const { cpf } = require('node-cpf'); 
 
 // Variáveis de ambiente
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -63,7 +66,6 @@ export default async (req, res) => {
             estado: data.estado,
             termos_aceitos: data.termos_aceitos,
             
-            // Assume confirmação para simplificar o fluxo inicial
             email_confirmado: true, 
         };
 
@@ -72,7 +74,6 @@ export default async (req, res) => {
 
         if (error) {
             console.error('Erro no Supabase:', error);
-            // Trata erro de duplicidade (e-mail/CPF já cadastrado)
             if (error.code === '23505') {
                  res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
             } else {
