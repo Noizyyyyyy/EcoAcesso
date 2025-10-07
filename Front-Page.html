@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Bem-vindo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
     <style>
         /* Estilos baseados no seu arquivo de cadastro */
         * {
@@ -46,36 +45,28 @@
             text-align: center;
         }
 
-        /* Cabeçalho reutilizado */
+        /* Cabeçalho reutilizado - MODIFICAÇÃO PARA INTEGRAÇÃO DO BANNER */
         header {
             background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
-            padding: 1.5rem 2rem;
+            padding: 0;
+            /* MUDANÇA: Padding removido para o banner preencher */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
             margin-bottom: 2.5rem;
-            /* Aumentado o espaçamento inferior */
             width: 100%;
+            overflow: hidden;
+            /* MUDANÇA: Garante que o banner respeite o border-radius */
         }
 
-        .logo {
-            font-size: 2.2rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .logo i {
-            margin-right: 10px;
-            font-size: 2.5rem;
-        }
-
-        .slogan {
-            font-style: italic;
-            opacity: 0.9;
-            font-size: 1rem;
+        /* ESTILO PARA O BANNER */
+        .header-banner {
+            width: 100%;
+            /* Ocupa a largura total do header */
+            height: auto;
+            /* Mantém a proporção */
+            display: block;
+            /* border-radius: 12px; REMOVIDO: O header com overflow: hidden já cuida disso */
         }
 
         /* Título de boas-vindas */
@@ -93,13 +84,14 @@
             font-size: 1.1rem;
         }
 
-        /* Container para os botões de ação */
+        /* Container para os botões de ação - DISPOSIÇÃO HORIZONTAL RESTAURADA */
         .action-buttons {
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            /* RESTAURADO: Botões lado a lado */
+            justify-content: space-between;
             gap: 1rem;
-            /* Espaço entre os botões */
         }
 
         /* Estilo do botão aplicado a links (<a>) */
@@ -107,16 +99,15 @@
             background: linear-gradient(135deg, var(--verde-principal), var(--verde-escuro));
             color: var(--branco);
             text-decoration: none;
-            /* Remove sublinhado do link */
             border: none;
             padding: 1rem 2rem;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.1rem;
-            /* Fonte um pouco maior */
             transition: all 0.3s;
             font-weight: 600;
-            width: 100%;
+            width: 49%;
+            /* RESTAURADO: Permite que dois caibam na linha */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -140,23 +131,31 @@
             text-align: center;
             padding: 1rem;
             margin-top: 2.5rem;
-            /* Aumentado o espaçamento superior */
             border-radius: 12px;
             width: 100%;
             font-size: 0.8rem;
         }
+
+        /* RESPONSIVIDADE: Volta para vertical em telas pequenas */
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+                /* Volta a ser vertical */
+            }
+
+            .btn {
+                width: 100%;
+                /* Ocupa a largura total */
+            }
+        }
     </style>
+    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
 </head>
 
 <body>
     <div class="main-container">
         <header>
-            <div class="logo">
-                <i class="fas fa-seedling"></i> Eco Acesso
-            </div>
-            <div class="slogan">
-                <p>Transformando sustentabilidade em oportunidades </p>
-            </div>
+            <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
         </header>
 
         <div class="welcome-title">
@@ -175,12 +174,9 @@
 
         <footer>
             <p>&copy; 2025 Eco Acesso - Todos os direitos reservados</p>
-            <p>ecoacesso2025@gmail.com  | (88) 99808-1107</p>
+            <p>ecoacesso2025@gmail.com| (11) 3456-7890</p>
         </footer>
     </div>
 </body>
 
-
 </html>
-
-
