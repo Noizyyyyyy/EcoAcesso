@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
     <style>
         /* Reset e estilos gerais */
         * {
@@ -463,7 +462,7 @@
                     <i class="fas fa-seedling"></i> Eco Acesso
                 </div>
                 <div class="slogan">
-                    <p>Transformando sustentabilidade em oportunidades</p>
+                    <p>Conectando pessoas à sustentabilidade</p>
                 </div>
                 <div class="organic-decoration">
                     <div class="leaf"></div>
@@ -523,7 +522,7 @@
         </div>
 
         <footer>
-            <p>&copy; 2025 Eco Acesso - Todos os direitos reservados | 
+            <p>&copy; 2025 Eco Acesso - Todos os direitos reservados |
                 <a href="politica.html" style="color: var(--branco);">Política de Privacidade</a> |
                 <a href="termos.html" style="color: var(--branco);">Termos de Uso</a>
             </p>
@@ -539,6 +538,11 @@
             const btnText = document.getElementById('btn-text');
             const btnLoading = document.getElementById('btn-loading');
             const btnSuccess = document.getElementById('btn-success');
+
+            // --- CREDENCIAIS DE TESTE HARDCODED ---
+            const TEST_EMAIL = 'ecoacesso2025@gmail.com';
+            const TEST_PASSWORD = 'EcoAcesso2025**';
+            // ----------------------------------------
 
             // Validar campo individual
             function validateField(field) {
@@ -585,8 +589,7 @@
             });
 
             // Envio do formulário
-            // Envio do formulário
-            form.addEventListener('submit', async function (e) { // Adicionado 'async' aqui
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 // Esconder mensagens
@@ -595,7 +598,6 @@
 
                 // --- 1. Validação do Frontend ---
                 if (!validateForm()) {
-                    // Adiciona a mensagem de erro padrão
                     errorMessage.querySelector('strong').textContent = "Credenciais inválidas!";
                     errorMessage.querySelector('br').nextSibling.textContent = " Verifique os campos destacados.";
                     errorMessage.style.display = 'block';
@@ -611,66 +613,45 @@
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
 
-                let response;
+                // Simulação de requisição/delay de servidor
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-                try {
-                    // --- 4. Envio REAL dos dados para a Serverless Function ---
-                    response = await fetch('/api/login', { // Chamada para a nova API de login
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    });
+                // --- 4. Verificação de Credenciais de Teste (Local) ---
+                const isCorrectLogin = (data.email === TEST_EMAIL && data.senha === TEST_PASSWORD);
 
-                    const result = await response.json();
+                // --- 5. Lógica de Resposta ---
+                if (isCorrectLogin) {
+                    // Ação de Sucesso
+                    btnLoading.style.display = 'none';
+                    btnSuccess.style.display = 'inline-block';
 
-                    if (response.ok) { // Status 200 (Sucesso)
-                        // Ação de Sucesso
-                        btnLoading.style.display = 'none';
-                        btnSuccess.style.display = 'inline-block';
+                    // 1. Exibir a mensagem de sucesso
+                    successMessage.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                        // 1. Exibir a mensagem de sucesso
-                        successMessage.style.display = 'block';
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // 2. Redirecionar após 2 segundos
+                    setTimeout(() => {
+                        // Redireciona para o Front-Page.html
+                        window.location.href = 'homepage.html';
+                    }, 2000);
 
-                        // 2. Redirecionar após 2 segundos
-                        setTimeout(() => {
-                            // Redireciona para o Front-Page.html (conforme seu vercel.json)
-                            window.location.href = '/'; 
-                        }, 2000); 
+                } else {
+                    // Ação de Erro
+                    btnLoading.style.display = 'none';
+                    btnText.style.display = 'inline';
+                    submitBtn.disabled = false;
 
-                    } else { // Status 400, 401, 500 (Erro)
-                        console.error('Erro no servidor/API:', result.error);
-                        
-                        // Atualiza a mensagem de erro específica
-                        errorMessage.querySelector('strong').textContent = "Falha no Login!";
-                        errorMessage.querySelector('br').nextSibling.textContent = ` ${result.error || 'Ocorreu um erro desconhecido.'}`;
-                        
-                        errorMessage.style.display = 'block';
-
-                        // Limpa a senha para segurança
-                        document.getElementById('senha').value = ''; 
-                    }
-
-                } catch (error) {
-                    console.error('Erro na requisição (rede ou CORS):', error);
-                    errorMessage.querySelector('strong').textContent = `Falha na Conexão!`;
-                    errorMessage.querySelector('br').nextSibling.textContent = ` Não foi possível conectar ao servidor.`;
+                    // Atualiza a mensagem de erro
+                    errorMessage.querySelector('strong').textContent = "Falha no Login!";
+                    errorMessage.querySelector('br').nextSibling.textContent = ` E-mail ou senha incorretos.`;
                     errorMessage.style.display = 'block';
 
-                } finally {
-                    // Garantir que o botão volte ao estado normal se a requisição falhou (e não redirecionou)
-                    if (!response || !response.ok) {
-                        btnLoading.style.display = 'none';
-                        btnText.style.display = 'inline';
-                        submitBtn.disabled = false;
-                    }
+                    // Limpa a senha para segurança
+                    document.getElementById('senha').value = '';
                 }
             });
         });
     </script>
 </body>
+
 </html>
-
-
