@@ -3,16 +3,16 @@
 // Usa a sintaxe CommonJS 'require' para máxima compatibilidade em Serverless.
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
-const { cpf } = require('node-cpf'); 
+const { cpf } = require('node-cpf');
 
+// REMOVIDAS: as linhas de leitura de variáveis e inicialização global
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 module.exports = async (req, res) => {
-    // CORREÇÃO CRÍTICA: Inicialização do Supabase movida para dentro da função.
+    // CORREÇÃO: As chaves e o cliente Supabase são inicializados AQUI dentro
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    // FIM DA CORREÇÃO
 
     // Garante que é uma requisição POST
     if (req.method !== 'POST') {
