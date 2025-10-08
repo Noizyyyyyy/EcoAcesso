@@ -3,14 +3,13 @@
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 
-// Variáveis de ambiente (lidas automaticamente pelo servidor)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-// Inicializa o cliente Supabase
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 module.exports = async (req, res) => {
+    // CORREÇÃO CRÍTICA: Inicialização do Supabase movida para dentro da função.
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // FIM DA CORREÇÃO
+
     // 1. Garante que é uma requisição POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Método não permitido. Use POST.' });
