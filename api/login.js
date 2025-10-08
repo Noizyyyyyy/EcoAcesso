@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 
 module.exports = async (req, res) => {
     // CORREÇÃO CRÍTICA: Inicialização do Supabase movida para dentro da função.
+    // Isso garante que o Vercel leia process.env apenas quando estiver pronto.
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
