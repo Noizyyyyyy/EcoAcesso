@@ -5,15 +5,15 @@ const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 const { cpf } = require('node-cpf'); 
 
-// Variáveis de ambiente
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-// Inicializa o cliente Supabase
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 module.exports = async (req, res) => {
+    // CORREÇÃO CRÍTICA: Inicialização do Supabase movida para dentro da função.
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // FIM DA CORREÇÃO
+
     // Garante que é uma requisição POST
     if (req.method !== 'POST') {
         res.status(405).json({ error: 'Método não permitido. Use POST.' });
@@ -87,7 +87,6 @@ module.exports = async (req, res) => {
         });
 
     } catch (e) {
-        // 7. Tratamento de erros gerais
         console.error('Erro na Serverless Function:', e);
         res.status(500).json({ error: 'Falha no processamento da API de cadastro.' });
     }
