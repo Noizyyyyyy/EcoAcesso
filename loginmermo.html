@@ -533,129 +533,104 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('login-form');
-            const successMessage = document.getElementById('success-message');
-            const errorMessage = document.getElementById('error-message');
-            const submitBtn = document.getElementById('submit-btn');
-            const btnText = document.getElementById('btn-text');
-            const btnLoading = document.getElementById('btn-loading');
-            const btnSuccess = document.getElementById('btn-success');
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('login-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+        const btnSuccess = document.getElementById('btn-success');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
 
-            // --- CREDENCIAIS DE TESTE HARDCODED ---
-            const TEST_EMAIL = 'ecoacesso2025@gmail.com';
-            const TEST_PASSWORD = 'EcoAcesso2025**';
-            // ----------------------------------------
+        // Inicialização do estado
+        btnLoading.style.display = 'none';
+        btnSuccess.style.display = 'none';
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
 
-            // Validar campo individual
-            function validateField(field) {
-                const errorElement = document.getElementById(`${field.id}-error`);
-                let isValid = true;
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-                if (field.value.trim() === '') {
-                    isValid = false;
-                }
-
-                if (field.type === 'email' && field.value.trim() !== '') {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(field.value)) {
-                        isValid = false;
-                    }
-                }
-
-                if (!isValid) {
-                    field.classList.add('error');
-                    if (errorElement) errorElement.style.display = 'block';
-                } else {
-                    field.classList.remove('error');
-                    if (errorElement) errorElement.style.display = 'none';
-                }
-
-                return isValid;
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            // Coleta de dados
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            // Validação básica
+            if (!email || !senha) {
+                errorMessage.querySelector('strong').textContent = `Dados Ausentes!`;
+                errorMessage.querySelector('br').nextSibling.textContent = ` Por favor, preencha todos os campos.`;
+                errorMessage.style.display = 'block';
+                return;
             }
 
-            // Validar formulário completo
-            function validateForm() {
-                let isValid = true;
-                const fieldsToValidate = form.querySelectorAll('input[required]');
-                fieldsToValidate.forEach(field => {
-                    if (!validateField(field)) {
-                        isValid = false;
-                    }
+            // 1. Iniciar estado de carregamento
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+
+            try {
+                // 2. CHAMADA REAL À API DE LOGIN
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, senha })
                 });
-                return isValid;
-            }
+                
+                const result = await response.json();
 
-            // Listeners para validação
-            form.querySelectorAll('input[required]').forEach(field => {
-                field.addEventListener('blur', () => validateField(field));
-            });
-
-            // Envio do formulário
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
-
-                // Esconder mensagens
-                successMessage.style.display = 'none';
-                errorMessage.style.display = 'none';
-
-                // --- 1. Validação do Frontend ---
-                if (!validateForm()) {
-                    errorMessage.querySelector('strong').textContent = "Credenciais inválidas!";
-                    errorMessage.querySelector('br').nextSibling.textContent = " Verifique os campos destacados.";
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-
-                // --- 2. Mostrar estado de carregamento ---
-                btnText.style.display = 'none';
-                btnLoading.style.display = 'inline-block';
-                submitBtn.disabled = true;
-
-                // 3. Coleta dos dados
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                // Simulação de requisição/delay de servidor
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                // --- 4. Verificação de Credenciais de Teste (Local) ---
-                const isCorrectLogin = (data.email === TEST_EMAIL && data.senha === TEST_PASSWORD);
-
-                // --- 5. Lógica de Resposta ---
-                if (isCorrectLogin) {
-                    // Ação de Sucesso
+                // 3. Lógica de Resposta
+                if (response.ok) { // Status 200 (Sucesso)
                     btnLoading.style.display = 'none';
                     btnSuccess.style.display = 'inline-block';
 
-                    // 1. Exibir a mensagem de sucesso
+                    successMessage.querySelector('strong').textContent = `Login Bem-Sucedido!`;
+                    successMessage.querySelector('br').nextSibling.textContent = ` Redirecionando para a sua área.`;
                     successMessage.style.display = 'block';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                    // 2. Redirecionar após 2 segundos
+                    // Redirecionar após 2 segundos
                     setTimeout(() => {
-                        // Redireciona para o Front-Page.html
                         window.location.href = 'homepage.html';
                     }, 2000);
 
-                } else {
-                    // Ação de Erro
+                } else { // Status 400, 401 ou 500 (Erro)
                     btnLoading.style.display = 'none';
                     btnText.style.display = 'inline';
                     submitBtn.disabled = false;
 
-                    // Atualiza a mensagem de erro
+                    console.error('Erro no servidor:', result.error);
                     errorMessage.querySelector('strong').textContent = "Falha no Login!";
-                    errorMessage.querySelector('br').nextSibling.textContent = ` E-mail ou senha incorretos.`;
+                    // Mostra a mensagem de erro do backend
+                    errorMessage.querySelector('br').nextSibling.textContent = ` ${result.error || 'Ocorreu um erro desconhecido.'}`;
                     errorMessage.style.display = 'block';
-
-                    // Limpa a senha para segurança
+                    
                     document.getElementById('senha').value = '';
                 }
-            });
+
+            } catch (error) {
+                console.error('Erro na requisição (rede ou CORS):', error);
+                // ESTA É A MENSAGEM DE 'FALHA NA CONEXÃO' QUE VEM DA FALHA DE REDE
+                errorMessage.querySelector('strong').textContent = `Falha na Conexão!`;
+                errorMessage.querySelector('br').nextSibling.textContent = ` Não foi possível conectar ao servidor.`;
+                errorMessage.style.display = 'block';
+
+            } finally {
+                if (submitBtn.disabled) {
+                    btnLoading.style.display = 'none';
+                    btnText.style.display = 'inline';
+                    submitBtn.disabled = false;
+                }
+            }
         });
-    </script>
+    });
+</script>
 </body>
 
 </html>
+
 
