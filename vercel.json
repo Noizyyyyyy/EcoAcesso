@@ -2,7 +2,6 @@
   "functions": {
     "api/**/*.cjs": {
       "runtime": "nodejs@20.x" 
-      // CORREÇÃO: Usando a sintaxe correta 'nodejs@20.x'
     }
   },
   "rewrites": [
