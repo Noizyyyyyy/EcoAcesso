@@ -20,7 +20,7 @@
             /* Verde-médio */
             --verde-escuro: #4caf50;
             /* Verde mais escuro */
-            --verde-claro: #81c784;
+            --verde-claro: #66bb6a;
             /* Verde claro */
             --verde-muito-claro: #c8e6c9;
             /* Verde muito claro */
@@ -105,6 +105,24 @@
         .slogan {
             font-style: italic;
             opacity: 0.9;
+        }
+
+        /* Botão Sair Alinhado à Direita */
+        .btn-sair {
+            color: var(--branco);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--branco);
+            border-radius: 5px;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-left: auto;
+        }
+
+        .btn-sair:hover {
+            background-color: var(--branco);
+            color: var(--verde-escuro);
         }
 
         /* Navegação por abas */
@@ -438,6 +456,11 @@
             .header-banner {
                 width: 60%; /* Um pouco maior em telas pequenas para melhor legibilidade */
             }
+
+            .btn-sair {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -475,13 +498,10 @@
         <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
         <div class="container">
             <div class="header-content">
-                
-                <div>
-                    <a href="loginmermo.html"
-                        style="color: var(--branco); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border: 1px solid var(--branco); border-radius: 5px;">
-                        <i class="fas fa-sign-out-alt"></i> Sair
-                    </a>
-                </div>
+
+                <a href="loginmermo.html" class="btn-sair">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
             </div>
         </div>
     </header>
@@ -628,40 +648,41 @@
         ];
 
         let alimentos = [
-            { id: 1, nome: "Arroz", categoria: "Alimento", preco: 10.00, descricao: "Fonte primária de carboidratos em muitas culturas, é energético e fácil de preparar", foto: "https://www.arenaatacado.com.br/on/demandware.static/-/Sites-storefront-catalog-sv/default/dw2d3d50da/Produtos/535311-7896290300714-arroz%20tipo%201%20integral%20prato%20fino%20pacote%201kg-prato%20fino-1.jpg" },
-            { id: 2, nome: "Feijão", categoria: "ALimento", preco: 8.50, descricao: "Rico em proteínas vegetais, fibras, ferro e outros minerais.", foto: "https://ibassets.com.br/ib.item.image.large/l-b15349c79e694c919b8d0e86514a5c24.jpeg" },
-            { id: 3, nome: "Pão", categoria: "Alimento", preco: 4.00, descricao: "Fonte rápida de carboidratos.", foto: "https://www.distribuidoracaue.com.br/media/catalog/product/cache/a65d2b67834c4584ec9c01d883900305/p/_/p_o_de_forma_visconti.jpg" },
-            { id: 4, nome: "Leite", categoria: "Bebida", preco: 2.50, descricao: "Rico em cálcio, proteínas e vitaminas.", foto: "https://phygital-files.mercafacil.com/catalogo/uploads/produto/leite_uht_integral_piracanjuba_caixa_com_tampa_1l_3eb13313-6dc6-4333-9356-a27464fd69b5.jpg" },
-            { id: 5, nome: "Ovo", categoria: "Comida", preco: 9.90, descricao: "Alimento acessível, rico em proteínas, gorduras boas e vários micronutrientes.", foto: "https://tauste.com.br/media/catalog/product/cache/85088212981f4c4416a405773fd6849a/1/3/1313121758079068.jpg" },
-            { id: 6, nome: "Batata", categoria: "Comida", preco: 8.90, descricao: "Fonte de carboidratos, potássio e fibras.", foto: "https://www.petz.com.br/blog/wp-content/uploads/2022/08/como-plantar-batata.jpg" },
-            { id: 7, nome: "Carnes(Bovina, Frango e Peixes)", categoria: "Comida", preco: 9.90, descricao: "onte importante de proteína completa, ferro e vitamina B12.", foto: "https://static.todamateria.com.br/upload/ca/rn/carnes.jpg" },
-            { id: 8, nome: "Macarrão", categoria: "Comida", preco: 7.90, descricao: "Alimento feito geralmente de trigo, é uma fonte de carboidrato e muito versátil", foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZV1zqLBigQ6uDXDd14rqHVUAODrvNBaEA9g&s" },
-            { id: 9, nome: "Banana", categoria: "Comida", preco: 5.90, descricao: "Fruta rica em potássio, carboidratos e fibras.", foto: "https://www.hortifrutiorganico.com.br/121-large_default/banana-organica-prata-1-kg.jpg" },
-            { id: 10, nome: "Tomate", categoria: "Comida", preco: 4.90, descricao: "Muito usado em saladas, molhos e cozidos.", foto: "https://52586.cdn.lojaquevende.com.br/static/52586/sku/legumes-Tomate-Andrea-1586283695804.png" },
+            { id: 11, nome: "Arroz", categoria: "Alimento", preco: 10.00, descricao: "Fonte primária de carboidratos em muitas culturas, é energético e fácil de preparar", foto: "https://www.arenaatacado.com.br/on/demandware.static/-/Sites-storefront-catalog-sv/default/dw2d3d50da/Produtos/535311-7896290300714-arroz%20tipo%201%20integral%20prato%20fino%20pacote%201kg-prato%20fino-1.jpg" },
+            { id: 12, nome: "Feijão", categoria: "ALimento", preco: 8.50, descricao: "Rico em proteínas vegetais, fibras, ferro e outros minerais.", foto: "https://ibassets.com.br/ib.item.image.large/l-b15349c79e694c919b8d0e86514a5c24.jpeg" },
+            { id: 13, nome: "Pão", categoria: "Alimento", preco: 4.00, descricao: "Fonte rápida de carboidratos.", foto: "https://www.distribuidoracaue.com.br/media/catalog/product/cache/a65d2b67834c4584ec9c01d883900305/p/_/p_o_de_forma_visconti.jpg" },
+            { id: 14, nome: "Leite", categoria: "Bebida", preco: 2.50, descricao: "Rico em cálcio, proteínas e vitaminas.", foto: "https://phygital-files.mercafacil.com/catalogo/uploads/produto/leite_uht_integral_piracanjuba_caixa_com_tampa_1l_3eb13313-6dc6-4333-9356-a27464fd69b5.jpg" },
+            { id: 15, nome: "Ovo", categoria: "Comida", preco: 9.90, descricao: "Alimento acessível, rico em proteínas, gorduras boas e vários micronutrientes.", foto: "https://tauste.com.br/media/catalog/product/cache/85088212981f4c4416a405773fd6849a/1/3/1313121758079068.jpg" },
+            { id: 16, nome: "Batata", categoria: "Comida", preco: 8.90, descricao: "Fonte de carboidratos, potássio e fibras.", foto: "https://www.petz.com.br/blog/wp-content/uploads/2022/08/como-plantar-batata.jpg" },
+            { id: 17, nome: "Carnes(Bovina, Frango e Peixes)", categoria: "Comida", preco: 9.90, descricao: "onte importante de proteína completa, ferro e vitamina B12.", foto: "https://static.todamateria.com.br/upload/ca/rn/carnes.jpg" },
+            { id: 18, nome: "Macarrão", categoria: "Comida", preco: 7.90, descricao: "Alimento feito geralmente de trigo, é uma fonte de carboidrato e muito versátil", foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZV1zqLBigQ6uDXDd14rqHVUAODrvNBaEA9g&s" },
+            { id: 19, nome: "Banana", categoria: "Comida", preco: 5.90, descricao: "Fruta rica em potássio, carboidratos e fibras.", foto: "https://www.hortifrutiorganico.com.br/121-large_default/banana-organica-prata-1-kg.jpg" },
+            { id: 20, nome: "Tomate", categoria: "Comida", preco: 4.90, descricao: "Muito usado em saladas, molhos e cozidos.", foto: "https://52586.cdn.lojaquevende.com.br/static/52586/sku/legumes-Tomate-Andrea-1586283695804.png" },
         ];
 
         let produtosVariados = [
-            { id: 1, nome: "Shampoo Sólido Natural", categoria: "beleza", preco: 10.00, descricao: "Vegano, sem sulfato, zero plástico.", foto: "https://cdn.awsli.com.br/2500x2500/2081/2081619/produto/150894966/sabonaria--2--0onb5z1bwt.jpg" },
-            { id: 2, nome: "Moletom", categoria: "Roupa", preco: 17.50, descricao: "Ótimo para o frio", foto: "https://akapanda.com.br/wp-content/uploads/2023/05/capa-moletom-canguru-com-capuz-moletom-moletom-branco-moletom-feminino-moletom-preto-moletom-roxo-moletom-vermelho-moletons-aka-panda.jpg" },
-            { id: 3, nome: "Sabonete Artesanal", categoria: "higiene", preco: 7.00, descricao: "Com extratos naturais e óleo de coco.", foto: "https://www.artesanatopassoapassoja.com.br/wp-content/uploads/2021/08/embalagens-para-sabonetes-artesanais.jpg" },
-            { id: 4, nome: "Protetor Solar FPS 50", categoria: "beleza", preco: 8.90, descricao: "Fórmula não oleosa, proteção UVA/UVB.", foto: "https://lojacoty.vteximg.com.br/arquivos/ids/189910-1000-1000/7896108560330_1.jpg?v=638702082513700000" },
-            { id: 5, nome: "Escova de Dentes Bambu", categoria: "higiene", preco: 4.90, descricao: "Alternativa sustentável para higiene bucal.", foto: "https://cdn.awsli.com.br/2626/2626263/produto/228017591eea08192de.jpg" },
+            { id: 21, nome: "Shampoo Sólido Natural", categoria: "beleza", preco: 10.00, descricao: "Vegano, sem sulfato, zero plástico.", foto: "https://cdn.awsli.com.br/2500x2500/2081/2081619/produto/150894966/sabonaria--2--0onb5z1bwt.jpg" },
+            { id: 22, nome: "Moletom", categoria: "Roupa", preco: 17.50, descricao: "Ótimo para o frio", foto: "https://akapanda.com.br/wp-content/uploads/2023/05/capa-moletom-canguru-com-capuz-moletom-moletom-branco-moletom-feminino-moletom-preto-moletom-roxo-moletom-vermelho-moletons-aka-panda.jpg" },
+            { id: 23, nome: "Sabonete Artesanal", categoria: "higiene", preco: 7.00, descricao: "Com extratos naturais e óleo de coco.", foto: "https://www.artesanatopassoapassoja.com.br/wp-content/uploads/2021/08/embalagens-para-sabonetes-artesanais.jpg" },
+            { id: 24, nome: "Protetor Solar FPS 50", categoria: "beleza", preco: 8.90, descricao: "Fórmula não oleosa, proteção UVA/UVB.", foto: "https://lojacoty.vteximg.com.br/arquivos/ids/189910-1000-1000/7896108560330_1.jpg?v=638702082513700000" },
+            { id: 25, nome: "Escova de Dentes Bambu", categoria: "higiene", preco: 4.90, descricao: "Alternativa sustentável para higiene bucal.", foto: "https://cdn.awsli.com.br/2626/2626263/produto/228017591eea08192de.jpg" },
         ];
 
         let doacoes = [
-            { id: 1, item: "Cesta Básica", origem: "Comunidade Sol", quantidade: "50 und", data: "01/10/2023", icone: "fas fa-box" },
-            { id: 2, item: "Kits de Higiene", origem: "Empresa Amiga", quantidade: "100 und", data: "05/10/2023", icone: "fas fa-hands-wash" },
-            { id: 3, item: "Agasalhos e Cobertores", origem: "Igreja Local", quantidade: "75 und", data: "15/09/2023", icone: "fas fa-tshirt" },
-            { id: 4, item: "Medicamentos Sem Uso", origem: "Farmácia Solidária", quantidade: "Variada", data: "20/09/2023", icone: "fas fa-pills" },
-            { id: 5, item: "Brinquedos Educativos", origem: "Doação Anônima", quantidade: "30 und", data: "03/10/2023", icone: "fas fa-puzzle-piece" },
+            { id: 26, item: "Cesta Básica", origem: "Comunidade Sol", quantidade: "50 und", data: "01/10/2023", icone: "fas fa-box" },
+            { id: 27, item: "Kits de Higiene", origem: "Empresa Amiga", quantidade: "100 und", data: "05/10/2023", icone: "fas fa-hands-wash" },
+            { id: 28, item: "Agasalhos e Cobertores", origem: "Igreja Local", quantidade: "75 und", data: "15/09/2023", icone: "fas fa-tshirt" },
+            { id: 29, item: "Medicamentos Sem Uso", origem: "Farmácia Solidária", quantidade: "Variada", data: "20/09/2023", icone: "fas fa-pills" },
+            { id: 30, item: "Brinquedos Educativos", origem: "Doação Anônima", quantidade: "30 und", data: "03/10/2023", icone: "fas fa-puzzle-piece" },
         ];
 
         let feedbacks = [
-            { id: 1, assunto: "Sugestão de Produto", prioridade: "Média", nome: "Carlos", data: "28/09/2023", status: "Novo", icone: "fas fa-lightbulb" },
-            { id: 2, assunto: "Elogio ao Atendimento", prioridade: "Baixa", nome: "Anônimo", data: "03/10/2023", status: "Novo", icone: "fas fa-smile" },
-            { id: 3, assunto: "Reclamação - Embalagem", prioridade: "Alta", nome: "Joana", data: "04/10/2023", status: "Novo", icone: "fas fa-exclamation-triangle" },
-            { id: 4, assunto: "Dúvida sobre Descarte", prioridade: "Média", nome: "Mariana S.", data: "06/10/2023", status: "Novo", icone: "fas fa-recycle" },
-            { id: 5, assunto: "Problema com Entrega", prioridade: "Alta", nome: "Roberto A.", data: "06/10/2023", status: "Novo", icone: "fas fa-truck-loading" },
+            { id: 31, assunto: "Sugestão de Produto", prioridade: "Média", nome: "Carlos", data: "28/09/2025", status: "Novo", icone: "fas fa-lightbulb" },
+            { id: 32, assunto: "Elogio ao Atendimento", prioridade: "Baixa", nome: "Anônimo", data: "03/10/2025", status: "Novo", icone: "fas fa-smile" },
+            { id: 33, assunto: "Reclamação - Embalagem", prioridade: "Alta", nome: "Joana", data: "04/10/2025", status: "Novo", icone: "fas fa-exclamation-triangle" },
+            { id: 34, assunto: "Dúvida sobre Descarte", prioridade: "Média", nome: "Mariana S.", data: "06/10/2025", status: "Novo", icone: "fas fa-recycle" },
+            { id: 35, assunto: "Problema com Entrega", prioridade: "Alta", nome: "Roberto A.", data: "06/10/2025", status: "Novo", icone: "fas fa-truck-loading" },
+            { id: 36, assunto: "Bem prático e fácil de usar", prioridade: "Baixa", nome: "Luis Antonio", data: "20/10/2025", status: "Novo", icone: "fas fa-smile" },
         ];
 
 
@@ -681,7 +702,7 @@
                         <div class="card-categoria">${formatarCategoriaMedicamento(medicamento.categoria)}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${medicamento.preco.toFixed(2)}</div>
-                            <button onclick="excluirMedicamento(${medicamento.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                            
                         </div>
                     </div>
                 `;
@@ -704,7 +725,7 @@
                         <div class="card-categoria categoria-laranja">${alimento.categoria}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
-                            <button onclick="excluirAlimento(${alimento.id})" class="btn-laranja" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                            
                         </div>
                     </div>
                 `;
@@ -727,7 +748,7 @@
                         <div class="card-categoria categoria-roxo">${produto.categoria}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${produto.preco.toFixed(2)}</div>
-                            <button onclick="excluirProdutoVariado(${produto.id})" class="btn-roxo" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                            
                         </div>
                     </div>
                 `;
@@ -749,7 +770,7 @@
                         <div class="card-categoria">${doacao.quantidade}</div>
                         <div class="card-info">
                             <div>${doacao.data}</div>
-                            <button onclick="excluirDoacao(${doacao.id})" class="btn-doacao" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Excluir</button>
+                            
                         </div>
                     </div>
                 `;
@@ -771,7 +792,7 @@
                         <div class="card-categoria" style="background-color: ${getCorPrioridade(feedback.prioridade)}; color: white;">${feedback.prioridade}</div>
                         <div class="card-info">
                             <div>${feedback.data}</div>
-                            <button onclick="excluirFeedback(${feedback.id})" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background-color: var(--rosa);">Excluir</button>
+                           
                         </div>
                     </div>
                 `;
@@ -889,5 +910,3 @@
 </body>
 
 </html>
-
-
