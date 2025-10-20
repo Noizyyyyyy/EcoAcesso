@@ -1,2 +1,0 @@
-supabase-py
-bcrypt
