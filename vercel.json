@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/**/*.cjs": {
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs@20.x" 
+      // Mudança: Agora está "nodejs@20.x" em vez de "nodejs20.x"
     }
   },
   "rewrites": [
