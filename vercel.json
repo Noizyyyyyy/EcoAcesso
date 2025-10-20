@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/**/*.cjs": {
-      "runtime": "nodejs@20.x" 
+      "runtime": "nodejs@18.x" 
+      // Mude para 18.x, que é suportada há mais tempo
     }
   },
   "rewrites": [
