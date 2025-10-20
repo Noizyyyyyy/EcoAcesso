@@ -8,9 +8,7 @@ module.exports = async (req, res) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    // FIM DA CORREÇÃO
 
-    // 1. Garante que é uma requisição POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Método não permitido. Use POST.' });
     }
@@ -22,32 +20,32 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'E-mail e senha são obrigatórios.' });
         }
 
-        // 2. Buscar o hash da senha na tabela customizada 'cadastro'
+        // 1. Buscar o hash da senha na tabela customizada 'cadastro'
         const { data: user, error: selectError } = await supabase
             .from('cadastro')
             .select('id, senha_hash') 
             .eq('email', email)
             .single();
 
-        // 3. Tratamento de erro de banco (PGRST116 é "No rows found")
+        // 2. Tratamento de erro de banco (PGRST116 é "No rows found")
         if (selectError && selectError.code !== 'PGRST116') { 
             console.error('Erro ao buscar usuário no Supabase:', selectError);
             return res.status(500).json({ error: 'Falha no servidor. Tente novamente.' });
         }
         
-        // 4. Verificar se o usuário existe
+        // 3. Verificar se o usuário existe
         if (!user) {
             return res.status(401).json({ error: 'Credenciais inválidas. Verifique seu e-mail ou senha.' });
         }
 
-        // 5. Comparar a senha fornecida com o hash salvo
+        // 4. Comparar a senha fornecida com o hash salvo
         const passwordMatch = await bcrypt.compare(senha, user.senha_hash);
 
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Credenciais inválidas. Verifique seu e-mail ou senha.' });
         }
 
-        // 6. SUCESSO!
+        // 5. SUCESSO!
         return res.status(200).json({ 
             success: true, 
             message: 'Login bem-sucedido! Redirecionando...',
