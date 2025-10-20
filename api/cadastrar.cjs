@@ -67,7 +67,6 @@ module.exports = async (req, res) => {
 
         if (error) {
             console.error('Erro no Supabase:', error);
-            // Trata erro de duplicidade (código 23505)
             if (error.code === '23505') {
                  res.status(409).json({ error: 'E-mail ou CPF já cadastrado.' });
             } else {
