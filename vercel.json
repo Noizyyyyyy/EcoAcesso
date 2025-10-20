@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/**/*.cjs": {
-      "runtime": "nodejs@18.x" 
+      "runtime": "nodejs" 
+      // Sintaxe simplificada: deixa o Vercel escolher a versão mais recente
     }
   },
   "rewrites": [
