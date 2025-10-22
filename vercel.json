@@ -1,9 +1,3 @@
-{
-  "functions": {
-    "api/**/*.cjs": {
-      "runtime": "nodejs@18.x" 
-      // Manter esta seção para garantir que as APIs .cjs funcionem
-    }
   },
   "rewrites": [
     {
