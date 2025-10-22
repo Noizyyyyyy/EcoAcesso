@@ -1,8 +1,31 @@
 {
+  "functions": {
+    "api/**/*.cjs": {
+      "runtime": "nodejs@18.x" 
+      // Manter esta seção para garantir que as APIs .cjs funcionem
+    }
+  },
   "rewrites": [
     {
       "source": "/",
-      "destination": "/cadastro.html"
+      "destination": "/Front-Page.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/cadastro",
+      "destination": "/cadastro.html",
+      "permanent": true
+    },
+    {
+      "source": "/login",
+      "destination": "/loginmermo.html",
+      "permanent": true
+    },
+    {
+      "source": "/homepage",
+      "destination": "/homepage.html",
+      "permanent": true
     }
   ]
 }
