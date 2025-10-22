@@ -1,13 +1,13 @@
 {
   "name": "ecoacesso-api",
   "version": "1.0.0",
-  "description": "API Serverless para Eco Acesso (Supabase)",
-  "main": "api/cadastrar.cjs", 
+  "description": "API Serverless para Eco Acesso (MongoDB Atlas)",
+  "main": "api/cadastrar.cjs",
   "scripts": {
     "start": "node api/cadastrar.cjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.43.4",
+    "mongodb": "^6.5.0",
     "bcryptjs": "^2.4.3",
     "node-cpf": "^2.0.4"
   }
