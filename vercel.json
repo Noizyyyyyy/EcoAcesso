@@ -2,7 +2,6 @@
   "functions": {
     "api/**/*.cjs": {
       "runtime": "nodejs@18.x" 
-      // Força o reconhecimento de QUALQUER arquivo .cjs na pasta api/
     }
   }
 }
