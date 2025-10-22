@@ -2,9 +2,9 @@
   "name": "ecoacesso-api",
   "version": "1.0.0",
   "description": "API Serverless para Eco Acesso (Supabase)",
-  "main": "api/login.cjs",
+  "main": "api/cadastrar.cjs", 
   "scripts": {
-    "start": "node api/login.cjs"
+    "start": "node api/cadastrar.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.43.4",
