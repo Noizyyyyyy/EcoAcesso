@@ -2,7 +2,6 @@
   "functions": {
     "api/cadastrar.cjs": {
       "runtime": "nodejs@18.x" 
-      // Esta linha obriga o Vercel a reconhecer o arquivo como uma API Node.js
     }
   },
   "rewrites": [
