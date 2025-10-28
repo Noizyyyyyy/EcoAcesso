@@ -1,14 +1,9 @@
 {
   "name": "ecoacesso-api",
   "version": "1.0.0",
-  "description": "API Serverless para Eco Acesso (MongoDB Atlas)",
-  "main": "api/cadastrar.cjs",
-  "scripts": {
-    "start": "node api/cadastrar.cjs"
-  },
   "dependencies": {
     "mongodb": "^6.5.0",
     "bcryptjs": "^2.4.3",
-    "node-cpf": "^2.0.4"
+    "dotenv": "^16.3.1"
   }
 }
