@@ -2,14 +2,13 @@
   "name": "ecoacesso-api",
   "version": "1.0.0",
   "description": "API Serverless para Eco Acesso (Supabase)",
-  "main": "api/cadastrar.js",
+  "main": "api/cadastrar.cjs",
   "scripts": {
-    "start": "node api/cadastrar.js",
-    "dev": "node api/cadastrar.js"
+    "start": "node api/cadastrar.cjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0",
+    "@supabase/supabase-js": "^2.43.4",
     "bcryptjs": "^2.4.3",
-    "dotenv": "^16.3.1"
+    "node-cpf": "^2.0.4"
   }
 }
