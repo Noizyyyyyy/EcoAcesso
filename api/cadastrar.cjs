@@ -1,22 +1,22 @@
-// api/cadastrar.cjs
 const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 
 // 1. Obter as variáveis de ambiente do Vercel
+// Usando 'SUPABASE_KEY' como padrão para a chave pública/anon
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY; 
 
 // 2. Criar o cliente Supabase
-// Se as chaves estiverem faltando, isso gera um erro 500 imediato, o que é bom para diagnóstico.
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error("ERRO DE CONFIGURAÇÃO CRÍTICO: Chaves do Supabase ausentes.");
+// Se as chaves estiverem faltando, isso gera um erro 500 imediato e informa no console.
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error("ERRO DE CONFIGURAÇÃO CRÍTICO: Variáveis SUPABASE_URL ou SUPABASE_KEY ausentes. Verifique as variáveis de ambiente no Vercel.");
     module.exports = (req, res) => {
-        res.status(500).json({ error: "Configuração do servidor inválida." });
+        res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados não encontradas." });
     };
     return;
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 module.exports = async (req, res) => {
     // Apenas aceite requisições POST
@@ -38,10 +38,10 @@ module.exports = async (req, res) => {
             bairro,
             cidade,
             estado,
-            interesses, // string separada por vírgulas
-            termos_aceitos, // boolean
-            receber_newsletter, // boolean
-            receber_eventos // boolean
+            interesses, 
+            termos_aceitos, 
+            receber_newsletter, 
+            receber_eventos 
         } = req.body;
 
         // Validação básica do lado do servidor
@@ -74,11 +74,13 @@ module.exports = async (req, res) => {
                     receber_newsletter: receber_newsletter,
                     receber_eventos: receber_eventos
                 }
-            ]);
+            ])
+            // Adiciona a opção para retornar o registo inserido, útil para depuração
+            .select(); 
 
         if (error) {
             console.error('Erro no Supabase:', error);
-            // Verifica se é um erro de duplicidade (código 23505)
+            // Verifica se é um erro de duplicidade (código 23505 - erro PostgreSQL)
             if (error.code === '23505') {
                  return res.status(409).json({ error: "O e-mail ou CPF já está cadastrado. Por favor, utilize outro." });
             }
@@ -89,7 +91,7 @@ module.exports = async (req, res) => {
         res.status(201).json({ message: "Usuário cadastrado com sucesso!", data: data });
 
     } catch (error) {
-        console.error('Erro no servidor:', error);
-        res.status(500).json({ error: "Erro interno do servidor." });
+        console.error('Erro interno do servidor:', error);
+        res.status(500).json({ error: "Erro interno do servidor. Verifique os logs para mais detalhes." });
     }
 };
