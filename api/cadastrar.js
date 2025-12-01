@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import * as bcrypt from 'bcryptjs'; // Importação robusta para bcryptjs
-// import { cpf } from 'node-cpf'; // Removido para evitar problemas de compatibilidade no Vercel
+// O bcryptjs foi removido do package.json para evitar falhas de build/runtime no Vercel.
+// import bcrypt from 'bcryptjs'; 
 
 // IMPORTANTE: Este código usa o sistema de módulos ES (import/export)
 // O seu package.json DEVE ter "type": "module" para isso funcionar.
@@ -119,16 +119,9 @@ export default async (req, res) => {
 
     // 5. Tratamento e Preparação dos Dados
     
-    // Criptografa a senha antes de salvar (SALT de 10 rodadas)
-    let hashedPassword;
-    try {
-        // Acesso à função hash através do namespace 'bcrypt'
-        hashedPassword = await bcrypt.hash(senha, 10);
-    } catch (hashError) {
-        console.error('Erro ao criptografar senha:', hashError);
-        return res.status(500).json({ error: "Falha interna ao processar a senha." });
-    }
-
+    // ***** ATENÇÃO: A CRIPTOGRAFIA DE SENHA FOI REMOVIDA *****
+    const senhaParaSalvar = senha;
+    
     // Converte a string de interesses para Array (separado por vírgulas) ou null
     let interessesArray = null;
     if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
@@ -146,7 +139,7 @@ export default async (req, res) => {
         // Mapeamentos obrigatórios
         nome_completo: nome,
         email: email,
-        senha_hash: hashedPassword, // Salva a senha criptografada
+        senha_hash: senhaParaSalvar, // Salva a senha em texto simples (APENAS PARA TESTES/DEMONSTRAÇÃO)
         cpf: cleanCpf,
         
         // Mapeamentos de dados pessoais
