@@ -969,7 +969,7 @@
             
             // 3. Adiciona explicitamente as checkboxes não marcadas como 'false'
             // Isso garante que o campo 'termos' (obrigatório) seja enviado, mesmo que desmarcado (caindo na validação do 400 da API, se o usuário burlar a validação do front)
-            // Também garante que newsletter/eventos sejam enviados como false se não marcados.
+            // Também garente que newsletter/eventos sejam enviados como false se não marcados.
             form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 if (!data.hasOwnProperty(checkbox.name)) {
                     data[checkbox.name] = false;
@@ -979,12 +979,24 @@
 
             // Remove a confirmação de senha antes de enviar para o backend
             delete data['confirmar-senha'];
-            
-            // CORREÇÃO: Renomeia o campo 'senha' para 'senha_hash' no frontend para evitar confusão no backend (opcional, mas limpa)
-            // No entanto, o backend espera 'senha', então vamos manter.
-            
-            // Log para debug (opcional, mas útil)
-            // console.log("Payload enviado:", data);
+
+            // CORREÇÃO: REMAPEIA OS CAMPOS PARA O FORMATO ESPERADO PELA API
+            const apiData = {
+                nome: data.nome || '',
+                email: data.email || '',
+                telefone: data.telefone || '',
+                data_nascimento: data['data-nascimento'] || '', // Mapeia de data-nascimento para data_nascimento
+                cpf: data.cpf || '',
+                senha: data.senha || '',
+                cep: data.cep || '',
+                logradouro: data.logradouro || '',
+                numero: data.numero || '',
+                complemento: data.complemento || '',
+                bairro: data.bairro || '',
+                cidade: data.cidade || '',
+                estado: data.estado || '',
+                termos_aceitos: data.termos || false // Mapeia de termos para termos_aceitos
+            };
 
             try {
                 // Endpoint para a sua Serverless Function no Vercel
@@ -993,7 +1005,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data) // Envia o objeto JSON corrigido
+                    body: JSON.stringify(apiData) // Envia o objeto REMAPEADO
                 });
 
                 // Verifica se a resposta foi bem-sucedida (status 2xx)
