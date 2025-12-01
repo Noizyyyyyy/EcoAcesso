@@ -1,32 +1,59 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// Variáveis de ambiente
+// Variáveis de ambiente (Configuradas no seu ambiente de hospedagem)
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY; // AGORA USAMOS SUPABASE_KEY
 
-// Inicializa o cliente Supabase.
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+let supabase;
+
+try {
+  // 1. Verificar se as variáveis de ambiente estão definidas ANTES de inicializar
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    throw new Error("As variáveis de ambiente SUPABASE_URL ou SUPABASE_KEY estão em falta. Por favor, configure-as no seu ambiente de hospedagem.");
   }
-});
+  
+  // 2. Inicializar o cliente Supabase usando a SUPABASE_KEY
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      // Desabilitar o refresh e a persistência é importante para funções serverless
+      autoRefreshToken: false,
+      persistSession: false,
+    }
+  });
+
+} catch (e) {
+  // Capturar erros de inicialização (principalmente missing env vars)
+  console.error("ERRO DE INICIALIZAÇÃO DO SUPABASE:", e.message);
+  // Define uma função de erro de fallback para ser usada no handler
+  supabase = { initializationError: e.message };
+}
+
 
 module.exports = async (req, res) => {
+  // Configurações CORS (Manter antes de qualquer retorno para garantir que o pre-flight funcione)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  // Lida com a requisição OPTIONS (pré-voo do CORS)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   // Apenas aceita requisições POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: 'Método não permitido.' });
   }
 
-  // Configurações CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Lida com a requisição OPTIONS (pré-voo do CORS)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // 3. Verificar o erro de inicialização capturado
+  if (supabase.initializationError) {
+    console.error("FALHA CRÍTICA DE SETUP:", supabase.initializationError);
+    // Retorna 500 em formato JSON para evitar o erro de 'non-JSON'
+    return res.status(500).json({ 
+      error: 'Erro de configuração no servidor. As chaves do Supabase estão em falta.', 
+      details: supabase.initializationError 
+    });
   }
 
   try {
@@ -36,43 +63,49 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
     }
 
-    console.log(`DEBUG REGISTER (API): Tentativa de registro com Email: "${email}"`);
+    console.log(`DEBUG LOGIN (API): Tentativa de login com Email: "${email}"`);
 
-    // Chamada de registro do Supabase
-    const { data, error } = await supabase.auth.signUp({
+    // Chamada de login do Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      console.error('Erro do Supabase:', error.message);
+      console.error('Erro de Autenticação do Supabase:', error.message);
       
-      // O Supabase usa um código '400' ou similar, mas a mensagem de erro
-      // 'User already registered' é o que buscamos para retornar 409 ao frontend.
-      if (error.message.includes('User already registered') || error.message.includes('A user with this email address already exists')) {
-        // Retorna o 409 Conflict, que o frontend irá tratar.
-        return res.status(409).json({ error: 'Este email já está registrado. Por favor, faça login.' });
+      // Mapeamento de erro para resposta do cliente
+      let errorMessage = 'Credenciais inválidas. Verifique seu email e senha.';
+      let status = 401; // Unauthorized
+      
+      if (!error.message.includes('Invalid login credentials')) {
+        errorMessage = 'Falha no login: ' + error.message;
+        status = 400; // Bad Request para outros erros de validação
       }
 
-      // Outros erros (senha muito fraca, etc.)
-      return res.status(400).json({ error: 'Falha no registro: ' + error.message });
+      return res.status(status).json({ 
+        error: errorMessage
+      });
     }
 
-    // Registro bem-sucedido
+    // Login bem-sucedido
     const user = {
       id: data.user.id,
       email: data.user.email,
     };
     
     // Retorna o token de sessão e informações básicas do usuário.
-    res.status(201).json({ 
-      message: 'Registro bem-sucedido. Por favor, verifique seu email para confirmar.',
+    // O token (access_token) é fundamental para interagir com o Supabase posteriormente.
+    res.status(200).json({ 
+      message: 'Login bem-sucedido!',
       user: user,
-      token: data.session?.access_token || null // O token pode ser nulo dependendo das configurações de email de confirmação.
+      token: data.session?.access_token
     });
 
   } catch (error) {
-    console.error('Erro inesperado no servidor:', error);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+    // 4. Tratamento de erro geral (o último recurso)
+    console.error('Erro inesperado na lógica de autenticação:', error);
+    // Garante que SEMPRE retorna um JSON
+    res.status(500).json({ error: 'Erro interno do servidor. Não foi possível processar a requisição.', details: error.message });
   }
 };
