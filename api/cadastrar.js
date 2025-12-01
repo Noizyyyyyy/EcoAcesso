@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs'; // Alterado para namespace import para maior compatibilidade
 import { cpf } from 'node-cpf'; 
 
 // IMPORTANTE: Este código usa o sistema de módulos ES (import/export)
@@ -8,7 +8,7 @@ import { cpf } from 'node-cpf';
 // 1. Variáveis de ambiente
 // O Vercel deve ter estas chaves configuradas.
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 // Expressão Regular para validação de formato de e-mail
 // CORREÇÃO AQUI: Removido o '.' obrigatório no final da regex
@@ -97,6 +97,7 @@ export default async (req, res) => {
     // Criptografa a senha antes de salvar (SALT de 10 rodadas)
     let hashedPassword;
     try {
+        // Acesso à função hash através do namespace 'bcrypt'
         hashedPassword = await bcrypt.hash(senha, 10);
     } catch (hashError) {
         console.error('Erro ao criptografar senha:', hashError);
