@@ -82,7 +82,7 @@ export default async (req, res) => {
         senha, 
         cpf: rawCpf, 
         data_nascimento,
-        genero,
+        genero, 
         telefone,
         cep,
         logradouro,
@@ -90,9 +90,9 @@ export default async (req, res) => {
         bairro,
         cidade,
         estado,
-        interesses,
-        receber_newsletter,
-        receber_eventos,
+        interesses, // Extraído, mas não será usado na inserção
+        receber_newsletter, // Extraído, mas não será usado na inserção
+        receber_eventos, // Extraído, mas não será usado na inserção
         termos_aceitos 
     } = data;
     
@@ -122,16 +122,16 @@ export default async (req, res) => {
     // ***** ATENÇÃO: A CRIPTOGRAFIA DE SENHA FOI REMOVIDA *****
     const senhaParaSalvar = senha;
     
-    // Converte a string de interesses para Array (separado por vírgulas) ou null
+    // A lógica de conversão de interesses foi removida, pois a coluna 'interesses' não existe no esquema SQL.
+    /*
     let interessesArray = null;
     if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
-        // Converte a string (Ex: "Reflorestamento, Energia Solar") em array
         interessesArray = interesses.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        // Se o array resultante for vazio, volta para null
         if (interessesArray.length === 0) {
              interessesArray = null;
         }
     }
+    */
 
 
     // 6. Estrutura de dados para o Supabase
@@ -144,7 +144,8 @@ export default async (req, res) => {
         
         // Mapeamentos de dados pessoais
         data_nascimento: data_nascimento || null, // Se vazio, salva NULL
-        genero: genero || null,
+        // As colunas 'genero', 'interesses', 'receber_newsletter', e 'receber_eventos' 
+        // foram removidas deste objeto para corresponder ao esquema SQL fornecido.
         
         // Mapeamentos de endereço e preferências
         telefone: telefone ? telefone.replace(/\D/g, '') : null, // Salva apenas números
@@ -156,9 +157,11 @@ export default async (req, res) => {
         estado: estado || null,
         
         // Campos de Array/Booleano
-        interesses: interessesArray, 
-        receber_newsletter: receber_newsletter || false,
-        receber_eventos: receber_eventos || false,
+        // Campos de preferência removidos para coincidir com o SQL.
+        
+        receber_newsletter: false, // Mantido como default se for importante, mas não inserido
+        receber_eventos: false, // Mantido como default se for importante, mas não inserido
+        
         termos_aceitos: termos_aceitos, 
         
         // Campo padrão que você pode ter no seu DB
@@ -178,7 +181,7 @@ export default async (req, res) => {
             return res.status(409).json({ message: "O e-mail ou CPF já está cadastrado. Por favor, utilize outro." });
         }
         
-        // Retorna o erro detalhado do Supabase
+        // Se o erro for de coluna ou outro problema de RLS/Esquema
         return res.status(500).json({ message: error.message || "Falha ao cadastrar no banco de dados. Verifique a configuração RLS e o esquema da tabela." });
     }
 
