@@ -122,19 +122,8 @@ export default async (req, res) => {
     // ***** ATENÇÃO: A CRIPTOGRAFIA DE SENHA FOI REMOVIDA *****
     const senhaParaSalvar = senha;
     
-    // A lógica de conversão de interesses foi removida, pois a coluna 'interesses' não existe no esquema SQL.
-    /*
-    let interessesArray = null;
-    if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
-        interessesArray = interesses.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        if (interessesArray.length === 0) {
-             interessesArray = null;
-        }
-    }
-    */
-
-
     // 6. Estrutura de dados para o Supabase
+    // ESTA LISTA DEVE CORRESPONDER EXATAMENTE ÀS COLUNAS DO SEU SQL.
     const cadastroData = {
         // Mapeamentos obrigatórios
         nome_completo: nome,
@@ -144,10 +133,8 @@ export default async (req, res) => {
         
         // Mapeamentos de dados pessoais
         data_nascimento: data_nascimento || null, // Se vazio, salva NULL
-        // As colunas 'genero', 'interesses', 'receber_newsletter', e 'receber_eventos' 
-        // foram removidas deste objeto para corresponder ao esquema SQL fornecido.
         
-        // Mapeamentos de endereço e preferências
+        // Mapeamentos de endereço
         telefone: telefone ? telefone.replace(/\D/g, '') : null, // Salva apenas números
         cep: cep ? cep.replace(/\D/g, '') : null,
         logradouro: logradouro || null,
@@ -157,11 +144,6 @@ export default async (req, res) => {
         estado: estado || null,
         
         // Campos de Array/Booleano
-        // Campos de preferência removidos para coincidir com o SQL.
-        
-        receber_newsletter: false, // Mantido como default se for importante, mas não inserido
-        receber_eventos: false, // Mantido como default se for importante, mas não inserido
-        
         termos_aceitos: termos_aceitos, 
         
         // Campo padrão que você pode ter no seu DB
@@ -181,7 +163,7 @@ export default async (req, res) => {
             return res.status(409).json({ message: "O e-mail ou CPF já está cadastrado. Por favor, utilize outro." });
         }
         
-        // Se o erro for de coluna ou outro problema de RLS/Esquema
+        // Se o erro for de coluna (PGRST204) ou outro problema de RLS/Esquema
         return res.status(500).json({ message: error.message || "Falha ao cadastrar no banco de dados. Verifique a configuração RLS e o esquema da tabela." });
     }
 
