@@ -1,11 +1,17 @@
 {
   "name": "ecoacesso-api",
   "version": "1.0.0",
-  "description": "API de cadastro para o projeto Eco Acesso",
-  "main": "api/cadastrar.cjs",
+  "description": "API de cadastro para o projeto Eco Acesso, usando Supabase.",
+  "main": "api/cadastrar.js",
   "dependencies": {
-    "@supabase/supabase-js": "^2.0.0",
-    "bcryptjs": "^2.4.3",
-    "node-cpf": "^1.1.0"
+    "@supabase/supabase-js": "^2.44.4",
+    "bcryptjs": "^2.4.3"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node api/cadastrar.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
