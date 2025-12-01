@@ -1,8 +1,8 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Variáveis de ambiente (Configuradas no seu ambiente de hospedagem)
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY; // AGORA USAMOS SUPABASE_KEY
+const SUPABASE_KEY = process.env.SUPABASE_KEY; // A chave pública do Supabase
 
 let supabase;
 
@@ -28,8 +28,8 @@ try {
   supabase = { initializationError: e.message };
 }
 
-
-module.exports = async (req, res) => {
+// Usamos 'export default' para módulos ES6, substituindo 'module.exports'
+export default async (req, res) => {
   // Configurações CORS (Manter antes de qualquer retorno para garantir que o pre-flight funcione)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
   // 3. Verificar o erro de inicialização capturado
   if (supabase.initializationError) {
     console.error("FALHA CRÍTICA DE SETUP:", supabase.initializationError);
-    // Retorna 500 em formato JSON para evitar o erro de 'non-JSON'
+    // Retorna 500 em formato JSON
     return res.status(500).json({ 
       error: 'Erro de configuração no servidor. As chaves do Supabase estão em falta.', 
       details: supabase.initializationError 
@@ -95,7 +95,6 @@ module.exports = async (req, res) => {
     };
     
     // Retorna o token de sessão e informações básicas do usuário.
-    // O token (access_token) é fundamental para interagir com o Supabase posteriormente.
     res.status(200).json({ 
       message: 'Login bem-sucedido!',
       user: user,
