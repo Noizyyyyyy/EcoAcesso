@@ -57,10 +57,18 @@ export default async (req, res) => {
   }
 
   try {
+    // --- NOVO: Logging para diagnóstico ---
+    console.log('DEBUG BODY (API): Recebendo body:', req.body);
+    // -------------------------------------
+
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
+      console.log('DEBUG ERROR (API): Email ou senha ausentes no corpo da requisição.');
+      return res.status(400).json({ 
+        error: 'Email e senha são obrigatórios.',
+        details: 'Verifique se o Content-Type é application/json e se o corpo da requisição está formatado corretamente.'
+      });
     }
 
     console.log(`DEBUG LOGIN (API): Tentativa de login com Email: "${email}"`);
