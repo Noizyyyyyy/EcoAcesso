@@ -1,90 +1,58 @@
-// Configuração do Supabase (Assumindo que você tem as variáveis de ambiente aqui)
+// api/login.js - Exemplo de função Serverless do Vercel
 import { createClient } from '@supabase/supabase-js';
 
-// Preencha com suas chaves (ou use variáveis de ambiente)
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY; 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// As variáveis de ambiente do Vercel são acessíveis via process.env em funções Node.js.
+// É uma boa prática inicializar o cliente fora do handler (se a plataforma suportar)
+// para reutilizar a conexão (cold start optimization), mas para segurança, vamos
+// garantir que as chaves sejam lidas robustamente.
 
-// Função auxiliar para converter strings para Hexadecimal, revelando caracteres invisíveis
-const stringToHex = (str) => {
-    if (!str) return 'NULO/VAZIO';
-    return Array.from(str)
-        .map(c => c.charCodeAt(0).toString(16).padStart(2, '0'))
-        .join(' ');
-};
+// 1. Defina as chaves de forma segura
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-// Função principal do handler
-const handler = async (req, res) => {
+// 2. Função de depuração (debug) para garantir que as chaves estão sendo lidas
+// Você pode remover esta linha após o debug, mas ela é crucial agora:
+console.log('STATUS DAS CHAVES - URL Length:', SUPABASE_URL ? SUPABASE_URL.length : 0, ' | Key Set:', !!SUPABASE_KEY);
+
+
+// 3. Verificação de segurança: se as chaves estiverem ausentes, evite a inicialização
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  // Se estiverem faltando, lance um erro informativo ANTES de inicializar o cliente.
+  // Isso deve aparecer nos logs do Vercel e evitar o erro genérico do Supabase.
+  throw new Error("SUPABASE_URL ou SUPABASE_KEY não foram encontrados no ambiente.");
+}
+
+// 4. Inicialize o cliente Supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+// 5. Exporte o handler da sua função serverless
+export default async function handler(req, res) {
+  try {
+    // Exemplo de lógica de login
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Método não permitido.' });
+      return res.status(405).json({ error: 'Método não permitido' });
     }
 
-    const { email, senha } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !senha) {
-        return res.status(400).json({ message: "E-mail e senha são obrigatórios." });
+    // Use o cliente Supabase inicializado
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Erro de login do Supabase:', error.message);
+      return res.status(401).json({ error: error.message });
     }
 
-    try {
-        // 1. Busca o usuário
-        // NOTA: É fundamental que 'senha_hash' seja o nome correto da coluna
-        const { data: userData, error: fetchError } = await supabase
-            .from('cadastro')
-            .select('nome_completo, senha_hash') 
-            .eq('email', email)
-            .single();
+    // Se o login for bem-sucedido
+    res.status(200).json({ user: data.user, session: data.session });
 
-        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = não encontrou
-            console.error('Erro ao buscar usuário (DB):', fetchError.message);
-            return res.status(500).json({ message: "Erro interno do servidor." });
-        }
-
-        if (!userData || !userData.senha_hash) {
-            return res.status(401).json({ message: "E-mail ou senha incorretos." });
-        }
-
-        // 2. Prepara as senhas para comparação
-        
-        // Aplica .trim() para remover espaços em branco iniciais/finais
-        const passwordDB = userData.senha_hash.trim();
-        const passwordInput = senha.trim();
-
-        // 3. DEBUG CRÍTICO COM REPRESENTAÇÃO HEXADECIMAL:
-        console.log(`--- DEBUG LOGIN ---`);
-        console.log(`[Input] Senha (Original): "${senha}"`);
-        console.log(`[DB] Senha (Original): "${userData.senha_hash}"`);
-
-        console.log(`[Input] Senha (Trimmed): "${passwordInput}"`);
-        console.log(`[DB] Senha (Trimmed): "${passwordDB}"`);
-        
-        // O CÓDIGO HEXADECIMAL É A CHAVE PARA REVELAR CARACTERES INVISÍVEIS
-        console.log(`[Input] Senha (HEX): ${stringToHex(passwordInput)}`);
-        console.log(`[DB] Senha (HEX): ${stringToHex(passwordDB)}`);
-        
-        console.log(`-------------------`);
-
-        // 4. Comparação ESTREITA (Caso e caracteres importam)
-        const passwordMatch = (passwordInput === passwordDB);
-
-        if (passwordMatch) {
-            // Sucesso
-            return res.status(200).json({ 
-                message: "Login bem-sucedido!",
-                user: {
-                    email: email,
-                    nome: userData.nome_completo
-                }
-            });
-        } else {
-            // Falha na comparação da senha (Verifique o log HEX!)
-            return res.status(401).json({ message: "E-mail ou senha incorretos." });
-        }
-
-    } catch (error) {
-        console.error('Erro desconhecido no login:', error);
-        return res.status(500).json({ message: "Erro interno do servidor." });
-    }
-};
-
-export default handler;
+  } catch (e) {
+    console.error('Erro na função de login:', e.message);
+    // Retorna um erro 500 para o frontend
+    res.status(500).json({ error: 'Erro interno do servidor: ' + e.message });
+  }
+}
