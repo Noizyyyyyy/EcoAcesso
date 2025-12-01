@@ -1,21 +1,47 @@
 import { createClient } from '@supabase/supabase-js';
-import * as bcrypt from 'bcryptjs'; // Alterado para namespace import para maior compatibilidade
-import { cpf } from 'node-cpf'; 
+import * as bcrypt from 'bcryptjs'; // Importação robusta para bcryptjs
+// import { cpf } from 'node-cpf'; // Removido para evitar problemas de compatibilidade no Vercel
 
 // IMPORTANTE: Este código usa o sistema de módulos ES (import/export)
 // O seu package.json DEVE ter "type": "module" para isso funcionar.
 
 // 1. Variáveis de ambiente
-// O Vercel deve ter estas chaves configuradas.
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 // Expressão Regular para validação de formato de e-mail
-// CORREÇÃO AQUI: Removido o '.' obrigatório no final da regex
 const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // Declara a variável supabase no escopo do módulo para reutilização
 let supabase = null;
+
+/**
+ * Função de validação de CPF (Substitui a biblioteca node-cpf)
+ * Implementação nativa para maior compatibilidade em ambientes Serverless.
+ */
+function isValidCPF(cpf) {
+    if (!cpf) return false;
+    cpf = cpf.replace(/[^\d]/g, ""); // Remove caracteres não numéricos
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false; // Verifica tamanho e sequências repetidas
+
+    let sum = 0;
+    let remainder;
+
+    for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+
+    sum = 0;
+    for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+    
+    return true;
+}
 
 // Exporta a função Serverless principal para ES Modules
 export default async (req, res) => {
@@ -25,7 +51,6 @@ export default async (req, res) => {
     }
 
     // 2. Inicialização e Verificação de Configuração
-    // Move a verificação para dentro da função e usa return para sair
     if (!SUPABASE_URL || !SUPABASE_KEY) {
         console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: As variáveis SUPABASE_URL ou SUPABASE_KEY não foram encontradas.");
         return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
@@ -55,7 +80,7 @@ export default async (req, res) => {
         nome, 
         email, 
         senha, 
-        cpf: rawCpf, // Renomeia para evitar conflito
+        cpf: rawCpf, 
         data_nascimento,
         genero,
         telefone,
@@ -68,7 +93,7 @@ export default async (req, res) => {
         interesses,
         receber_newsletter,
         receber_eventos,
-        termos_aceitos // Campo obrigatório no frontend
+        termos_aceitos 
     } = data;
     
     // 4. Validação de campos obrigatórios
@@ -86,9 +111,9 @@ export default async (req, res) => {
         return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres." });
     }
     
-    // Limpa e valida o CPF
+    // Limpa e valida o CPF usando a função embutida
     const cleanCpf = rawCpf.replace(/\D/g, ''); // Remove máscara
-    if (!cpf.isValid(cleanCpf)) {
+    if (!isValidCPF(cleanCpf)) { // Uso da função nativa
         return res.status(400).json({ error: "O CPF fornecido é inválido. Por favor, verifique." });
     }
 
@@ -141,7 +166,7 @@ export default async (req, res) => {
         interesses: interessesArray, 
         receber_newsletter: receber_newsletter || false,
         receber_eventos: receber_eventos || false,
-        termos_aceitos: termos_aceitos, // Deve ser true para passar na validação
+        termos_aceitos: termos_aceitos, 
         
         // Campo padrão que você pode ter no seu DB
         email_confirmado: true
