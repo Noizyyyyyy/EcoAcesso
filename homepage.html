@@ -15,6 +15,14 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        .imagem-ajustada {
+            max-width: 100%;
+            height: auto;
+            zoom: 1;
+            /* ou scale: 1; */
+            transform: scale(1);
+        }
+
         :root {
             --verde-principal: #66bb6a;
             --verde-escuro: #4caf50;
@@ -44,12 +52,14 @@
         header {
             background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
-            padding: 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
+            border-radius: 0;
+            /* REMOVIDO: 16px */
             margin-bottom: 2.5rem;
             width: 100%;
-            overflow: hidden;
+            overflow: visible;
+            padding: 0;
+            /* Adicionado */
         }
 
         .container {
@@ -59,56 +69,59 @@
             flex-grow: 1;
         }
 
+        /* BANNER - Ocupa toda a largura do header */
+        .banner-container {
+            width: 100vw;
+            /* Largura total da viewport */
+            margin-left: calc(-50vw + 50%);
+            /* Centraliza expandindo para os lados */
+            margin-right: calc(-50vw + 50%);
+            /* Centraliza expandindo para os lados */
+            padding: 0;
+            border-radius: 0;
+            /* REMOVIDO: 16px 16px 0 0 */
+        }
+
         .header-banner {
             width: 100%;
-            height: 180px;
+            height: 280px;
+            /* Aumentada de 220px para 280px */
             object-fit: cover;
             object-position: center;
             display: block;
-            border-radius: 16px 16px 0 0;
         }
 
+        /* Container do conteúdo do header com o botão sair */
         .header-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
-            flex-wrap: wrap;
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
+            min-height: 60px;
+            position: relative;
+            /* Adicionado para posicionamento absoluto */
+            z-index: 10;
+            /* Adicionado para ficar acima do banner */
         }
 
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo i {
-            margin-right: 10px;
-            font-size: 2.5rem;
-        }
-
-        .slogan {
-            font-style: italic;
-            opacity: 0.9;
-        }
-
+        /* Botão Sair ajustado */
         .btn-sair {
             color: var(--branco);
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             border: 1px solid var(--branco);
             border-radius: 5px;
             transition: all 0.3s;
             display: inline-block;
-            margin-left: auto;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .btn-sair:hover {
             background-color: var(--branco);
             color: var(--verde-escuro);
+            transform: translateY(-2px);
         }
 
         /* Navegação por abas */
@@ -373,8 +386,6 @@
             background-color: #fbc02d;
         }
 
-        /* --- FIM ESTILOS DE FORMULÁRIO --- */
-
         /* --- MODAL DE DETALHES DO PRODUTO --- */
         .modal-overlay {
             position: fixed;
@@ -525,8 +536,6 @@
             justify-content: flex-end;
         }
 
-        /* --- FIM MODAL DE DETALHES DO PRODUTO --- */
-
         /* Rodapé */
         footer {
             background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
@@ -558,13 +567,9 @@
 
         /* Responsividade */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .logo {
-                margin-bottom: 1rem;
+            .header-banner {
+                height: 220px;
+                /* Aumentada de 180px para 220px */
             }
 
             .tabs {
@@ -590,12 +595,14 @@
             }
 
             .header-banner {
-                height: 140px;
+                height: 180px;
+                /* Altura reduzida para telas menores */
             }
 
             .btn-sair {
-                margin-left: 0;
-                margin-top: 1rem;
+                width: 100%;
+                text-align: center;
+                margin-top: 0.5rem;
             }
 
             .modal-details {
@@ -613,13 +620,14 @@
 
         @media (max-width: 480px) {
             .header-banner {
-                height: 120px;
+                height: 180px;
+                /* Aumentada de 150px para 180px */
             }
-            
+
             .modal-image {
                 height: 250px;
             }
-            
+
             .card-image {
                 height: 350px;
             }
@@ -651,8 +659,13 @@
 
 <body>
     <header>
+        <!-- BANNER Expandido para os lados -->
+        <div class="banner-container">
+            <img src="banner.jpeg" alt="Banner Eco Acesso" style="width: 100%; height: auto;" class="header-banner">
+        </div>
+
+        <!-- Container do conteúdo do header com o botão sair - AGORA DENTRO DO HEADER DIRETO -->
         <div class="container">
-            <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
             <div class="header-content">
                 <a href="loginmermo.html" class="btn-sair">
                     <i class="fas fa-sign-out-alt"></i> Sair
@@ -660,7 +673,6 @@
             </div>
         </div>
     </header>
-
     <main class="container">
         <div class="tabs">
             <div class="tab active" data-tab="medicamentos"><i class="fas fa-pills"></i> Medicamentos</div>
@@ -806,7 +818,6 @@
                     <p class="detail-value" id="modal-descricao">Descrição do produto.</p>
                 </div>
             </div>
-           
         </div>
     </div>
 
@@ -837,6 +848,7 @@
     </footer>
 
     <script>
+        // O código JavaScript permanece o mesmo do seu arquivo original
         // Dados iniciais (mantidos com 5 itens)
         let medicamentos = [
             {
@@ -1083,7 +1095,7 @@
                 descricao: "Fórmula não oleosa, proteção UVA/UVB.",
                 foto: "src/protetor.webp",
                 quantidade: 65,
-                localizacoes: ["Setor de Cosméticos "]
+                localizacoes: ["Setor de Cosméticos"]
             },
             {
                 id: 25,
@@ -1093,7 +1105,7 @@
                 descricao: "Alternativa sustentável para higiene bucal.",
                 foto: "src/escova.webp",
                 quantidade: 90,
-                localizacoes: ["Setor de Higiene "]
+                localizacoes: ["Setor de Higiene"]
             },
         ];
 
@@ -1389,4 +1401,3 @@
 </body>
 
 </html>
-
