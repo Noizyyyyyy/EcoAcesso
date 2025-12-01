@@ -4,8 +4,7 @@
   "description": "API de cadastro para o projeto Eco Acesso, usando Supabase.",
   "main": "api/cadastrar.js",
   "dependencies": {
-    "@supabase/supabase-js": "^2.44.4",
-    "bcryptjs": "^2.4.3"
+    "@supabase/supabase-js": "^2.44.4"
   },
   "type": "module",
   "scripts": {
