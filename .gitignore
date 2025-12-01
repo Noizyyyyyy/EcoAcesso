@@ -1,0 +1,42 @@
+--- Dependências e Build ---
+
+A pasta node_modules contém todas as dependências instaladas (como Supabase, bcrypt, etc.).
+
+Ela é grande e é gerada automaticamente pelo 'npm install' no servidor.
+
+/node_modules
+/dist
+/build
+.vercel # Arquivos de configuração do Vercel
+
+--- Logs e Dados Temporários ---
+
+Arquivos de log gerados pelo Node
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.log
+*.sqlite
+*.sqlite-journal
+
+--- Dados de Configuração e Credenciais (CRÍTICO) ---
+
+Se usar um arquivo .env para variáveis de ambiente locais, NUNCA o envie.
+
+.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+
+--- Outros arquivos temporários ou de IDEs ---
+
+Arquivos do editor VS Code
+
+.vscode/
+
+Arquivos temporários do sistema
+
+.DS_Store
+Thumbs.db
