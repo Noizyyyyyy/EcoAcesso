@@ -17,28 +17,18 @@
 
         :root {
             --verde-principal: #66bb6a;
-            /* Verde-médio */
             --verde-escuro: #4caf50;
-            /* Verde mais escuro */
             --verde-claro: #66bb6a;
-            /* Verde claro */
             --verde-muito-claro: #c8e6c9;
-            /* Verde muito claro */
             --verde-super-claro: #e8f5e9;
-            /* Quase branco */
             --branco: #ffffff;
             --cinza-claro: #f5f5f5;
             --cinza-escuro: #424242;
             --azul: #42a5f5;
-            /* Azul para Clientes/Ações */
             --laranja: #ffb74d;
-            /* Laranja para Alimentos */
             --roxo: #ab47bc;
-            /* Roxo para Produtos Variados */
             --amarelo: #ffeb3b;
-            /* Amarelo para Doações */
             --rosa: #ec407a;
-            /* Rosa para Feedback */
         }
 
         body {
@@ -50,18 +40,16 @@
             flex-direction: column;
         }
 
-        /* Cabeçalho - MODIFICAÇÃO PARA INTEGRAR O BANNER */
+        /* Cabeçalho */
         header {
             background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
             padding: 0;
-            /* MUDANÇA: Padding removido para o banner preencher */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
             margin-bottom: 2.5rem;
             width: 100%;
             overflow: hidden;
-            /* MUDANÇA: Garante que o banner respeite o border-radius */
         }
 
         .container {
@@ -71,22 +59,21 @@
             flex-grow: 1;
         }
 
-        /* ESTILO PARA O BANNER - REDUZIDO EM 70% */
         .header-banner {
-            width: 30%; /* Reduzido de 100% para 30% (70% de redução) */
-            height: auto;
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            object-position: center;
             display: block;
-            margin: 0 auto; /* Centraliza o banner */
-            padding: 10px 0; /* Adiciona um pequeno espaçamento vertical */
+            border-radius: 16px 16px 0 0;
         }
 
-        /* Container do conteúdo do header (logo, slogan, botão sair) */
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            padding: 1rem 0;
+            padding: 1.5rem 0;
             background: linear-gradient(135deg, var(--verde-claro), var(--verde-principal));
         }
 
@@ -107,7 +94,6 @@
             opacity: 0.9;
         }
 
-        /* Botão Sair Alinhado à Direita */
         .btn-sair {
             color: var(--branco);
             text-decoration: none;
@@ -214,6 +200,7 @@
             transition: all 0.3s;
             border: 1px solid var(--verde-muito-claro);
             overflow: hidden;
+            cursor: pointer;
         }
 
         .card:hover {
@@ -221,22 +208,21 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Imagem do Card - ALTURA AUMENTADA PARA 250PX */
+        /* Imagem do Card */
         .card-image {
             width: 100%;
-            height: 500px; /* Alterado de 200px para 250px */
+            height: 500px;
             object-fit: cover;
             border-radius: 10px 10px 0 0;
             display: block;
         }
 
-        /* Conteúdo do Card - ALTURA MÍNIMA ADICIONADA PARA 140PX */
+        /* Conteúdo do Card */
         .card-content {
             padding: 1.5rem;
             padding-top: 0.5rem;
-            min-height: 140px; /* Alterado de 120px para 140px */
+            min-height: 140px;
         }
-
 
         /* Cores de Card Personalizadas */
         .card-medicamentos {
@@ -258,7 +244,6 @@
         .card-feedback {
             border-top: 4px solid var(--rosa);
         }
-
 
         .card-titulo {
             font-weight: bold;
@@ -307,14 +292,13 @@
             color: var(--roxo);
         }
 
-
         /* --- ESTILOS DE FORMULÁRIO --- */
         .form-container {
             background-color: var(--cinza-claro);
             padding: 2rem;
             border-radius: 10px;
             margin-bottom: 2rem;
-            border-left: 5px solid var(--amarelo); /* Destaque para doação */
+            border-left: 5px solid var(--amarelo);
         }
 
         .form-group {
@@ -362,7 +346,7 @@
         button:hover {
             background-color: var(--verde-escuro);
         }
-        
+
         .btn-laranja {
             background-color: var(--laranja);
         }
@@ -378,7 +362,7 @@
         .btn-roxo:hover {
             background-color: #7b1fa2;
         }
-        
+
         .btn-doacao {
             background-color: var(--amarelo);
             color: var(--cinza-escuro);
@@ -388,8 +372,160 @@
         .btn-doacao:hover {
             background-color: #fbc02d;
         }
+
         /* --- FIM ESTILOS DE FORMULÁRIO --- */
 
+        /* --- MODAL DE DETALHES DO PRODUTO --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--branco);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--cinza-escuro);
+            cursor: pointer;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .modal-close:hover {
+            background-color: var(--cinza-claro);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--cinza-claro);
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: var(--verde-principal);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--verde-escuro);
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--cinza-escuro);
+        }
+
+        .stock-info {
+            background-color: var(--verde-super-claro);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stock-title {
+            font-weight: 600;
+            color: var(--verde-escuro);
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-locations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .location-tag {
+            background-color: var(--verde-muito-claro);
+            color: var(--verde-escuro);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--cinza-claro);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* --- FIM MODAL DE DETALHES DO PRODUTO --- */
 
         /* Rodapé */
         footer {
@@ -398,6 +534,7 @@
             text-align: center;
             padding: 2.5rem 0;
             margin-top: 3rem;
+            border-radius: 16px 16px 0 0;
         }
 
         .footer-content {
@@ -451,21 +588,40 @@
             .tab-content {
                 padding: 1.5rem;
             }
-            
-            /* Ajuste do banner para telas menores */
+
             .header-banner {
-                width: 60%; /* Um pouco maior em telas pequenas para melhor legibilidade */
+                height: 140px;
             }
 
             .btn-sair {
                 margin-left: 0;
                 margin-top: 1rem;
             }
+
+            .modal-details {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-image {
+                height: 300px;
+            }
+
+            .card-image {
+                height: 400px;
+            }
         }
-        
+
         @media (max-width: 480px) {
             .header-banner {
-                width: 80%; /* Ainda maior em telas muito pequenas */
+                height: 120px;
+            }
+            
+            .modal-image {
+                height: 250px;
+            }
+            
+            .card-image {
+                height: 350px;
             }
         }
 
@@ -490,15 +646,14 @@
             margin-bottom: 1.5rem;
         }
     </style>
-     <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
+    <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
 </head>
 
 <body>
     <header>
-        <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
         <div class="container">
+            <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
             <div class="header-content">
-
                 <a href="loginmermo.html" class="btn-sair">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </a>
@@ -565,7 +720,7 @@
             </div>
 
             <h3 style="color: var(--amarelo);"><i class="fas fa-plus-circle"></i> Registrar Nova Doação</h3>
-            
+
             <div class="form-container">
                 <form id="form-doacao">
                     <div class="form-group">
@@ -605,6 +760,56 @@
         </div>
     </main>
 
+    <!-- Modal para Detalhes do Produto -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" id="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon" id="modal-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h2 class="modal-title" id="modal-title">Nome do Produto</h2>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Imagem do produto" class="modal-image" id="modal-image">
+
+                <div class="modal-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Categoria</span>
+                        <span class="detail-value" id="modal-categoria">Categoria</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Preço</span>
+                        <span class="detail-value" id="modal-preco">R$ 0,00</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Quantidade em Estoque</span>
+                        <span class="detail-value" id="modal-quantidade">0 unidades</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Código</span>
+                        <span class="detail-value" id="modal-codigo">0000</span>
+                    </div>
+                </div>
+
+                <div class="stock-info">
+                    <div class="stock-title">Disponível nas seguintes localizações:</div>
+                    <div class="stock-locations" id="modal-locations">
+                        <!-- As localizações serão inseridas aqui via JavaScript -->
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Descrição</span>
+                    <p class="detail-value" id="modal-descricao">Descrição do produto.</p>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -623,7 +828,6 @@
                 <div class="footer-section">
                     <h3>Parceiros</h3>
                     <p>A procura</p>
-                    
                 </div>
             </div>
             <div class="text-center mt-2">
@@ -635,37 +839,262 @@
     <script>
         // Dados iniciais (mantidos com 5 itens)
         let medicamentos = [
-            { id: 1, nome: "Paracetamol 500mg", categoria: "analgesico", preco: 11.00, descricao: "Analgésico e antitérmico para alívio de dores e febre.", foto: "https://www.drogasil.com.br/_next/image?url=https%3A%2F%2Fproduct-data.raiadrogasil.io%2Fimages%2F3555709.webp&w=828&q=75" },
-            { id: 2, nome: "Amoxicilina 500mg", categoria: "antibiotico", preco: 15.00, descricao: "Antibiótico para tratamento de infecções bacterianas.", foto: "https://io.convertiez.com.br/m/morifarma/shop/products/images/277450/large/amoxicilina-500mg-ems-com-15-capsulas_9884.jpg" },
-            { id: 3, nome: "Ibuprofeno 400mg", categoria: "anti-inflamatorio", preco: 10.00, descricao: "Alivia dor, febre e inflamação.", foto: "https://www.drogasil.com.br/_next/image?url=https%3A%2F%2Fproduct-data.raiadrogasil.io%2Fimages%2F16727535.webp&w=3840&q=40" },
-            { id: 4, nome: "Losartana 50mg", categoria: "cardiovascular", preco: 9.90, descricao: "Tratamento para hipertensão arterial.", foto: "https://portal.riomeddistribuicao.com.br/12262-thickbox_default/losartana-potassica-50mg-30com-geolab.webp" },
-            { id: 5, nome: "Omeprazol 20mg", categoria: "gastrico", preco: 5.99, descricao: "Inibidor de bomba de prótons para refluxo e úlcera.", foto: "https://d1jgmae0hcnr1i.cloudfront.net/Custom/Content/Products/98/93/98938_omeprazol-20mg-c-56-cpr-p91645_m1_638404129072131579.webp" },
-            { id: 6, nome: "Dipirona", categoria: "Analgésico ", preco: 4.99, descricao: "Analgésico e antipirético usado para aliviar dores e reduzir febre", foto: "https://www.drogarianovaesperanca.com.br/imagens/600x600/dipirona-500mg-com-30-comprimidos-4d0eeb1305.jpg" },
-            { id: 7, nome: "Cetirizina", categoria: "anti-alérgico", preco: 8.99, descricao: "Antialérgico (antihistamínico) utilizado para tratar sintomas de rinite alérgica", foto: "https://atuafarmacia.pt/cdn/shop/files/cetirizina-bluepharma-10mg-20-comprimidos.webp?v=1687451193" },
-            { id: 8, nome: "Loratadina 10mg", categoria: "anti-alérgico", preco: 6.99, descricao: "Antialérgico para o alívio de sintomas de rinite e urticária.", foto: "https://i3-imagens-prd.araujo.com.br/webp/79069/134394_7896714213040_1.webp" },
-            { id: 9, nome: "Metformina", categoria: "gastrico", preco: 7.99, descricao: "Medicamento oral usado no tratamento do diabetes tipo 2.", foto: "https://d1jgmae0hcnr1i.cloudfront.net/Custom/Content/Products/98/93/98938_omeprazol-20mg-c-56-cpr-p91645_m1_638404129072131579.webp" },
-            { id: 10, nome: "Salbutamol", categoria: "gastrico", preco: 8.99, descricao: "Broncodilatador usado em crises de asma ou bronquite.", foto: "https://portal.riomeddistribuicao.com.br/13129-thickbox_default/salbutamol-xarope-04mg-ml-120ml-geolab.webp" },
+            {
+                id: 1,
+                nome: "Paracetamol 500mg",
+                categoria: "analgesico",
+                preco: 11.00,
+                descricao: "Analgésico e antitérmico para alívio de dores e febre.",
+                foto: "Sours/paracetamol.webp",
+                quantidade: 150,
+                localizacoes: ["Hospital Estrela Polar", "Farmácia Erva Doce"]
+            },
+            {
+                id: 2,
+                nome: "Amoxicilina 500mg",
+                categoria: "antibiotico",
+                preco: 15.00,
+                descricao: "Antibiótico para tratamento de infecções bacterianas.",
+                foto: "Sours/amoxicilina.jpg",
+                quantidade: 80,
+                localizacoes: ["Maternidade Ninho da Esperança", "Drogaria Apolo"]
+            },
+            {
+                id: 3,
+                nome: "Ibuprofeno 400mg",
+                categoria: "anti-inflamatorio",
+                preco: 10.00,
+                descricao: "Alivia dor, febre e inflamação.",
+                foto: "Sours/ibuprofeno.webp",
+                quantidade: 120,
+                localizacoes: ["Centro Médico Guardião da Serra", "Farmácia Botica Central"]
+            },
+            {
+                id: 4,
+                nome: "Losartana 50mg",
+                categoria: "cardiovascular",
+                preco: 9.90,
+                descricao: "Tratamento para hipertensão arterial.",
+                foto: "Sours/losartana.webp",
+                quantidade: 95,
+                localizacoes: ["Hospital Universitário Arcanjo Rafael", "Drogaria Bem-Estar"]
+            },
+            {
+                id: 5,
+                nome: "Omeprazol 20mg",
+                categoria: "gastrico",
+                preco: 5.99,
+                descricao: "Inibidor de bomba de prótons para refluxo e úlcera.",
+                foto: "Sours/omeprazol.webp",
+                quantidade: 200,
+                localizacoes: ["Instituto Ortopédico Vila Nova", "Farmácia Gota Mágica"]
+            },
+            {
+                id: 6,
+                nome: "Dipirona",
+                categoria: "Analgésico",
+                preco: 4.99,
+                descricao: "Analgésico e antipirético usado para aliviar dores e reduzir febre",
+                foto: "Sours/dipirona.jpg",
+                quantidade: 180,
+                localizacoes: ["Clínica de Repouso Beira-Mar", "Drogaria Anjo da Guarda"]
+            },
+            {
+                id: 7,
+                nome: "Cetirizina",
+                categoria: "anti-alérgico",
+                preco: 8.99,
+                descricao: "Antialérgico (antihistamínico) utilizado para tratar sintomas de rinite alérgica",
+                foto: "Sours/cetirizina.webp",
+                quantidade: 60,
+                localizacoes: ["Hospital Luz do Amanhecer", "Farmácia Raízes da Terra"]
+            },
+            {
+                id: 8,
+                nome: "Loratadina 10mg",
+                categoria: "anti-alérgico",
+                preco: 6.99,
+                descricao: "Antialérgico para o alívio de sintomas de rinite e urticária.",
+                foto: "Sours/loratadina.webp",
+                quantidade: 75,
+                localizacoes: ["Pronto-Socorro Cruz Dourada", "Drogaria Super Saudável"]
+            },
+            {
+                id: 9,
+                nome: "Metformina",
+                categoria: "gastrico",
+                preco: 7.99,
+                descricao: "Medicamento oral usado no tratamento do diabetes tipo 2.",
+                foto: "Sours/metformina.webp",
+                quantidade: 110,
+                localizacoes: ["Hospital Geral Ponte dos Ventos", "Farmácia Quatro Estações"]
+            },
+            {
+                id: 10,
+                nome: "Salbutamol",
+                categoria: "gastrico",
+                preco: 8.99,
+                descricao: "Broncodilatador usado em crises de asma ou bronquite.",
+                foto: "Sours/salbutamol.webp",
+                quantidade: 45,
+                localizacoes: ["Centro de Cardiologia Coração Vivo", "Drogaria Ponto de Cura"]
+            },
         ];
 
         let alimentos = [
-            { id: 11, nome: "Arroz", categoria: "Alimento", preco: 10.00, descricao: "Fonte primária de carboidratos em muitas culturas, é energético e fácil de preparar", foto: "https://www.arenaatacado.com.br/on/demandware.static/-/Sites-storefront-catalog-sv/default/dw2d3d50da/Produtos/535311-7896290300714-arroz%20tipo%201%20integral%20prato%20fino%20pacote%201kg-prato%20fino-1.jpg" },
-            { id: 12, nome: "Feijão", categoria: "ALimento", preco: 8.50, descricao: "Rico em proteínas vegetais, fibras, ferro e outros minerais.", foto: "https://ibassets.com.br/ib.item.image.large/l-b15349c79e694c919b8d0e86514a5c24.jpeg" },
-            { id: 13, nome: "Pão", categoria: "Alimento", preco: 4.00, descricao: "Fonte rápida de carboidratos.", foto: "https://www.distribuidoracaue.com.br/media/catalog/product/cache/a65d2b67834c4584ec9c01d883900305/p/_/p_o_de_forma_visconti.jpg" },
-            { id: 14, nome: "Leite", categoria: "Bebida", preco: 2.50, descricao: "Rico em cálcio, proteínas e vitaminas.", foto: "https://phygital-files.mercafacil.com/catalogo/uploads/produto/leite_uht_integral_piracanjuba_caixa_com_tampa_1l_3eb13313-6dc6-4333-9356-a27464fd69b5.jpg" },
-            { id: 15, nome: "Ovo", categoria: "Comida", preco: 9.90, descricao: "Alimento acessível, rico em proteínas, gorduras boas e vários micronutrientes.", foto: "https://tauste.com.br/media/catalog/product/cache/85088212981f4c4416a405773fd6849a/1/3/1313121758079068.jpg" },
-            { id: 16, nome: "Batata", categoria: "Comida", preco: 8.90, descricao: "Fonte de carboidratos, potássio e fibras.", foto: "https://www.petz.com.br/blog/wp-content/uploads/2022/08/como-plantar-batata.jpg" },
-            { id: 17, nome: "Carnes(Bovina, Frango e Peixes)", categoria: "Comida", preco: 9.90, descricao: "onte importante de proteína completa, ferro e vitamina B12.", foto: "https://static.todamateria.com.br/upload/ca/rn/carnes.jpg" },
-            { id: 18, nome: "Macarrão", categoria: "Comida", preco: 7.90, descricao: "Alimento feito geralmente de trigo, é uma fonte de carboidrato e muito versátil", foto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZV1zqLBigQ6uDXDd14rqHVUAODrvNBaEA9g&s" },
-            { id: 19, nome: "Banana", categoria: "Comida", preco: 5.90, descricao: "Fruta rica em potássio, carboidratos e fibras.", foto: "https://www.hortifrutiorganico.com.br/121-large_default/banana-organica-prata-1-kg.jpg" },
-            { id: 20, nome: "Tomate", categoria: "Comida", preco: 4.90, descricao: "Muito usado em saladas, molhos e cozidos.", foto: "https://52586.cdn.lojaquevende.com.br/static/52586/sku/legumes-Tomate-Andrea-1586283695804.png" },
+            {
+                id: 11,
+                nome: "Arroz",
+                categoria: "Alimento",
+                preco: 10.00,
+                descricao: "Fonte primária de carboidratos em muitas culturas, é energético e fácil de preparar",
+                foto: "Sours/arroz.jpg",
+                quantidade: 500,
+                localizacoes: ["Supermercado O Gigante"]
+            },
+            {
+                id: 12,
+                nome: "Feijão",
+                categoria: "Alimento",
+                preco: 8.50,
+                descricao: "Rico em proteínas vegetais, fibras, ferro e outros minerais.",
+                foto: "Sours/feijão.jpeg",
+                quantidade: 350,
+                localizacoes: ["Mercado Sabor da Terra"]
+            },
+            {
+                id: 13,
+                nome: "Pão",
+                categoria: "Alimento",
+                preco: 4.00,
+                descricao: "Fonte rápida de carboidratos.",
+                foto: "Sours/pão.png",
+                quantidade: 100,
+                localizacoes: ["Supermercado Econômico do Bairro"]
+            },
+            {
+                id: 14,
+                nome: "Leite",
+                categoria: "Bebida",
+                preco: 2.50,
+                descricao: "Rico em cálcio, proteínas e vitaminas.",
+                foto: "Sours/leite.jpg",
+                quantidade: 200,
+                localizacoes: ["Mercado Leve Mais"]
+            },
+            {
+                id: 15,
+                nome: "Ovo",
+                categoria: "Comida",
+                preco: 9.90,
+                descricao: "Alimento acessível, rico em proteínas, gorduras boas e vários micronutrientes.",
+                foto: "Sours/ovo.jpeg",
+                quantidade: 300,
+                localizacoes: ["Supermercado O Cesta Cheia"]
+            },
+            {
+                id: 16,
+                nome: "Batata",
+                categoria: "Comida",
+                preco: 8.90,
+                descricao: "Fonte de carboidratos, potássio e fibras.",
+                foto: "Sours/batata.jpg",
+                quantidade: 250,
+                localizacoes: ["Hortifrúti & Empório Central"]
+            },
+            {
+                id: 17,
+                nome: "Carnes(Bovina, Frango e Peixes)",
+                categoria: "Comida",
+                preco: 9.90,
+                descricao: "Fonte importante de proteína completa, ferro e vitamina B12.",
+                foto: "Sours/carne.jpg",
+                quantidade: 150,
+                localizacoes: ["Mercado Ponto Fresco"]
+            },
+            {
+                id: 18,
+                nome: "Macarrão",
+                categoria: "Comida",
+                preco: 7.90,
+                descricao: "Alimento feito geralmente de trigo, é uma fonte de carboidrato e muito versátil",
+                foto: "Sours/macarrão.png",
+                quantidade: 400,
+                localizacoes: ["Supermercado Novo Horizonte"]
+            },
+            {
+                id: 19,
+                nome: "Banana",
+                categoria: "Comida",
+                preco: 5.90,
+                descricao: "Fruta rica em potássio, carboidratos e fibras.",
+                foto: "Sours/banana.jpg",
+                quantidade: 180,
+                localizacoes: ["Mercado Qualidade Total"]
+            },
+            {
+                id: 20,
+                nome: "Tomate",
+                categoria: "Comida",
+                preco: 4.90,
+                descricao: "Muito usado em saladas, molhos e cozidos.",
+                foto: "Sours/tomate.png",
+                quantidade: 220,
+                localizacoes: ["Supermercado Bom Preço"]
+            },
         ];
 
         let produtosVariados = [
-            { id: 21, nome: "Shampoo Sólido Natural", categoria: "beleza", preco: 10.00, descricao: "Vegano, sem sulfato, zero plástico.", foto: "https://cdn.awsli.com.br/2500x2500/2081/2081619/produto/150894966/sabonaria--2--0onb5z1bwt.jpg" },
-            { id: 22, nome: "Moletom", categoria: "Roupa", preco: 17.50, descricao: "Ótimo para o frio", foto: "https://akapanda.com.br/wp-content/uploads/2023/05/capa-moletom-canguru-com-capuz-moletom-moletom-branco-moletom-feminino-moletom-preto-moletom-roxo-moletom-vermelho-moletons-aka-panda.jpg" },
-            { id: 23, nome: "Sabonete Artesanal", categoria: "higiene", preco: 7.00, descricao: "Com extratos naturais e óleo de coco.", foto: "https://www.artesanatopassoapassoja.com.br/wp-content/uploads/2021/08/embalagens-para-sabonetes-artesanais.jpg" },
-            { id: 24, nome: "Protetor Solar FPS 50", categoria: "beleza", preco: 8.90, descricao: "Fórmula não oleosa, proteção UVA/UVB.", foto: "https://lojacoty.vteximg.com.br/arquivos/ids/189910-1000-1000/7896108560330_1.jpg?v=638702082513700000" },
-            { id: 25, nome: "Escova de Dentes Bambu", categoria: "higiene", preco: 4.90, descricao: "Alternativa sustentável para higiene bucal.", foto: "https://cdn.awsli.com.br/2626/2626263/produto/228017591eea08192de.jpg" },
+            {
+                id: 21,
+                nome: "Shampoo Sólido Natural",
+                categoria: "beleza",
+                preco: 10.00,
+                descricao: "Vegano, sem sulfato, zero plástico.",
+                foto: "Sours/shampoo.webp",
+                quantidade: 80,
+                localizacoes: ["Setor de Higiene"]
+            },
+            {
+                id: 22,
+                nome: "Moletom",
+                categoria: "Roupa",
+                preco: 17.50,
+                descricao: "Ótimo para o frio",
+                foto: "Sours/moletom.jpeg",
+                quantidade: 50,
+                localizacoes: ["Setor de Roupas"]
+            },
+            {
+                id: 23,
+                nome: "Sabonete Artesanal",
+                categoria: "higiene",
+                preco: 7.00,
+                descricao: "Com extratos naturais e óleo de coco.",
+                foto: "Sours/sabonete.jpg",
+                quantidade: 120,
+                localizacoes: ["Setor de Higiene"]
+            },
+            {
+                id: 24,
+                nome: "Protetor Solar FPS 50",
+                categoria: "beleza",
+                preco: 8.90,
+                descricao: "Fórmula não oleosa, proteção UVA/UVB.",
+                foto: "Sours/protetor.webp",
+                quantidade: 65,
+                localizacoes: ["Setor de Cosméticos "]
+            },
+            {
+                id: 25,
+                nome: "Escova de Dentes Bambu",
+                categoria: "higiene",
+                preco: 4.90,
+                descricao: "Alternativa sustentável para higiene bucal.",
+                foto: "Sours/escova.webp",
+                quantidade: 90,
+                localizacoes: ["Setor de Higiene "]
+            },
         ];
 
         let doacoes = [
@@ -685,6 +1114,18 @@
             { id: 36, assunto: "Bem prático e fácil de usar", prioridade: "Baixa", nome: "Luis Antonio", data: "20/10/2025", status: "Novo", icone: "fas fa-smile" },
         ];
 
+        // Elementos do Modal
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalClose = document.getElementById('modal-close');
+        const modalTitle = document.getElementById('modal-title');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalImage = document.getElementById('modal-image');
+        const modalCategoria = document.getElementById('modal-categoria');
+        const modalPreco = document.getElementById('modal-preco');
+        const modalQuantidade = document.getElementById('modal-quantidade');
+        const modalCodigo = document.getElementById('modal-codigo');
+        const modalDescricao = document.getElementById('modal-descricao');
+        const modalLocations = document.getElementById('modal-locations');
 
         // Funções de Renderização
         function renderizarMedicamentos() {
@@ -694,6 +1135,8 @@
             medicamentos.forEach(medicamento => {
                 const card = document.createElement('div');
                 card.className = 'card card-medicamentos';
+                card.setAttribute('data-id', medicamento.id);
+                card.setAttribute('data-tipo', 'medicamento');
                 card.innerHTML = `
                     <img src="${medicamento.foto}" alt="${medicamento.nome}" class="card-image">
                     <div class="card-content">
@@ -702,11 +1145,15 @@
                         <div class="card-categoria">${formatarCategoriaMedicamento(medicamento.categoria)}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${medicamento.preco.toFixed(2)}</div>
-                            
                         </div>
                     </div>
                 `;
                 gridMedicamentos.appendChild(card);
+
+                // Adicionar evento de clique para abrir o modal
+                card.addEventListener('click', () => {
+                    abrirModal(medicamento, 'medicamento');
+                });
             });
         }
 
@@ -717,6 +1164,8 @@
             alimentos.forEach(alimento => {
                 const card = document.createElement('div');
                 card.className = 'card card-alimentos';
+                card.setAttribute('data-id', alimento.id);
+                card.setAttribute('data-tipo', 'alimento');
                 card.innerHTML = `
                     <img src="${alimento.foto}" alt="${alimento.nome}" class="card-image">
                     <div class="card-content">
@@ -725,11 +1174,15 @@
                         <div class="card-categoria categoria-laranja">${alimento.categoria}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${alimento.preco.toFixed(2)}</div>
-                            
                         </div>
                     </div>
                 `;
                 gridAlimentos.appendChild(card);
+
+                // Adicionar evento de clique para abrir o modal
+                card.addEventListener('click', () => {
+                    abrirModal(alimento, 'alimento');
+                });
             });
         }
 
@@ -740,6 +1193,8 @@
             produtosVariados.forEach(produto => {
                 const card = document.createElement('div');
                 card.className = 'card card-variados';
+                card.setAttribute('data-id', produto.id);
+                card.setAttribute('data-tipo', 'produto-variado');
                 card.innerHTML = `
                     <img src="${produto.foto}" alt="${produto.nome}" class="card-image">
                     <div class="card-content">
@@ -748,11 +1203,15 @@
                         <div class="card-categoria categoria-roxo">${produto.categoria}</div>
                         <div class="card-info">
                             <div class="card-preco">R$ ${produto.preco.toFixed(2)}</div>
-                            
                         </div>
                     </div>
                 `;
                 gridVariados.appendChild(card);
+
+                // Adicionar evento de clique para abrir o modal
+                card.addEventListener('click', () => {
+                    abrirModal(produto, 'produto-variado');
+                });
             });
         }
 
@@ -770,7 +1229,6 @@
                         <div class="card-categoria">${doacao.quantidade}</div>
                         <div class="card-info">
                             <div>${doacao.data}</div>
-                            
                         </div>
                     </div>
                 `;
@@ -792,13 +1250,70 @@
                         <div class="card-categoria" style="background-color: ${getCorPrioridade(feedback.prioridade)}; color: white;">${feedback.prioridade}</div>
                         <div class="card-info">
                             <div>${feedback.data}</div>
-                           
                         </div>
                     </div>
                 `;
                 gridFeedback.appendChild(card);
             });
         }
+
+        // Função para abrir o modal com os detalhes do produto
+        function abrirModal(produto, tipo) {
+            // Definir ícone baseado no tipo
+            let iconClass = 'fas fa-box';
+            if (tipo === 'medicamento') iconClass = 'fas fa-pills';
+            if (tipo === 'alimento') iconClass = 'fas fa-apple-alt';
+            if (tipo === 'produto-variado') iconClass = 'fas fa-box-open';
+
+            // Preencher os dados do modal
+            modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
+            modalTitle.textContent = produto.nome;
+            modalImage.src = produto.foto;
+            modalImage.alt = produto.nome;
+            modalCategoria.textContent = formatarCategoriaMedicamento(produto.categoria);
+            modalPreco.textContent = `R$ ${produto.preco.toFixed(2)}`;
+            modalQuantidade.textContent = `${produto.quantidade} unidades`;
+            modalCodigo.textContent = `#${produto.id.toString().padStart(4, '0')}`;
+            modalDescricao.textContent = produto.descricao;
+
+            // Limpar e preencher as localizações
+            modalLocations.innerHTML = '';
+            if (produto.localizacoes && produto.localizacoes.length > 0) {
+                produto.localizacoes.forEach(local => {
+                    const locationTag = document.createElement('span');
+                    locationTag.className = 'location-tag';
+                    locationTag.textContent = local;
+                    modalLocations.appendChild(locationTag);
+                });
+            } else {
+                modalLocations.innerHTML = '<span class="location-tag">Sem localização definida</span>';
+            }
+
+            // Mostrar o modal
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Impede rolagem da página
+        }
+
+        // Fechar o modal
+        function fecharModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto'; // Restaura rolagem da página
+        }
+
+        // Event Listeners para o modal
+        modalClose.addEventListener('click', fecharModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                fecharModal();
+            }
+        });
+
+        // Fechar modal com a tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                fecharModal();
+            }
+        });
 
         // Funções Auxiliares
         function formatarCategoriaMedicamento(categoria) {
@@ -819,42 +1334,6 @@
                 'Alta': '#f44336'
             };
             return cores[prioridade] || '#66bb6a';
-        }
-
-        // Funções de Exclusão
-        function excluirMedicamento(id) {
-            if (confirm('Tem certeza que deseja excluir este medicamento?')) {
-                medicamentos = medicamentos.filter(med => med.id !== id);
-                renderizarMedicamentos();
-            }
-        }
-
-        function excluirAlimento(id) {
-            if (confirm('Tem certeza que deseja excluir este alimento?')) {
-                alimentos = alimentos.filter(ali => ali.id !== id);
-                renderizarAlimentos();
-            }
-        }
-
-        function excluirProdutoVariado(id) {
-            if (confirm('Tem certeza que deseja excluir este produto?')) {
-                produtosVariados = produtosVariados.filter(prod => prod.id !== id);
-                renderizarProdutosVariados();
-            }
-        }
-
-        function excluirDoacao(id) {
-            if (confirm('Tem certeza que deseja excluir este registro de doação?')) {
-                doacoes = doacoes.filter(doa => doa.id !== id);
-                renderizarDoacoes();
-            }
-        }
-
-        function excluirFeedback(id) {
-            if (confirm('Tem certeza que deseja excluir este feedback?')) {
-                feedbacks = feedbacks.filter(fb => fb.id !== id);
-                renderizarFeedbacks();
-            }
         }
 
         // Sistema de Abas
