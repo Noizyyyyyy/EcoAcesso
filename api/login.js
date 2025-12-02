@@ -1,74 +1,89 @@
 import { createClient } from '@supabase/supabase-js';
-import jwt from 'jsonwebtoken';
 
 // 1. Variáveis de ambiente
-// IMPORTANTE: Use a URL e a chave de serviço (service_key) do Supabase para segurança
+// Use a chave pública (anon key) para operações de autenticação do lado do cliente.
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY; // Chave de serviço (service_role)
-const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta_muito_segura'; // Chave secreta para assinar o token
+const SUPABASE_KEY = process.env.SUPABASE_KEY; // Chave pública (anon key)
 
-// 2. Inicialização do Supabase
+// Expressão Regular para validação de formato de e-mail
+const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// Declara a variável supabase no escopo do módulo para reutilização
 let supabase = null;
-try {
-    // Para autenticação e manipulação de usuários, a chave de serviço é preferível para o backend.
-    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-} catch (e) {
-    console.error("Erro ao inicializar Supabase. Verifique as credenciais.");
-}
 
-/**
- * Endpoint de Login
- * @param {object} req - O objeto de requisição (contém e-mail e senha no body).
- * @param {object} res - O objeto de resposta.
- */
-export default async function loginHandler(req, res) {
+// Exporta a função Serverless principal
+export default async (req, res) => {
+    // 1. Apenas aceite requisições POST
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Método não permitido.' });
+        return res.status(405).json({ error: "Método não permitido. Apenas POST é aceito." });
     }
 
-    const { email, senha } = req.body;
-
-    if (!email || !senha) {
-        return res.status(400).json({ message: 'E-mail e senha são obrigatórios.' });
+    // 2. Inicialização e Verificação de Configuração
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: As variáveis SUPABASE_URL ou SUPABASE_KEY não foram encontradas.");
+        return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
     }
 
+    // Inicializa o cliente Supabase se ainda não foi inicializado
     if (!supabase) {
-        return res.status(500).json({ message: 'Falha na conexão com o banco de dados.' });
+        try {
+            // Usa a chave pública para login
+            supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error("Erro ao inicializar o cliente Supabase:", e.message);
+            return res.status(500).json({ error: "Falha na conexão com o banco de dados. Verifique o URL e a Chave." });
+        }
     }
 
+    let data;
     try {
-        // 3. Autenticação via Supabase Auth
-        // Nota: O Supabase lida com o hashing e a comparação da senha internamente.
-        const { data, error } = await supabase.auth.signInWithPassword({ 
-            email: email, 
-            password: senha 
+        data = req.body; 
+    } catch (e) {
+        return res.status(400).json({ error: "Corpo da requisição deve ser JSON válido." });
+    }
+
+    // 3. Extrai e valida os dados de login
+    const { email, senha } = data;
+    
+    // Validação de campos obrigatórios
+    if (!email || !senha) {
+        return res.status(400).json({ error: "Email e Senha são obrigatórios para o login." });
+    }
+
+    // Validação de formato de E-mail
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "O formato do e-mail é inválido." });
+    }
+    
+    // 4. Realiza o Login com o serviço de Autenticação do Supabase
+    try {
+        const { data: authData, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: senha,
         });
 
         if (error) {
-            console.error("Erro na autenticação Supabase:", error);
-            // 401 Unauthorized para credenciais inválidas
-            return res.status(401).json({ message: 'E-mail ou senha inválidos.' });
+            console.error('Erro de Supabase Auth Login:', error);
+
+            // Supabase Auth retorna 400 ou 401 para credenciais inválidas.
+            return res.status(401).json({ 
+                error: "Credenciais inválidas.", 
+                message: "Email ou senha incorretos, ou usuário não confirmado.",
+                details: error.message
+            });
         }
         
-        // Se a autenticação foi bem-sucedida (data.user existe)
-        const user = data.user;
-        
-        // 4. Gera um JWT para manter o estado de login no frontend (opcional, mas boa prática)
-        const payload = {
-            id: user.id,
-            email: user.email,
-        };
-        const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }); 
-
-        // 5. Retorna sucesso e o token para o frontend
-        return res.status(200).json({ 
-            message: 'Login realizado com sucesso.',
-            token: token,
-            user_id: user.id
+        // 5. Resposta de sucesso (Status 200: OK)
+        // O token de sessão e os dados do usuário são retornados,
+        // permitindo que o cliente armazene a sessão.
+        res.status(200).json({ 
+            message: "Login realizado com sucesso!", 
+            user: authData.user,
+            session: authData.session
         });
 
-    } catch (error) {
-        console.error('Erro interno do servidor:', error);
-        return res.status(500).json({ message: 'Erro interno do servidor.' });
+    } catch (e) {
+        console.error('Erro interno do servidor durante o login:', e);
+        return res.status(500).json({ error: "Falha interna ao processar o login." });
     }
-}
+};
