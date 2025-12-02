@@ -1,206 +1,111 @@
-import { createClient } from '@supabase/supabase-js';
+// =========================================================================
+// 1. CONFIGURAÇÃO DO SUPABASE
+// IMPORTANTE: Você deve substituir estas chaves pelas suas chaves reais do Supabase!
+// Elas podem ser encontradas nas configurações do seu projeto Supabase (Settings -> API)
+// =========================================================================
+const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co'; // Ex: https://abcdefg1234.supabase.co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8'; // Ex: eyJhbGciOiJIUzI1NiI...
 
-// ATENÇÃO CRÍTICA: 
-// 1. Em um ambiente de backend (como uma função serverless), você DEVE usar a 
-//    CHAVE DE SERVIÇO (SERVICE_ROLE KEY), pois ela tem permissão para ignorar as 
-//    regras de RLS (Row Level Security) e realizar o `auth.signUp` de forma segura.
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY; 
+// Inicializa o cliente Supabase (usa o objeto 'supabase' globalmente injetado pelo script na tag HTML)
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Expressão Regular para validação de formato de e-mail
-const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+// =========================================================================
+// 2. REFERÊNCIAS AO DOM
+// =========================================================================
+const form = document.getElementById('signup-form');
+const messageArea = document.getElementById('message-area');
+const submitButton = document.getElementById('submit-button');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
 
-let supabase = null;
+// =========================================================================
+// 3. FUNÇÕES AUXILIARES
+// =========================================================================
 
 /**
- * Função de validação de CPF
+ * Exibe uma mensagem de feedback na interface.
+ * @param {string} text - O texto da mensagem a ser exibida.
+ * @param {boolean} isError - Se a mensagem é um erro (usa cores vermelhas) ou sucesso (usa cores verdes).
  */
-function isValidCPF(cpf) {
-    if (!cpf) return false;
-    cpf = cpf.replace(/[^\d]/g, "");
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-
-    let sum = 0;
-    let remainder;
-
-    for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
-    remainder = (sum * 10) % 11;
-
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
-
-    sum = 0;
-    for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
-    remainder = (sum * 10) % 11;
-
-    if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+function showMessage(text, isError = false) {
+    messageArea.textContent = text;
+    // Remove todas as classes de estado e esconde/mostra conforme necessário
+    messageArea.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
     
-    return true;
+    if (isError) {
+        messageArea.classList.add('bg-red-100', 'text-red-700');
+    } else {
+        messageArea.classList.add('bg-green-100', 'text-green-700');
+    }
 }
 
-// Exporta a função Serverless principal
-export default async (req, res) => {
-    // 1. Apenas aceite requisições POST
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: "Método não permitido. Apenas POST é aceito." });
+// =========================================================================
+// 4. LÓGICA DE REGISTRO
+// =========================================================================
+
+/**
+ * Lida com o evento de submissão do formulário, realiza o registro no Supabase e gerencia o feedback visual.
+ * @param {Event} event - O objeto de evento de submissão.
+ */
+async function handleSignUp(event) {
+    event.preventDefault(); // Impede o recarregamento da página
+
+    // Desabilita o botão e mostra que está processando
+    submitButton.disabled = true;
+    submitButton.textContent = 'A Processar...';
+    messageArea.classList.add('hidden'); // Esconde a mensagem anterior
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        showMessage('Por favor, preencha o e-mail e a senha.', true);
+        submitButton.disabled = false;
+        submitButton.textContent = 'Registrar e Enviar Confirmação';
+        return;
     }
 
-    // 2. Inicialização e Verificação de Configuração
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: A Chave de Serviço (SUPABASE_SERVICE_KEY) não foi encontrada. É obrigatória para operações de Auth no backend.");
-        return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
-    }
-
-    // Inicializa o cliente Supabase com a CHAVE DE SERVIÇO
-    if (!supabase) {
-        try {
-            supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-        } catch (e) {
-            console.error("Erro ao inicializar o cliente Supabase:", e.message);
-            return res.status(500).json({ error: "Falha na conexão com o banco de dados. Verifique o URL e a Chave de Serviço." });
-        }
-    }
-
-    let data;
     try {
-        data = req.body; 
-    } catch (e) {
-        return res.status(400).json({ error: "Corpo da requisição deve ser JSON válido." });
-    }
-
-    // 3. Extrai e valida os dados
-    const { 
-        nome, 
-        email, 
-        senha, 
-        cpf: rawCpf, 
-        data_nascimento,
-        genero,
-        telefone,
-        cep,
-        logradouro,
-        numero,
-        bairro,
-        cidade,
-        estado,
-        interesses,
-        receber_newsletter,
-        receber_eventos,
-        termos_aceitos 
-    } = data;
-    
-    // Validações
-    if (!nome || !email || !senha || !rawCpf || !termos_aceitos) {
-        return res.status(400).json({ error: "Campos obrigatórios (Nome, E-mail, Senha, CPF, Termos) não preenchidos." });
-    }
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: "O formato do e-mail é inválido." });
-    }
-    if (senha.length < 6) {
-        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres." });
-    }
-    const cleanCpf = rawCpf.replace(/\D/g, ''); 
-    if (!isValidCPF(cleanCpf)) {
-        return res.status(400).json({ error: "O CPF fornecido é inválido. Por favor, verifique." });
-    }
-
-    let interessesArray = null;
-    if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
-        // Converte a string de interesses separada por vírgula em um array
-        interessesArray = interesses.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        if (interessesArray.length === 0) {
-             interessesArray = null;
-        }
-    }
-
-
-    // =========================================================
-    // 4. PASSO CRUCIAL: CRIA O USUÁRIO NO SISTEMA DE AUTENTICAÇÃO
-    //    Isto criptografa a senha e armazena de forma segura.
-    // =========================================================
-    let authUser = null;
-    let authError = null;
-    
-    try {
-        const { data: authData, error } = await supabase.auth.signUp({
+        // Chama a API de autenticação do Supabase.
+        const { data, error } = await supabase.auth.signUp({
             email: email,
-            password: senha, // A senha é criptografada e salva aqui.
-            options: { data: { full_name: nome } }
+            password: password,
+            options: {
+                // URL de redirecionamento após o clique no link do e-mail (usamos o domínio atual)
+                emailRedirectTo: window.location.origin 
+            }
         });
 
-        authError = error;
-        authUser = authData.user;
-
-    } catch (e) {
-        console.error('Erro de servidor ao tentar signUp:', e);
-        return res.status(500).json({ message: "Falha interna ao criar conta de autenticação." });
-    }
-    
-    if (authError) {
-        console.error('Erro de Supabase Auth SignUp:', authError);
-        if (authError.message.includes('already registered')) {
-            return res.status(409).json({ message: "O e-mail já está cadastrado. Por favor, utilize outro." });
+        if (error) {
+            // Trata erros da API
+            console.error('Erro de Registro:', error);
+            showMessage(`Erro ao registrar: ${error.message}.`, true);
+        } else if (data.user && !data.session) {
+            // Sucesso: O usuário foi criado, mas a sessão não foi iniciada (confirmação por e-mail pendente)
+            showMessage(
+                'Sucesso! Verifique a sua caixa de e-mail (e a pasta de SPAM) para o link de confirmação.',
+                false
+            );
+            // Limpa o formulário após o sucesso
+            form.reset();
+        } else {
+             // Caso a confirmação por e-mail não esteja ativada no Supabase.
+             showMessage('Sucesso no registro e login!', false);
         }
-        return res.status(500).json({ message: authError.message || "Erro no serviço de autenticação." });
-    }
-    
-    // Se precisar de confirmação de e-mail (configurado no Supabase), a resposta é 202.
-    // O usuário é criado, mas não está logado automaticamente.
-    if (!authUser || !authUser.id) {
-        return res.status(202).json({ 
-            message: "Conta de login criada. Verifique seu e-mail para confirmar o cadastro e, em seguida, faça o login.", 
-            email: email 
-        });
-    }
 
-    // ========================================================
-    // 5. INSERE O PERFIL NO BANCO DE DADOS USANDO O ID DE AUTH
-    // ========================================================
-    const cadastroData = {
-        // CHAVE ESTRANGEIRA OBRIGATÓRIA: Liga o perfil à conta de login segura
-        user_id: authUser.id, 
-        
-        // Dados de perfil
-        nome_completo: nome,
-        email: email,
-        // *** NÃO HÁ CAMPO 'senha' AQUI *** A senha está armazenada criptografada no Auth Service.
-        cpf: cleanCpf,
-        
-        data_nascimento: data_nascimento || null, 
-        genero: genero || null,
-        
-        telefone: telefone ? telefone.replace(/\D/g, '') : null,
-        cep: cep ? cep.replace(/\D/g, '') : null,
-        logradouro: logradouro || null,
-        numero: numero || null,
-        bairro: bairro || null,
-        cidade: cidade || null,
-        estado: estado || null,
-        
-        interesses: interessesArray, // Array de strings
-        receber_newsletter: receber_newsletter || false,
-        receber_eventos: receber_eventos || false,
-        termos_aceitos: termos_aceitos, 
-        email_confirmado: authUser.email_confirmed_at ? true : false // Opcional: reflete o status do Auth
-    };
-    
-    const { error: dbError } = await supabase
-        .from('cadastro') 
-        .insert([cadastroData]);
-
-    if (dbError) {
-        console.error('Erro ao inserir perfil na tabela "cadastro". O usuário no Auth foi criado, mas o perfil falhou. Você deve limpar o usuário no Auth se isso for crítico:', dbError);
-        
-        return res.status(500).json({ 
-            message: "Conta de login criada, mas falha ao salvar dados de perfil. Tente fazer login mais tarde ou contate o suporte.", 
-            details: dbError.message 
-        });
+    } catch (err) {
+        console.error('Erro geral inesperado:', err);
+        showMessage('Ocorreu um erro inesperado. Tente novamente.', true);
+    } finally {
+        // Restaura o botão
+        submitButton.disabled = false;
+        submitButton.textContent = 'Registrar e Enviar Confirmação';
     }
+}
 
-    // 6. Resposta de sucesso (Status 201: Created)
-    res.status(201).json({ 
-        message: "Usuário e perfil cadastrados com sucesso! Agora você pode usar o endpoint de login.", 
-        user_id: authUser.id 
-    });
-};
+// =========================================================================
+// 5. EVENT LISTENERS
+// =========================================================================
+
+// Adiciona o listener ao formulário
+form.addEventListener('submit', handleSignUp);
