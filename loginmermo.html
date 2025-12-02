@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Login</title>
-    <!-- Substituindo Tailwind e Font-Awesome para simplificar em um único arquivo -->
+    <!-- Carregamento do Tailwind CSS e Font Awesome para estilos e ícones -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -25,13 +25,7 @@
             --verde-muito-claro: #c8e6c9;
             --verde-super-claro: #e8f5e9;
             --branco: #ffffff;
-            --cinza-claro: #f5f5f5;
             --cinza-escuro: #424242;
-            --amarelo: #ffeb3b;
-            --laranja: #ff9800;
-            --azul: #2196f3;
-            --marrom-claro: #d7ccc8;
-            --marrom: #8d6e63;
         }
 
         body {
@@ -45,22 +39,19 @@
             padding: 1.5rem;
         }
 
-        /* Container principal centralizado - AJUSTADO PARA LOGIN */
         .main-container {
             width: 100%;
             max-width: 500px;
-            /* Mais estreito para um formulário de login */
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* CABEÇALHO ATUALIZADO - Design mais orgânico */
+        /* CABEÇALHO ATUALIZADO */
         header {
             background: linear-gradient(135deg, #3e8e41, #2e7d32, #1b5e20);
             color: var(--branco);
             padding: 0;
-            /* MUDANÇA: Padding removido para o banner preencher */
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             border-radius: 18px;
             margin-bottom: 2rem;
@@ -68,23 +59,20 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            /* MUDANÇA: Garante que o banner respeite o border-radius */
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         /* ESTILO PARA O BANNER (IMAGEM) */
         .header-banner {
             width: 100%;
-            /* Ocupa a largura total do header */
             height: auto;
-            /* Mantém a proporção */
             display: block;
             object-fit: cover;
-            border-radius: 18px 18px 0 0; /* Arredondamento apenas no topo */
-            min-height: 150px; /* Para o placeholder */
+            border-radius: 18px 18px 0 0;
+            min-height: 150px;
         }
 
-        /* Efeito de textura orgânica no cabeçalho */
+        /* Efeito de textura orgânica no cabeçalho (melhorado) */
         header::before {
             content: '';
             position: absolute;
@@ -97,88 +85,8 @@
                 radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 2%, transparent 10%);
             background-size: 300px 300px;
             z-index: 1;
-            /* **OBS: O banner (z-index 3) ficará por cima, sobrepondo este efeito.** */
         }
 
-        .header-content {
-            position: relative;
-            z-index: 2;
-            padding: 1.5rem 1rem;
-        }
-
-        .logo {
-            font-size: 2.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.8rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            font-family: 'Georgia', serif;
-            letter-spacing: 0.5px;
-        }
-
-        .logo i {
-            margin-right: 15px;
-            font-size: 3.2rem;
-            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
-            color: #c8e6c9;
-        }
-
-        .slogan {
-            font-style: italic;
-            opacity: 0.95;
-            font-size: 1.3rem;
-            margin-bottom: 1.2rem;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        /* Elementos decorativos orgânicos */
-        .organic-decoration {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 1rem;
-        }
-
-        .leaf {
-            width: 40px;
-            height: 25px;
-            background-color: #a5d6a7;
-            border-radius: 50% 0 50% 0;
-            transform: rotate(-15deg);
-            position: relative;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .leaf::before {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 20px;
-            background-color: #81c784;
-            border-radius: 50% 0 50% 0;
-            top: 2px;
-            left: 5px;
-        }
-
-        .leaf:nth-child(2) {
-            transform: rotate(15deg);
-            background-color: #81c784;
-        }
-
-        .leaf:nth-child(2)::before {
-            background-color: #66bb6a;
-        }
-
-        .leaf:nth-child(3) {
-            transform: rotate(-5deg);
-            background-color: #66bb6a;
-        }
-
-        /* Título da página */
         .page-title {
             text-align: center;
             margin-bottom: 1.8rem;
@@ -234,7 +142,7 @@
 
         .required::after {
             content: " *";
-            color: #f44336; /* Usando vermelho para clareza no "obrigatório" */
+            color: #f44336;
         }
 
         input {
@@ -268,21 +176,18 @@
         .checkbox-group {
             display: flex;
             align-items: center;
-            /* Alinhado ao centro */
             gap: 0.5rem;
         }
 
         .checkbox-group input {
             width: auto;
             margin-top: 0;
-            /* Removido margin-top */
         }
 
         .checkbox-group label {
             margin-bottom: 0;
             font-size: 0.95rem;
             font-weight: normal;
-            /* Mais leve */
         }
 
         button {
@@ -384,21 +289,11 @@
             }
         }
 
-        .success-checkmark {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            transform: rotate(45deg);
-            position: relative;
-        }
-        
-        /* Ícone de sucesso (ajustado para ser um Font Awesome checkmark para simplificar) */
         #btn-success-icon {
             font-size: 1.2rem;
             color: white;
         }
 
-        /* Seção de link para cadastro */
         .signup-link {
             text-align: center;
             margin-top: 1.5rem;
@@ -441,7 +336,6 @@
 
             header {
                 padding: 0;
-                /* MUDANÇA: Ajuste de padding para o banner em telas pequenas */
             }
 
             .logo {
@@ -464,8 +358,9 @@
 <body>
     <div class="main-container">
         <header>
-            <!-- IMAGEM DE PLACEHOLDER - Já que 'banner.jpeg' não está disponível -->
-            <img src="https://placehold.co/500x150/2e7d32/ffffff?text=Eco+Acesso" alt="Banner Eco Acesso" class="header-banner">
+            <!-- IMAGEM DE PLACEHOLDER -->
+            <img src="https://placehold.co/500x150/2e7d32/ffffff?text=Eco+Acesso" alt="Banner Eco Acesso"
+                class="header-banner" onerror="this.style.display='none'; this.closest('header').style.backgroundColor='#2e7d32';">
         </header>
 
         <div class="page-title">
@@ -473,16 +368,14 @@
             <p>Que bom te ver de volta! Entre com seus dados para continuar.</p>
         </div>
 
-        <!-- MENSAGEM DE ERRO GERAL (Será atualizada pelo JS) -->
-        <div class="message error" id="error-message">
-            <strong><i class="fas fa-exclamation-circle"></i> Erro de Conexão:</strong><br>
-            Não foi possível comunicar com o servidor.
+        <!-- MENSAGEM DE ERRO GERAL -->
+        <div class="message error" id="error-message" style="display: none;">
+            <!-- Conteúdo injetado pelo JS -->
         </div>
-        
+
         <!-- MENSAGEM DE SUCESSO -->
-        <div class="message success" id="success-message">
-            <strong><i class="fas fa-check-circle"></i> Login realizado com sucesso!</strong><br>
-            Redirecionando para a sua página...
+        <div class="message success" id="success-message" style="display: none;">
+            <!-- Conteúdo injetado pelo JS -->
         </div>
 
         <div class="form-wrapper">
@@ -504,8 +397,8 @@
                         <input type="checkbox" id="lembrar" name="lembrar">
                         <label for="lembrar">Lembrar de mim</label>
                     </div>
-                    <!-- Apenas um placeholder, não funcional neste escopo -->
-                    <a href="#" onclick="alert('Funcionalidade de recuperação de senha não implementada.')">Esqueci minha senha</a>
+                    <!-- Substituindo alert() por uma mensagem de modal/console (conforme instrução) -->
+                    <a href="#" id="forgot-password-link">Esqueci minha senha</a>
                 </div>
 
                 <button type="submit" id="submit-btn">
@@ -536,13 +429,14 @@
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Variáveis globais para configuração do ambiente (CORREÇÃO DE CONFIGURAÇÃO)
+        // Variáveis globais para configuração do ambiente
         const firebaseConfigString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
+
         let app;
         let auth;
         let authReady = false; // Flag para indicar que a autenticação foi inicializada
+        const dummyRedirectURL = "homepage.html"; // URL para simular o redirecionamento
 
         setLogLevel('debug'); // Ativa logs de debug no console
 
@@ -556,23 +450,35 @@
             const btnSuccess = document.getElementById('btn-success');
             const emailInput = document.getElementById('email');
             const senhaInput = document.getElementById('senha');
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
 
 
             // Função de utilidade para exibir mensagens na UI
             function displayMessage(el, text, isError = true) {
+                // Esconde a outra mensagem
                 if (isError) {
-                    el.innerHTML = `<strong><i class="fas fa-exclamation-circle"></i> ${text}</strong>`;
+                    successMessage.style.display = 'none';
+                    el.innerHTML = `<strong><i class="fas fa-exclamation-circle"></i> Erro:</strong> ${text}`;
                     el.style.display = 'block';
                     el.classList.add('error');
                     el.classList.remove('success');
                 } else {
-                    el.innerHTML = `<strong><i class="fas fa-check-circle"></i> ${text}</strong>`;
+                    errorMessage.style.display = 'none';
+                    el.innerHTML = `<strong><i class="fas fa-check-circle"></i> Sucesso:</strong> ${text}`;
                     el.style.display = 'block';
                     el.classList.add('success');
                     el.classList.remove('error');
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+            
+            // Função para simular o modal de recuperação de senha (substituindo o alert)
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                displayMessage(errorMessage, 'Funcionalidade de recuperação de senha não implementada. Por favor, cheque o console para mais detalhes.', true);
+                console.log('Recuperação de senha solicitada para email: (N/A)');
+            });
+
 
             // Função para traduzir códigos de erro do Firebase
             function getFirebaseErrorMessage(errorCode) {
@@ -589,44 +495,53 @@
                         return 'Falha na conexão de rede. Tente novamente.';
                     case 'auth/invalid-api-key':
                         return 'Erro interno: Chave de API do Firebase inválida.';
+                    case 'auth/missing-password':
+                        return 'A senha não pode ser vazia.';
                     default:
                         console.error("Firebase Error Code:", errorCode);
                         return 'Erro desconhecido. Tente novamente mais tarde.';
                 }
             }
-            
-            // --- INICIALIZAÇÃO DO FIREBASE (CORREÇÃO) ---
+
+            // --- INICIALIZAÇÃO DO FIREBASE ---
             async function initializeFirebase() {
                 try {
                     const firebaseConfig = JSON.parse(firebaseConfigString);
-                    
+
                     if (!firebaseConfig.apiKey) {
-                         throw new Error("A configuração do Firebase (apiKey) está faltando ou é inválida.");
+                        throw new Error("A configuração do Firebase (apiKey) está faltando ou é inválida.");
                     }
 
                     app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
-                    
-                    // Tentativa de login inicial com o token do ambiente
+
+                    // Garante que o estado de autenticação inicial seja estabelecido
                     await new Promise(resolve => {
-                        onAuthStateChanged(auth, async (user) => {
-                            if (!user) {
-                                // Tenta usar o token customizado
+                        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                            // Se já houver um usuário logado (pode ser o anônimo inicial), resolve
+                            if (user) {
+                                authReady = true;
+                                unsubscribe(); // Para de escutar mudanças
+                                resolve();
+                            } else {
+                                // Tenta logar com o token do ambiente
                                 if (initialAuthToken) {
                                     try {
                                         await signInWithCustomToken(auth, initialAuthToken);
                                     } catch (e) {
-                                        console.warn("Falha ao usar token customizado, caindo para anônimo ou mantendo deslogado.");
+                                        console.warn("Falha ao usar token customizado, caindo para anônimo.");
                                         await signInAnonymously(auth);
                                     }
                                 } else {
                                     await signInAnonymously(auth); // Fallback seguro
                                 }
+                                // O onAuthStateChanged será chamado novamente com o novo usuário, garantindo authReady = true
                             }
-                            authReady = true;
-                            resolve();
                         });
                     });
+
+                    // Caso o listener não resolva imediatamente (ex: anônimo logado)
+                    authReady = true;
 
                 } catch (error) {
                     console.error("Erro fatal ao inicializar o Firebase:", error);
@@ -643,10 +558,8 @@
 
                 if (field.value.trim() === '') {
                     isValid = false;
-                    if (errorElement) errorElement.textContent = `Por favor, insira seu ${field.name}.`;
-                }
-
-                if (field.type === 'email' && field.value.trim() !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+                    if (errorElement) errorElement.textContent = `O campo ${field.name} é obrigatório.`;
+                } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
                     isValid = false;
                     if (errorElement) errorElement.textContent = 'Por favor, insira um e-mail válido.';
                 }
@@ -667,7 +580,7 @@
                 let isValid = true;
                 const fieldsToValidate = form.querySelectorAll('input[required]');
                 fieldsToValidate.forEach(field => {
-                    // O `validateField` altera o `isValid` se houver erro
+                    // Se o campo for inválido, atualiza isValid para false
                     if (!validateField(field)) {
                         isValid = false;
                     }
@@ -675,7 +588,7 @@
                 return isValid;
             }
 
-            // Listeners para validação
+            // Listeners para validação em tempo real
             emailInput.addEventListener('blur', () => validateField(emailInput));
             senhaInput.addEventListener('blur', () => validateField(senhaInput));
 
@@ -707,35 +620,36 @@
                 const senha = senhaInput.value;
 
                 try {
-                    // --- 2. Realizar Login com Firebase Auth (CORREÇÃO) ---
+                    // --- 2. Realizar Login com Firebase Auth ---
                     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-                    
+
                     // LOGIN SUCESSO
                     btnLoading.style.display = 'none';
                     btnSuccess.style.display = 'inline-block';
 
-                    displayMessage(successMessage, `Login realizado com sucesso! UID: ${userCredential.user.uid}`, false);
-                    
+                    displayMessage(successMessage, `Login realizado com sucesso! Bem-vindo(a), usuário: ${userCredential.user.uid.substring(0, 8)}...`, false);
+
                     // 3. Redirecionar após 2 segundos
                     setTimeout(() => {
-                        // Redireciona para 'homepage.html'
-                        window.location.href = 'homepage.html';
+                        window.location.href = dummyRedirectURL;
                     }, 2000);
 
                 } catch (error) {
                     // LOGIN FALHA
                     btnLoading.style.display = 'none';
+                    btnSuccess.style.display = 'none';
                     btnText.style.display = 'inline';
                     submitBtn.disabled = false;
 
                     const userFacingMessage = getFirebaseErrorMessage(error.code);
                     displayMessage(errorMessage, `Falha no Login: ${userFacingMessage}`, true);
-                    
+
                     // Limpa a senha por segurança
                     senhaInput.value = '';
                 }
             });
 
+            // Inicializa o Firebase
             await initializeFirebase();
         });
     </script>
