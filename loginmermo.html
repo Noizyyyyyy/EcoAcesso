@@ -239,7 +239,7 @@
             box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
         }
 
-        .error-message {
+        .error-message-inline {
             color: #f44336;
             font-size: 0.8rem;
             margin-top: 0.3rem;
@@ -334,6 +334,7 @@
             background-color: #ffebee;
             border-left: 4px solid #f44336;
             color: #c62828;
+            text-align: left; /* Alinha o texto do erro à esquerda para melhor leitura */
         }
 
         /* Rodapé */
@@ -369,28 +370,15 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            transform: rotate(45deg);
+            position: relative; /* Ajuste para centralizar o checkmark */
+        }
+        
+        /* Checkmark SVG (substituindo o CSS complexo por algo mais simples) */
+        .success-checkmark .fa-check {
+             color: white;
+             font-size: 1.2rem;
         }
 
-        .success-checkmark:before {
-            content: '';
-            position: absolute;
-            width: 4px;
-            height: 10px;
-            background-color: white;
-            left: 10px;
-            top: 6px;
-        }
-
-        .success-checkmark:after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: white;
-            left: 8px;
-            top: 12px;
-        }
 
         /* Seção de link para cadastro */
         .signup-link {
@@ -488,18 +476,18 @@
         </div>
 
         <div class="form-wrapper">
-            <!-- O ID 'login-form' é usado pelo login.js -->
+            <!-- O ID 'login-form' é usado pelo script abaixo -->
             <form id="login-form">
                 <div class="form-group">
                     <label for="email" class="required">E-mail</label>
                     <input type="email" id="email" name="email" required placeholder="seu@email.com">
-                    <div class="error-message" id="email-error">Por favor, insira um e-mail válido</div>
+                    <div class="error-message-inline" id="email-error">Por favor, insira um e-mail válido</div>
                 </div>
 
                 <div class="form-group">
                     <label for="senha" class="required">Senha</label>
                     <input type="password" id="senha" name="senha" required placeholder="Sua senha">
-                    <div class="error-message" id="senha-error">Por favor, insira sua senha</div>
+                    <div class="error-message-inline" id="senha-error">Por favor, insira sua senha</div>
                 </div>
 
                 <div class="form-options">
@@ -510,11 +498,13 @@
                     <a href="esqueci-senha.html">Esqueci minha senha</a>
                 </div>
 
-                <!-- O ID 'submit-btn' e os elementos internos são usados pelo login.js -->
+                <!-- O ID 'submit-btn' e os elementos internos são usados pelo script abaixo -->
                 <button type="submit" id="submit-btn">
                     <span id="btn-text">Entrar</span>
                     <div class="loading" id="btn-loading" style="display: none;"></div>
-                    <div class="success-checkmark" id="btn-success" style="display: none;"></div>
+                    <div class="success-checkmark" id="btn-success" style="display: none;">
+                         <i class="fas fa-check"></i>
+                    </div>
                 </button>
             </form>
 
@@ -530,13 +520,105 @@
         </footer>
     </div>
 
-    <!-- 1. Importações do Firebase SDK -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const btnSuccess = document.getElementById('btn-success');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const errorDetails = document.getElementById('error-details');
 
-    <!-- 2. Importa o seu script de login com type="module" -->
-    <script type="module" src="./login.js"></script>
+            // --- Funções de Estado da UI ---
+
+            function resetMessages() {
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+            }
+
+            function setButtonLoading() {
+                btnText.textContent = 'Verificando...';
+                btnLoading.style.display = 'inline-block';
+                btnSuccess.style.display = 'none';
+                submitBtn.disabled = true;
+                resetMessages();
+            }
+
+            function setButtonSuccess() {
+                btnLoading.style.display = 'none';
+                btnText.textContent = 'Sucesso!';
+                btnSuccess.style.display = 'inline-block';
+                successMessage.style.display = 'block';
+            }
+
+            function setButtonError(message) {
+                btnLoading.style.display = 'none';
+                btnSuccess.style.display = 'none';
+                btnText.textContent = 'Tentar Novamente';
+                submitBtn.disabled = false;
+
+                errorMessage.style.display = 'block';
+                errorDetails.textContent = message;
+            }
+
+
+            // --- Lógica de Submissão do Formulário ---
+
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                // 1. Coleta dados
+                const email = document.getElementById('email').value.trim();
+                const senha = document.getElementById('senha').value;
+                const lembrar = document.getElementById('lembrar').checked;
+
+                // 2. Define o estado de carregamento
+                setButtonLoading();
+
+                try {
+                    // 3. Envia requisição para o backend (api/login.js)
+                    const response = await fetch('/api/login', { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, senha })
+                    });
+
+                    if (response.ok) { 
+                        // Status 200-299: Login BEM-SUCEDIDO
+                        const data = await response.json();
+                        
+                        // Opcional: Armazenamento do token para manter a sessão
+                        if (lembrar) {
+                             localStorage.setItem('userToken', data.token);
+                        } else {
+                            sessionStorage.setItem('userToken', data.token); // Sessão temporária
+                        }
+
+                        // 4. Mudar UI para Sucesso e Redirecionar
+                        setButtonSuccess();
+                        console.log(`Login bem-sucedido. Redirecionando para homepage.html`);
+                        
+                        // O REDIRECIONAMENTO ACONTECE AQUI!
+                        setTimeout(() => {
+                            window.location.href = 'homepage.html'; 
+                        }, 1500); // Dá 1.5 segundos para o usuário ver a mensagem de sucesso
+
+                    } else {
+                        // Trata erros de login (401 Unauthorized, 400 Bad Request, 500 Internal Error)
+                        const errorData = await response.json();
+                        const message = errorData.message || `Erro no servidor: Status ${response.status}. Verifique suas credenciais.`;
+                        
+                        setButtonError(message);
+                    }
+
+                } catch (error) {
+                    console.error('Falha na comunicação com o servidor:', error);
+                    setButtonError('Não foi possível conectar ao servidor ou houve um erro interno. Tente novamente.');
+                }
+            });
+        });
+    </script>
 </body>
-
 </html>
