@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Login</title>
+    <!-- Não precisamos do Tailwind, pois você está usando CSS customizado -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Reset e estilos gerais */
@@ -381,6 +382,8 @@
             display: inline-block;
             width: 20px;
             height: 20px;
+            /* Cria o contêiner */
+            position: relative;
             transform: rotate(45deg);
         }
 
@@ -465,15 +468,17 @@
             }
         }
     </style>
+    <!-- O favicon "ecoacesso.ico" não será carregado no ambiente Canvas, mas manteremos o link -->
     <link rel="icon" href="ecoacesso.ico" type="image/x-icon">
 </head>
 
 <body>
     <div class="main-container">
         <header>
-            <img src="banner.jpeg" alt="Banner Eco Acesso" class="header-banner">
-            
-            </header>
+            <!-- Substituímos a imagem por um placeholder para garantir o funcionamento -->
+            <img src="https://placehold.co/500x150/2e7d32/ffffff?text=Eco+Acesso+Banner" alt="Banner Eco Acesso"
+                class="header-banner">
+        </header>
 
         <div class="page-title">
             <h1>Acesse sua Conta</h1>
@@ -485,9 +490,10 @@
             Redirecionando para a sua página...
         </div>
 
+        <!-- Mensagem de erro atualizada para ser dinâmica -->
         <div class="message error" id="error-message">
-            <strong><i class="fas fa-exclamation-circle"></i> Credenciais inválidas!</strong><br>
-            Verifique seu e-mail e senha.
+            <strong><i class="fas fa-exclamation-circle"></i> Falha no Login!</strong><br>
+            <span id="error-detail">Detalhes do erro aqui.</span>
         </div>
 
         <div class="form-wrapper">
@@ -532,130 +538,192 @@
         </footer>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('login-form');
-            const successMessage = document.getElementById('success-message');
-            const errorMessage = document.getElementById('error-message');
-            const submitBtn = document.getElementById('submit-btn');
-            const btnText = document.getElementById('btn-text');
-            const btnLoading = document.getElementById('btn-loading');
-            const btnSuccess = document.getElementById('btn-success');
+    <script type="module">
+        // Importações do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            // --- CREDENCIAIS DE TESTE HARDCODED ---
-            const TEST_EMAIL = 'ecoacesso2025@gmail.com';
-            const TEST_PASSWORD = 'EcoAcesso2025**';
-            // ----------------------------------------
+        // --- Variáveis Globais do Ambiente ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Inicializa o Firebase
+        if (Object.keys(firebaseConfig).length === 0) {
+            console.error("Firebase configuration not available.");
+            // Não tenta iniciar a aplicação se a config estiver ausente.
+        }
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Autenticação inicial (necessário para o ambiente Canvas)
+        async function authenticateCanvasUser() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                console.log("Firebase Auth inicializado. Usuário anônimo/customizado logado.");
+            } catch (e) {
+                console.error("Erro na autenticação inicial do Canvas:", e);
+            }
+        }
+        authenticateCanvasUser();
+        
+        // Variáveis de elementos DOM
+        const form = document.getElementById('login-form');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const errorDetail = document.getElementById('error-detail');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+        const btnSuccess = document.getElementById('btn-success');
+        const emailInput = document.getElementById('email');
+        const senhaInput = document.getElementById('senha');
 
-            // Validar campo individual
-            function validateField(field) {
-                const errorElement = document.getElementById(`${field.id}-error`);
-                let isValid = true;
 
-                if (field.value.trim() === '') {
+        /**
+         * Traduz códigos de erro do Firebase para mensagens amigáveis.
+         * @param {string} code - O código de erro do Firebase.
+         * @returns {string} Mensagem traduzida.
+         */
+        function translateFirebaseError(code) {
+            switch (code) {
+                case 'auth/invalid-email':
+                    return 'Formato de e-mail inválido.';
+                case 'auth/user-disabled':
+                    return 'Esta conta de usuário foi desativada.';
+                case 'auth/user-not-found':
+                case 'auth/wrong-password': // Usamos a mesma mensagem para não revelar se o erro é o e-mail ou a senha.
+                    return 'Credenciais inválidas. Verifique seu e-mail e senha.';
+                case 'auth/invalid-credential':
+                    return 'Credenciais inválidas. Verifique seu e-mail e senha.';
+                default:
+                    return `Ocorreu um erro desconhecido: ${code.replace('auth/', '')}`;
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // LÓGICA DE VALIDAÇÃO (mantida do seu código)
+        // ----------------------------------------------------------------------
+
+        function validateField(field) {
+            const errorElement = document.getElementById(`${field.id}-error`);
+            let isValid = true;
+
+            if (field.value.trim() === '') {
+                isValid = false;
+            }
+
+            if (field.type === 'email' && field.value.trim() !== '') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
                     isValid = false;
                 }
-
-                if (field.type === 'email' && field.value.trim() !== '') {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(field.value)) {
-                        isValid = false;
-                    }
-                }
-
-                if (!isValid) {
-                    field.classList.add('error');
-                    if (errorElement) errorElement.style.display = 'block';
-                } else {
-                    field.classList.remove('error');
-                    if (errorElement) errorElement.style.display = 'none';
-                }
-
-                return isValid;
             }
 
-            // Validar formulário completo
-            function validateForm() {
-                let isValid = true;
-                const fieldsToValidate = form.querySelectorAll('input[required]');
-                fieldsToValidate.forEach(field => {
-                    if (!validateField(field)) {
-                        isValid = false;
-                    }
-                });
-                return isValid;
+            if (!isValid) {
+                field.classList.add('error');
+                if (errorElement) errorElement.style.display = 'block';
+            } else {
+                field.classList.remove('error');
+                if (errorElement) errorElement.style.display = 'none';
             }
 
-            // Listeners para validação
-            form.querySelectorAll('input[required]').forEach(field => {
-                field.addEventListener('blur', () => validateField(field));
+            return isValid;
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const fieldsToValidate = form.querySelectorAll('input[required]');
+            fieldsToValidate.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
             });
+            return isValid;
+        }
 
-            // Envio do formulário
-            form.addEventListener('submit', async function (e) {
-                e.preventDefault();
+        form.querySelectorAll('input[required]').forEach(field => {
+            field.addEventListener('blur', () => validateField(field));
+        });
 
-                // Esconder mensagens
-                successMessage.style.display = 'none';
-                errorMessage.style.display = 'none';
+        // ----------------------------------------------------------------------
+        // LÓGICA DE SUBMISSÃO (AGORA COM FIREBASE)
+        // ----------------------------------------------------------------------
 
-                // --- 1. Validação do Frontend ---
-                if (!validateForm()) {
-                    errorMessage.querySelector('strong').textContent = "Credenciais inválidas!";
-                    errorMessage.querySelector('br').nextSibling.textContent = " Verifique os campos destacados.";
-                    errorMessage.style.display = 'block';
-                    return;
-                }
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-                // --- 2. Mostrar estado de carregamento ---
-                btnText.style.display = 'none';
-                btnLoading.style.display = 'inline-block';
-                submitBtn.disabled = true;
+            // Esconder mensagens anteriores
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
 
-                // 3. Coleta dos dados
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
+            // 1. Validação do Frontend
+            if (!validateForm()) {
+                errorDetail.textContent = "Verifique os campos destacados e tente novamente.";
+                errorMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
 
-                // Simulação de requisição/delay de servidor
-                await new Promise(resolve => setTimeout(resolve, 1500));
+            // 2. Mostrar estado de carregamento
+            btnText.style.display = 'none';
+            btnSuccess.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            submitBtn.disabled = true;
 
-                // --- 4. Verificação de Credenciais de Teste (Local) ---
-                const isCorrectLogin = (data.email === TEST_EMAIL && data.senha === TEST_PASSWORD);
+            const email = emailInput.value;
+            const senha = senhaInput.value;
 
-                // --- 5. Lógica de Resposta ---
-                if (isCorrectLogin) {
-                    // Ação de Sucesso
-                    btnLoading.style.display = 'none';
-                    btnSuccess.style.display = 'inline-block';
+            try {
+                // Tenta fazer login usando o Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+                
+                // --- Ação de Sucesso ---
+                console.log("Login bem-sucedido:", userCredential.user.uid);
+                
+                btnLoading.style.display = 'none';
+                btnSuccess.style.display = 'inline-block';
 
-                    // 1. Exibir a mensagem de sucesso
-                    successMessage.style.display = 'block';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                // 1. Exibir a mensagem de sucesso
+                successMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                    // 2. Redirecionar após 2 segundos
-                    setTimeout(() => {
-                        // Redireciona para o Front-Page.html
-                        window.location.href = 'homepage.html';
-                    }, 2000);
+                // 2. Redirecionar após 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'homepage.html';
+                }, 2000);
 
-                } else {
-                    // Ação de Erro
+            } catch (error) {
+                // --- Ação de Erro ---
+                console.error("Erro de Firebase Auth:", error.code, error.message);
+                
+                // Traduz o código de erro para o usuário
+                const friendlyMessage = translateFirebaseError(error.code);
+                
+                // Exibir a mensagem de erro
+                errorDetail.textContent = friendlyMessage;
+                errorMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Limpa a senha e restaura o botão
+                senhaInput.value = '';
+
+            } finally {
+                // Finaliza o estado de carregamento se não houve redirecionamento
+                if (btnSuccess.style.display !== 'inline-block') {
                     btnLoading.style.display = 'none';
                     btnText.style.display = 'inline';
                     submitBtn.disabled = false;
-
-                    // Atualiza a mensagem de erro
-                    errorMessage.querySelector('strong').textContent = "Falha no Login!";
-                    errorMessage.querySelector('br').nextSibling.textContent = ` E-mail ou senha incorretos.`;
-                    errorMessage.style.display = 'block';
-
-                    // Limpa a senha para segurança
-                    document.getElementById('senha').value = '';
                 }
-            });
+            }
         });
     </script>
 </body>
 
 </html>
-
