@@ -26,10 +26,10 @@
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         // ----------------------------------------------------
-        // ATENÇÃO: Substitua estas variáveis pelas suas credenciais reais do Supabase.
+        // ATENÇÃO: Credenciais Supabase (fornecidas pelo utilizador)
         // ----------------------------------------------------
-        const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co'; // Ex: 'https://xyz.supabase.co'
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8'; // Chave pública anónima
+        const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8';
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -41,7 +41,6 @@
         const passwordInput = document.getElementById('password');
         const messageDisplay = document.getElementById('message-display');
         const userEmailDisplay = document.getElementById('user-email-display');
-        const configError = document.getElementById('config-error');
 
         // Função para exibir mensagens de status
         function showMessage(message, isError = false) {
@@ -121,12 +120,6 @@
         // Inicialização e Listener de Autenticação
         // ----------------------------------------------------
         document.addEventListener('DOMContentLoaded', async () => {
-            if (SUPABASE_URL.includes('supabase.co')) {
-                configError.classList.remove('hidden');
-                appContainer.classList.add('hidden');
-                return;
-            }
-
             // 1. Escuta mudanças no estado de autenticação (login/logout)
             supabase.auth.onAuthStateChange((event, session) => {
                 updateUI(session?.user ?? null);
@@ -141,14 +134,7 @@
 </head>
 <body>
 
-    <div id="config-error" class="container bg-white p-8 rounded-xl shadow-2xl border border-red-200 hidden">
-        <h2 class="text-3xl font-extrabold text-red-600 mb-6 text-center">
-            Configuração Incompleta
-        </h2>
-        <p class="text-gray-700 text-center">
-            Por favor, preencha as variáveis <code class="font-mono text-red-500">SUPABASE_URL</code> e <code class="font-mono text-red-500">SUPABASE_ANON_KEY</code> no código.
-        </p>
-    </div>
+    <!-- A div config-error foi removida pois as credenciais foram fornecidas. -->
 
     <div id="app-container" class="container bg-white p-8 rounded-2xl shadow-xl space-y-6">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
@@ -238,4 +224,3 @@
     </div>
 </body>
 </html>
-
