@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Acesso - Login</title>
-    <!-- Carregamento do Tailwind CSS e Font Awesome para estilos e ícones -->
+    <!-- Carregamento do Tailwind CSS e Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset e estilos gerais */
+        /* Variáveis e Estilos base mantidos */
         * {
             margin: 0;
             padding: 0;
@@ -47,7 +47,6 @@
             align-items: center;
         }
 
-        /* CABEÇALHO ATUALIZADO */
         header {
             background: linear-gradient(135deg, #3e8e41, #2e7d32, #1b5e20);
             color: var(--branco);
@@ -62,7 +61,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* ESTILO PARA O BANNER (IMAGEM) */
         .header-banner {
             width: 100%;
             height: auto;
@@ -72,7 +70,6 @@
             min-height: 150px;
         }
 
-        /* Efeito de textura orgânica no cabeçalho (melhorado) */
         header::before {
             content: '';
             position: absolute;
@@ -105,7 +102,6 @@
             color: var(--cinza-escuro);
         }
 
-        /* Layout do formulário */
         .form-wrapper {
             width: 100%;
             background-color: var(--branco);
@@ -126,7 +122,6 @@
             background: linear-gradient(90deg, var(--verde-claro), var(--verde-principal), var(--verde-escuro));
         }
 
-        /* Estilos do formulário */
         .form-group {
             margin-bottom: 1.2rem;
             position: relative;
@@ -225,7 +220,6 @@
             box-shadow: none;
         }
 
-        /* Mensagens de sucesso/erro */
         .message {
             padding: 1.2rem;
             border-radius: 8px;
@@ -260,7 +254,6 @@
             color: #c62828;
         }
 
-        /* Rodapé */
         footer {
             background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
@@ -272,7 +265,6 @@
             font-size: 0.9rem;
         }
 
-        /* Utilitários */
         .loading {
             display: inline-block;
             width: 20px;
@@ -310,7 +302,6 @@
             text-decoration: underline;
         }
 
-        /* Opções extras do formulário (lembrar/esqueci senha) */
         .form-options {
             display: flex;
             justify-content: space-between;
@@ -334,10 +325,6 @@
                 padding: 1.5rem;
             }
 
-            header {
-                padding: 0;
-            }
-
             .logo {
                 font-size: 1.8rem;
             }
@@ -358,9 +345,8 @@
 <body>
     <div class="main-container">
         <header>
-            <!-- IMAGEM DE PLACEHOLDER -->
-            <img src="https://placehold.co/500x150/2e7d32/ffffff?text=Eco+Acesso" alt="Banner Eco Acesso"
-                class="header-banner" onerror="this.style.display='none'; this.closest('header').style.backgroundColor='#2e7d32';">
+            <!-- IMAGEM DE PLACEHOLDER - Representando o tema Eco/Verde -->
+            <img src="https://placehold.co/500x150/2e7d32/ffffff?text=Eco+Acesso" alt="Banner Eco Acesso" class="header-banner">
         </header>
 
         <div class="page-title">
@@ -369,26 +355,27 @@
         </div>
 
         <!-- MENSAGEM DE ERRO GERAL -->
-        <div class="message error" id="error-message" style="display: none;">
-            <!-- Conteúdo injetado pelo JS -->
+        <div class="message error" id="error-message">
+            <!-- Conteúdo dinâmico -->
         </div>
 
         <!-- MENSAGEM DE SUCESSO -->
-        <div class="message success" id="success-message" style="display: none;">
-            <!-- Conteúdo injetado pelo JS -->
+        <div class="message success" id="success-message">
+            <strong><i class="fas fa-check-circle"></i> Login realizado com sucesso!</strong><br>
+            Redirecionando para a sua página...
         </div>
 
         <div class="form-wrapper">
             <form id="login-form">
                 <div class="form-group">
                     <label for="email" class="required">E-mail</label>
-                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com" value="">
                     <div class="error-message" id="email-error">Por favor, insira um e-mail válido</div>
                 </div>
 
                 <div class="form-group">
                     <label for="senha" class="required">Senha</label>
-                    <input type="password" id="senha" name="senha" required placeholder="Sua senha">
+                    <input type="password" id="senha" name="senha" required placeholder="Sua senha" value="">
                     <div class="error-message" id="senha-error">Por favor, insira sua senha</div>
                 </div>
 
@@ -397,8 +384,8 @@
                         <input type="checkbox" id="lembrar" name="lembrar">
                         <label for="lembrar">Lembrar de mim</label>
                     </div>
-                    <!-- Substituindo alert() por uma mensagem de modal/console (conforme instrução) -->
-                    <a href="#" id="forgot-password-link">Esqueci minha senha</a>
+                    <!-- Substituindo alert() por uma função de mensagem na UI/Console, conforme regra do ambiente. -->
+                    <a href="#" id="reset-password-link">Esqueci minha senha</a>
                 </div>
 
                 <button type="submit" id="submit-btn">
@@ -424,21 +411,12 @@
     </div>
 
     <script type="module">
-        // Importações do Firebase SDK
+        // Importa as funções do Firebase para inicialização e autenticação
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Variáveis globais para configuração do ambiente
-        const firebaseConfigString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let app;
+        import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
         let auth;
-        let authReady = false; // Flag para indicar que a autenticação foi inicializada
-        const dummyRedirectURL = "homepage.html"; // URL para simular o redirecionamento
-
-        setLogLevel('debug'); // Ativa logs de debug no console
+        let authInitialized = false;
 
         document.addEventListener('DOMContentLoaded', async function () {
             const form = document.getElementById('login-form');
@@ -450,116 +428,84 @@
             const btnSuccess = document.getElementById('btn-success');
             const emailInput = document.getElementById('email');
             const senhaInput = document.getElementById('senha');
-            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const resetLink = document.getElementById('reset-password-link');
 
+            // --- 1. Inicialização do Firebase ---
+            try {
+                // Variáveis globais fornecidas pelo ambiente
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-            // Função de utilidade para exibir mensagens na UI
-            function displayMessage(el, text, isError = true) {
-                // Esconde a outra mensagem
-                if (isError) {
-                    successMessage.style.display = 'none';
-                    el.innerHTML = `<strong><i class="fas fa-exclamation-circle"></i> Erro:</strong> ${text}`;
-                    el.style.display = 'block';
-                    el.classList.add('error');
-                    el.classList.remove('success');
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                
+                // Tenta fazer login com o token personalizado (se fornecido) ou anonimamente
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
                 } else {
-                    errorMessage.style.display = 'none';
-                    el.innerHTML = `<strong><i class="fas fa-check-circle"></i> Sucesso:</strong> ${text}`;
-                    el.style.display = 'block';
-                    el.classList.add('success');
-                    el.classList.remove('error');
+                    await signInAnonymously(auth);
                 }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            
-            // Função para simular o modal de recuperação de senha (substituindo o alert)
-            forgotPasswordLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                displayMessage(errorMessage, 'Funcionalidade de recuperação de senha não implementada. Por favor, cheque o console para mais detalhes.', true);
-                console.log('Recuperação de senha solicitada para email: (N/A)');
-            });
+                authInitialized = true;
+                console.log("Firebase Auth inicializado com sucesso.");
 
+            } catch (e) {
+                console.error("Erro na inicialização ou autenticação inicial do Firebase:", e);
+                // Exibe uma mensagem de erro crítica para o usuário
+                displayMessage(errorMessage, "Erro crítico de inicialização. Tente recarregar a página.", true);
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // --- 2. Lógica de Mensagens e Utilitários ---
 
             // Função para traduzir códigos de erro do Firebase
             function getFirebaseErrorMessage(errorCode) {
                 switch (errorCode) {
-                    case 'auth/user-not-found':
-                    case 'auth/wrong-password':
-                    case 'auth/invalid-credential':
-                        return 'E-mail ou senha incorretos.';
                     case 'auth/invalid-email':
-                        return 'O formato do e-mail é inválido.';
+                    case 'auth/wrong-password':
+                    case 'auth/user-not-found':
+                    case 'auth/invalid-credential':
+                        return 'Credenciais Inválidas. E-mail ou senha incorretos.';
                     case 'auth/user-disabled':
-                        return 'Esta conta foi desativada.';
-                    case 'auth/network-request-failed':
-                        return 'Falha na conexão de rede. Tente novamente.';
-                    case 'auth/invalid-api-key':
-                        return 'Erro interno: Chave de API do Firebase inválida.';
-                    case 'auth/missing-password':
-                        return 'A senha não pode ser vazia.';
+                        return 'Esta conta foi desativada pelo administrador.';
+                    case 'auth/too-many-requests':
+                        return 'Acesso bloqueado temporariamente devido a muitas tentativas falhas.';
                     default:
-                        console.error("Firebase Error Code:", errorCode);
-                        return 'Erro desconhecido. Tente novamente mais tarde.';
+                        console.error("Código de Erro Firebase Desconhecido:", errorCode);
+                        return 'Erro desconhecido ao tentar acessar. Tente novamente.';
                 }
             }
 
-            // --- INICIALIZAÇÃO DO FIREBASE ---
-            async function initializeFirebase() {
-                try {
-                    const firebaseConfig = JSON.parse(firebaseConfigString);
+            // Função de utilidade para exibir mensagens na UI
+            function displayMessage(el, text, isError = true) {
+                // Esconde a outra mensagem
+                (isError ? successMessage : errorMessage).style.display = 'none';
 
-                    if (!firebaseConfig.apiKey) {
-                        throw new Error("A configuração do Firebase (apiKey) está faltando ou é inválida.");
-                    }
-
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-
-                    // Garante que o estado de autenticação inicial seja estabelecido
-                    await new Promise(resolve => {
-                        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-                            // Se já houver um usuário logado (pode ser o anônimo inicial), resolve
-                            if (user) {
-                                authReady = true;
-                                unsubscribe(); // Para de escutar mudanças
-                                resolve();
-                            } else {
-                                // Tenta logar com o token do ambiente
-                                if (initialAuthToken) {
-                                    try {
-                                        await signInWithCustomToken(auth, initialAuthToken);
-                                    } catch (e) {
-                                        console.warn("Falha ao usar token customizado, caindo para anônimo.");
-                                        await signInAnonymously(auth);
-                                    }
-                                } else {
-                                    await signInAnonymously(auth); // Fallback seguro
-                                }
-                                // O onAuthStateChanged será chamado novamente com o novo usuário, garantindo authReady = true
-                            }
-                        });
-                    });
-
-                    // Caso o listener não resolva imediatamente (ex: anônimo logado)
-                    authReady = true;
-
-                } catch (error) {
-                    console.error("Erro fatal ao inicializar o Firebase:", error);
-                    displayMessage(errorMessage, `Falha de Configuração: ${error.message}`, true);
-                    submitBtn.disabled = true;
+                if (isError) {
+                    el.innerHTML = `<strong><i class="fas fa-exclamation-circle"></i> ${text}</strong>`;
+                    el.classList.add('error');
+                    el.classList.remove('success');
+                } else {
+                    el.innerHTML = `<strong><i class="fas fa-check-circle"></i> ${text}</strong>`;
+                    el.classList.add('success');
+                    el.classList.remove('error');
                 }
+                el.style.display = 'block';
+                // Rola para o topo para garantir que a mensagem seja visível
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-
-            // Validar campo individual
+            // Função para validar campo individual
             function validateField(field) {
                 const errorElement = document.getElementById(`${field.id}-error`);
                 let isValid = true;
 
                 if (field.value.trim() === '') {
                     isValid = false;
-                    if (errorElement) errorElement.textContent = `O campo ${field.name} é obrigatório.`;
-                } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+                    if (errorElement) errorElement.textContent = `Por favor, insira seu ${field.name}.`;
+                }
+
+                if (field.type === 'email' && field.value.trim() !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
                     isValid = false;
                     if (errorElement) errorElement.textContent = 'Por favor, insira um e-mail válido.';
                 }
@@ -575,12 +521,12 @@
                 return isValid;
             }
 
-            // Validar formulário completo
+            // Função para validar formulário completo
             function validateForm() {
                 let isValid = true;
                 const fieldsToValidate = form.querySelectorAll('input[required]');
                 fieldsToValidate.forEach(field => {
-                    // Se o campo for inválido, atualiza isValid para false
+                    // Se validateField retornar false, isValid se torna false.
                     if (!validateField(field)) {
                         isValid = false;
                     }
@@ -588,59 +534,70 @@
                 return isValid;
             }
 
-            // Listeners para validação em tempo real
+            // Listeners para validação em tempo real (on blur)
             emailInput.addEventListener('blur', () => validateField(emailInput));
             senhaInput.addEventListener('blur', () => validateField(senhaInput));
+            
+            // Listener para o link "Esqueci minha senha"
+            resetLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                displayMessage(errorMessage, "A funcionalidade de recuperação de senha não está implementada nesta demonstração.", true);
+                console.log("Funcionalidade de recuperação de senha acionada.");
+            });
 
 
-            // Envio do formulário (LÓGICA DE LOGIN REAL COM FIREBASE)
+            // --- 3. Lógica de Envio (Login Firebase) ---
             form.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                successMessage.style.display = 'none';
-                errorMessage.style.display = 'none';
-
-                if (!authReady) {
-                    displayMessage(errorMessage, "Sistema de autenticação não está pronto. Tente novamente.", true);
+                if (!authInitialized) {
+                    displayMessage(errorMessage, "O sistema de autenticação ainda está carregando. Por favor, aguarde.", true);
                     return;
                 }
+
+                // Limpa mensagens anteriores
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
 
                 if (!validateForm()) {
                     displayMessage(errorMessage, "Verifique os campos destacados e tente novamente.", true);
                     return;
                 }
 
-                // --- 1. Mostrar estado de carregamento ---
+                // Mostrar estado de carregamento
                 btnText.style.display = 'none';
                 btnSuccess.style.display = 'none';
                 btnLoading.style.display = 'inline-block';
                 submitBtn.disabled = true;
 
                 const email = emailInput.value;
-                const senha = senhaInput.value;
+                const password = senhaInput.value;
 
                 try {
-                    // --- 2. Realizar Login com Firebase Auth ---
-                    const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+                    // Chamada REAL do Firebase Auth
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
                     // LOGIN SUCESSO
+                    const user = userCredential.user;
                     btnLoading.style.display = 'none';
                     btnSuccess.style.display = 'inline-block';
+                    
+                    displayMessage(successMessage, `Login realizado com sucesso! ID do Usuário: ${user.uid}`, false);
 
-                    displayMessage(successMessage, `Login realizado com sucesso! Bem-vindo(a), usuário: ${userCredential.user.uid.substring(0, 8)}...`, false);
-
-                    // 3. Redirecionar após 2 segundos
+                    // 4. Redirecionar (Simulado) após 2 segundos
                     setTimeout(() => {
-                        window.location.href = dummyRedirectURL;
+                        displayMessage(successMessage, `Autenticação Firebase BEM-SUCEDIDA. (UID: ${user.uid})`, false);
+                        submitBtn.disabled = false;
+                        btnSuccess.style.display = 'none';
+                        btnText.style.display = 'inline';
                     }, 2000);
 
                 } catch (error) {
                     // LOGIN FALHA
                     btnLoading.style.display = 'none';
-                    btnSuccess.style.display = 'none';
                     btnText.style.display = 'inline';
                     submitBtn.disabled = false;
-
+                    
                     const userFacingMessage = getFirebaseErrorMessage(error.code);
                     displayMessage(errorMessage, `Falha no Login: ${userFacingMessage}`, true);
 
@@ -649,8 +606,8 @@
                 }
             });
 
-            // Inicializa o Firebase
-            await initializeFirebase();
+            // Mensagem informativa inicial removida, mas se quiser adicionar, use:
+            // displayMessage(errorMessage, "Use o seu e-mail e senha do Firebase para testar o login.", true);
         });
     </script>
 </body>
