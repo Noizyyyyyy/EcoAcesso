@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protótipo de Login</title>
+    <title>Protótipo de Login e Cadastro</title>
     <!-- Carrega Tailwind CSS para estilização rápida -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.fonts.google.com/specimen/Inter');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f7f9fb;
@@ -18,46 +18,95 @@
         .btn-primary {
             transition: background-color 0.3s, transform 0.1s;
         }
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: #3b82f6;
             transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-    <!-- Card de Login -->
+    <!-- Card de Login/Cadastro -->
     <div class="card bg-white p-8 rounded-xl w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Acesso ao Protótipo</h1>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Acesso ao Protótipo</h1>
+
+        <!-- Seletor de Formulário (Login / Cadastro) -->
+        <div class="flex border-b border-gray-200 mb-6">
+            <button id="tab-login" class="flex-1 py-2 text-gray-600 tab-active" onclick="switchForm('login')">
+                Login
+            </button>
+            <button id="tab-register" class="flex-1 py-2 text-gray-600" onclick="switchForm('register')">
+                Cadastro
+            </button>
+        </div>
 
         <!-- AVISO DE SEGURANÇA CRÍTICO -->
         <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-sm">
             <p class="font-bold">⚠️ ALERTA DE SEGURANÇA CRÍTICO</p>
-            <p>Este protótipo realiza a comparação da senha em texto simples (inseguro), conforme solicitado. **ISSO NÃO DEVE SER USADO EM PRODUÇÃO.** Para um sistema real, use o Firebase Authentication ou hashes seguros (como bcrypt).</p>
+            <p>Este protótipo armazena e compara senhas em **texto simples (inseguro)**. NÃO use em produção.</p>
         </div>
 
+        <!-- Formulário de LOGIN -->
         <form id="login-form" class="space-y-4">
+            <p class="text-gray-500 text-sm text-center">Use um e-mail já cadastrado (ou crie um novo na aba Cadastro).</p>
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input type="email" id="email" name="email" required
+                <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input type="email" id="login-email" name="email" required
                        placeholder="Seu e-mail"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                <input type="password" id="password" name="password" required
-                       placeholder="Sua senha em texto simples (noizypapocai)"
+                <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                <input type="password" id="login-password" name="password" required
+                       placeholder="Sua senha"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
 
-            <button type="submit" id="login-button"
-                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                Entrar
+            <button type="submit" id="login-button" disabled
+                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
+                Aguardando Inicialização...
+            </button>
+        </form>
+
+        <!-- Formulário de CADASTRO (Oculto por padrão) -->
+        <form id="register-form" class="space-y-4 hidden">
+            <p class="text-gray-500 text-sm text-center">Preencha para criar uma nova conta.</p>
+            <div>
+                <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                <input type="text" id="register-name" name="name" required
+                       placeholder="Seu nome"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input type="email" id="register-email" name="email" required
+                       placeholder="Seu e-mail"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                <input type="password" id="register-password" name="password" required minlength="6"
+                       placeholder="Mínimo 6 caracteres"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <button type="submit" id="register-button" disabled
+                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
+                Aguardando Inicialização...
             </button>
         </form>
 
         <!-- Área de Status e Mensagens -->
-        <div id="status-message" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+        <div id="status-message" class="mt-4 p-3 rounded-lg text-center bg-gray-100 text-gray-800">Aguardando inicialização do Firebase...</div>
 
         <!-- ID do Usuário Autenticado (para referência) -->
         <div class="mt-4 text-center text-xs text-gray-500">
@@ -69,27 +118,53 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Configurações Globais do Canvas (MANDATÓRIO)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        let db;
-        let auth;
-        let currentUserId = null;
+        let db = null;
+        let auth = null;
         let isAuthReady = false;
 
+        // Elementos do DOM
         const statusMessage = document.getElementById('status-message');
         const currentUserIdDisplay = document.getElementById('current-user-id');
         const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
         const loginButton = document.getElementById('login-button');
+        const registerButton = document.getElementById('register-button');
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+
+        // Caminho da Coleção Pública de Usuários
+        const usersCollectionPath = `artifacts/${appId}/public/data/users`;
+
+        // --- UI FUNÇÕES ---
+
+        // Função para alternar entre as abas de Login e Cadastro
+        window.switchForm = function(mode) {
+            if (mode === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabLogin.classList.add('tab-active');
+                tabRegister.classList.remove('tab-active');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabLogin.classList.remove('tab-active');
+                tabRegister.classList.add('tab-active');
+            }
+            // Limpa o status ao alternar
+            showStatus(isAuthReady ? "Pronto para Login ou Cadastro." : "Aguardando inicialização do Firebase...", 'info');
+        }
 
         // Função para exibir mensagens de status
         function showStatus(message, type = 'info') {
             statusMessage.textContent = message;
-            statusMessage.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-800', 'text-green-800');
+            statusMessage.classList.remove('bg-red-100', 'bg-green-100', 'bg-gray-100', 'text-red-800', 'text-green-800', 'text-gray-800');
             if (type === 'error') {
                 statusMessage.classList.add('bg-red-100', 'text-red-800');
             } else if (type === 'success') {
@@ -99,7 +174,20 @@
             }
         }
 
-        // 1. Inicialização do Firebase e Autenticação
+        // Função para habilitar/desabilitar botões
+        function setButtonsEnabled(enabled, text = 'Entrar / Cadastrar') {
+            loginButton.disabled = !enabled;
+            registerButton.disabled = !enabled;
+            loginButton.textContent = enabled ? 'Entrar' : 'Aguardando Inicialização...';
+            registerButton.textContent = enabled ? 'Cadastrar' : 'Aguardando Inicialização...';
+        }
+
+
+        // --- FIREBASE FUNÇÕES ---
+
+        /**
+         * 1. Inicialização e Autenticação do Firebase
+         */
         async function initializeFirebase() {
             if (!firebaseConfig) {
                 showStatus("Erro: Configuração do Firebase indisponível.", 'error');
@@ -107,62 +195,56 @@
             }
 
             try {
-                // Ativar logs de debug para depuração
                 setLogLevel('debug');
                 
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Listener de estado de autenticação
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        currentUserIdDisplay.textContent = currentUserId;
-                        isAuthReady = true;
-                        showStatus("Firebase e autenticação prontos (Usuário Anônimo).", 'success');
-                    } else {
-                        currentUserId = 'Não Autenticado';
-                        currentUserIdDisplay.textContent = currentUserId;
-                        isAuthReady = true;
-                    }
-                    // Tenta autenticar ou usa anonimamente
-                    if (auth && !user) {
-                        if (initialAuthToken) {
-                            await signInWithCustomToken(auth, initialAuthToken);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    }
+                // Autenticar o usuário
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listener para atualizar o ID do usuário no UI
+                onAuthStateChanged(auth, (user) => {
+                    const userId = user ? user.uid : 'Não Autenticado';
+                    currentUserIdDisplay.textContent = userId;
                 });
+
+                // TUDO PRONTO: Habilita os botões de ação
+                isAuthReady = true;
+                setButtonsEnabled(true);
+                showStatus("Firebase e autenticação prontos. Pode fazer Login ou Cadastro.", 'success');
 
             } catch (error) {
                 console.error("Erro na inicialização do Firebase ou autenticação:", error);
-                showStatus(`Erro de inicialização: ${error.message}`, 'error');
+                showStatus(`Erro de inicialização: ${error.message}. Recarregue a página.`, 'error');
+                setButtonsEnabled(false, `ERRO: ${error.message}`);
             }
         }
 
-        // 2. Lógica de Login (Usando Consulta Manual Insegura)
+        /**
+         * 2. Lógica de LOGIN (consulta manual insegura)
+         */
         async function handleLogin(event) {
             event.preventDefault();
 
             if (!isAuthReady || !db) {
-                showStatus("Aguarde, o Firebase ainda não está pronto.", 'info');
+                showStatus("Aguarde, o Firebase ainda não está pronto para consultas.", 'info');
                 return;
             }
 
-            const email = document.getElementById('email').value.trim();
-            // A senha submetida pelo usuário
-            const password = document.getElementById('password').value; 
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value; 
             
-            loginButton.disabled = true;
+            setButtonsEnabled(false);
             loginButton.textContent = 'Verificando...';
             showStatus('A procurar utilizador na base de dados...');
 
             try {
-                // O caminho da coleção pública para a demonstração
-                // (assumindo que a tabela da imagem corresponde a uma coleção 'users' pública)
-                const usersCollectionPath = `artifacts/${appId}/public/data/users`;
                 const usersCollectionRef = collection(db, usersCollectionPath);
 
                 // Consulta para encontrar o documento pelo e-mail
@@ -171,41 +253,12 @@
 
                 if (querySnapshot.empty) {
                     showStatus("Erro de Login: E-mail não encontrado.", 'error');
-                    console.warn(`Tentativa de login falhou: Email ${email} não encontrado.`);
                     return;
                 }
 
-                // Deve haver apenas um resultado para o email
                 const userDoc = querySnapshot.docs[0];
                 const userData = userDoc.data();
                 
-                // --- AQUI ESTÁ A LÓGICA DE PROTÓTIPO INSEGURA ---
-                // Compara a senha submetida (plaintext) com a senha armazenada (plaintext)
-                const storedPassword = userData.senha_hash; // O valor é "noizypapocai" ou similar
-                
-                if (password === storedPassword) {
-                    showStatus(`Sucesso! Bem-vindo, ${userData.nome_completo || email}.`, 'success');
-                    console.log("Login bem-sucedido (PROTÓTIPO INSEGURO). Dados do Usuário:", userData);
-                    
-                    // Nota: Em um aplicativo real, você faria um login real aqui (ex: signInWithCustomToken)
-                    // Mas para o protótipo, apenas mostramos o sucesso da consulta.
-                } else {
-                    showStatus("Erro de Login: Senha inválida.", 'error');
-                    console.warn("Tentativa de login falhou: Senha não corresponde ao valor armazenado em texto simples.");
-                }
-
-            } catch (error) {
-                console.error("Erro ao tentar fazer login:", error);
-                showStatus(`Erro no acesso ao BD: ${error.message}`, 'error');
-            } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Entrar';
-            }
-        }
-
-        // Inicializa a aplicação e atribui o manipulador de formulário
-        initializeFirebase();
-        loginForm.addEventListener('submit', handleLogin);
-    </script>
-</body>
-</html>
+                // --- LÓGICA DE PROTÓTIPO INSEGURA (Comparação de Senha) ---
+                if (password === userData.senha_hash) {
+                    showStatus(`Sucesso! Bem-vindo(a), ${userData.nome_completo || email}. (PROT
