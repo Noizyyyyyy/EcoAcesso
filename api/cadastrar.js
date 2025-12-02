@@ -10,13 +10,17 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // =========================================================================
-// 2. REFERÊNCIAS AO DOM
+// 2. REFERÊNCIAS AO DOM E CONFIGURAÇÃO
+// AQUI VOCÊ DEVE CONFIGURAR OS IDs DOS SEUS ELEMENTOS HTML
 // =========================================================================
-const form = document.getElementById('signup-form');
-const messageArea = document.getElementById('message-area');
-const submitButton = document.getElementById('submit-button');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
+const form = document.getElementById('signup-form'); // ID do seu formulário
+const messageArea = document.getElementById('message-area'); // ID da área para mensagens de feedback
+const submitButton = document.getElementById('submit-button'); // ID do seu botão de submissão
+const emailInput = document.getElementById('email'); // ID do campo de E-mail
+const passwordInput = document.getElementById('password'); // ID do campo de Senha
+
+// URL para onde redirecionar após o login bem-sucedido
+const DASHBOARD_URL = 'dashboard.html'; 
 
 // =========================================================================
 // 3. FUNÇÕES AUXILIARES
@@ -25,11 +29,13 @@ const passwordInput = document.getElementById('password');
 /**
  * Exibe uma mensagem de feedback na interface.
  * @param {string} text - O texto da mensagem a ser exibida.
- * @param {boolean} isError - Se a mensagem é um erro (usa cores vermelhas) ou sucesso (usa cores verdes).
+ * @param {boolean} isError - Se a mensagem é um erro.
  */
 function showMessage(text, isError = false) {
+    if (!messageArea) return;
+
     messageArea.textContent = text;
-    // Remove todas as classes de estado e esconde/mostra conforme necessário
+    // Remove todas as classes de estado
     messageArea.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
     
     if (isError) {
@@ -39,67 +45,102 @@ function showMessage(text, isError = false) {
     }
 }
 
+/**
+ * Tenta fazer o login com as credenciais e redireciona.
+ * @param {string} email - O e-mail do usuário.
+ * @param {string} password - A senha do usuário.
+ */
+async function signInUser(email, password) {
+    const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
+
+    if (error) {
+        console.error('Erro no Login Imediato:', error);
+        // Se houver falha de login, exibe o erro e sugere login manual
+        showMessage(`Registo OK, mas falha no login automático: ${error.message}.`, true);
+    } else {
+        // Redireciona o usuário
+        showMessage('Registo e Login Automático OK! Redirecionando...', false);
+        setTimeout(() => {
+            window.location.href = DASHBOARD_URL; 
+        }, 800);
+    }
+}
+
 // =========================================================================
-// 4. LÓGICA DE REGISTRO
+// 4. LÓGICA DE REGISTRO PRINCIPAL
 // =========================================================================
 
 /**
- * Lida com o evento de submissão do formulário, realiza o registro no Supabase e gerencia o feedback visual.
- * @param {Event} event - O objeto de evento de submissão.
+ * Lida com o evento de submissão do formulário.
  */
 async function handleSignUp(event) {
-    event.preventDefault(); // Impede o recarregamento da página
+    event.preventDefault();
+
+    // Verificação inicial dos elementos DOM
+    if (!form || !messageArea || !submitButton || !emailInput || !passwordInput) {
+        console.error("ERRO: Um ou mais elementos DOM necessários não foram encontrados. Verifique seus IDs.");
+        return;
+    }
 
     // Desabilita o botão e mostra que está processando
     submitButton.disabled = true;
     submitButton.textContent = 'A Processar...';
-    messageArea.classList.add('hidden'); // Esconde a mensagem anterior
+    messageArea.classList.add('hidden');
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
-    if (!email || !password) {
-        showMessage('Por favor, preencha o e-mail e a senha.', true);
-        submitButton.disabled = false;
-        submitButton.textContent = 'Registrar e Enviar Confirmação';
-        return;
+    // Verificação de segurança de configuração
+    if (SUPABASE_URL.includes('SUA_URL') || SUPABASE_ANON_KEY.includes('SUA_CHAVE')) {
+         showMessage('ERRO DE CONFIGURAÇÃO: Por favor, substitua os placeholders de URL e Chave ANÔNIMA no arquivo cadastro.js.', true);
+         submitButton.disabled = false;
+         submitButton.textContent = 'Registrar e Entrar';
+         return;
     }
 
     try {
-        // Chama a API de autenticação do Supabase.
-        const { data, error } = await supabase.auth.signUp({
+        // 1. Tenta Registrar o Usuário
+        const { data, error: signUpError } = await supabase.auth.signUp({
             email: email,
-            password: password,
-            options: {
-                // URL de redirecionamento após o clique no link do e-mail (usamos o domínio atual)
-                emailRedirectTo: window.location.origin 
-            }
+            password: password
         });
 
-        if (error) {
-            // Trata erros da API
-            console.error('Erro de Registro:', error);
-            showMessage(`Erro ao registrar: ${error.message}.`, true);
-        } else if (data.user && !data.session) {
-            // Sucesso: O usuário foi criado, mas a sessão não foi iniciada (confirmação por e-mail pendente)
-            showMessage(
-                'Sucesso! Verifique a sua caixa de e-mail (e a pasta de SPAM) para o link de confirmação.',
-                false
-            );
-            // Limpa o formulário após o sucesso
-            form.reset();
+        if (signUpError) {
+            console.error('Erro de Registo:', signUpError);
+            showMessage(`Erro ao registrar: ${signUpError.message}.`, true);
         } else {
-             // Caso a confirmação por e-mail não esteja ativada no Supabase.
-             showMessage('Sucesso no registro e login!', false);
+            // 2. Se o Registro foi bem-sucedido, tenta fazer o Login Imediato
+            // ESTA É A PARTE QUE SÓ FUNCIONA COM "EMAIL CONFIRMATIONS" DESATIVADO.
+            
+            // O Supabase retorna `data.session` se a confirmação estiver desligada e o login automático for bem-sucedido.
+            if (data.session) {
+                showMessage('Registo bem-sucedido e login automático OK! Redirecionando...', false);
+                 setTimeout(() => {
+                    window.location.href = DASHBOARD_URL; 
+                 }, 800);
+            } else {
+                // Se a confirmação estiver ligada, o Supabase envia o e-mail, mas não retorna a sessão.
+                showMessage(
+                    'Registo OK! A confirmação por e-mail está ATIVA. Verifique sua caixa de entrada.',
+                    false
+                );
+            }
+            
+            form.reset();
         }
 
     } catch (err) {
         console.error('Erro geral inesperado:', err);
         showMessage('Ocorreu um erro inesperado. Tente novamente.', true);
     } finally {
-        // Restaura o botão
-        submitButton.disabled = false;
-        submitButton.textContent = 'Registrar e Enviar Confirmação';
+        // Restaura o botão apenas se não houver redirecionamento imediato
+        if (window.location.href.includes('registro.html')) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Registrar e Entrar';
+        }
     }
 }
 
@@ -108,4 +149,11 @@ async function handleSignUp(event) {
 // =========================================================================
 
 // Adiciona o listener ao formulário
-form.addEventListener('submit', handleSignUp);
+// Adicione um listener DOMContentLoaded para garantir que os elementos já existem
+document.addEventListener('DOMContentLoaded', () => {
+    if (form) {
+        form.addEventListener('submit', handleSignUp);
+    } else {
+        console.error("ERRO: O formulário com ID 'signup-form' não foi encontrado.");
+    }
+});
