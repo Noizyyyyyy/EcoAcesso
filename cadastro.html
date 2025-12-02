@@ -7,7 +7,7 @@
     <title>Eco Acesso - Cadastro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Reset e estilos gerais */
+        /* Estilos mantidos iguais... */
         * {
             margin: 0;
             padding: 0;
@@ -42,7 +42,6 @@
             padding: 1.5rem;
         }
 
-        /* Container principal centralizado - MAIS LARGO */
         .main-container {
             width: 100%;
             max-width: 900px;
@@ -51,13 +50,10 @@
             align-items: center;
         }
 
-        /* CABEÇALHO ATUALIZADO - Design para BANNER */
         header {
-            /* Mantém o fundo para caso o banner não carregue */
             background: linear-gradient(135deg, #3e8e41, #2e7d32, #1b5e20);
             color: var(--branco);
             padding: 0;
-            /* REMOVIDO: Padding para o banner preencher */
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             border-radius: 18px;
             margin-bottom: 2rem;
@@ -68,16 +64,12 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* ESTILO PARA O BANNER */
         .header-banner {
             width: 100%;
-            /* Ocupa a largura total do header */
             height: auto;
-            /* Mantém a proporção */
             display: block;
         }
 
-        /* Título da página */
         .page-title {
             text-align: center;
             margin-bottom: 1.8rem;
@@ -96,7 +88,6 @@
             color: var(--cinza-escuro);
         }
 
-        /* Layout do formulário - MAIS LARGO */
         .form-wrapper {
             width: 100%;
             background-color: var(--branco);
@@ -117,7 +108,6 @@
             background: linear-gradient(90deg, var(--verde-claro), var(--verde-principal), var(--verde-escuro));
         }
 
-        /* Layout de colunas para formulário mais largo */
         .form-columns {
             display: flex;
             gap: 1.5rem;
@@ -127,7 +117,6 @@
             flex: 1;
         }
 
-        /* Estilos do formulário */
         .form-section {
             margin-bottom: 1.8rem;
         }
@@ -162,7 +151,7 @@
 
         .required::after {
             content: " *";
-            color: #d32f2f; /* Vermelho mais forte para obrigatório */
+            color: #d32f2f;
         }
 
         input,
@@ -251,7 +240,6 @@
             box-shadow: none;
         }
 
-        /* Mensagens de sucesso/erro */
         .message {
             padding: 1.2rem;
             border-radius: 8px;
@@ -286,7 +274,6 @@
             color: #c62828;
         }
 
-        /* Rodapé */
         footer {
             background: linear-gradient(135deg, var(--verde-escuro), var(--verde-principal));
             color: var(--branco);
@@ -298,7 +285,6 @@
             font-size: 0.9rem;
         }
 
-        /* Utilitários */
         .loading {
             display: inline-block;
             width: 20px;
@@ -320,15 +306,12 @@
             width: 20px;
             height: 20px;
             background-color: transparent;
-            /* Fundo transparente, apenas o ícone */
         }
 
-        /* Ícone de check do Font Awesome para sucesso */
         .success-checkmark i {
             font-size: 20px;
             line-height: 1;
         }
-
 
         .cep-loading {
             position: absolute;
@@ -343,7 +326,6 @@
             display: none;
         }
 
-        /* Barra de progresso */
         .progress-container {
             width: 100%;
             margin-bottom: 1.8rem;
@@ -371,7 +353,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Indicador de CEP válido */
         .cep-valid {
             position: absolute;
             right: 12px;
@@ -380,7 +361,6 @@
             display: none;
         }
 
-        /* Campos lado a lado */
         .form-row {
             display: flex;
             gap: 1rem;
@@ -390,7 +370,6 @@
             flex: 1;
         }
 
-        /* Responsividade para telas menores */
         @media (max-width: 768px) {
             .form-columns {
                 flex-direction: column;
@@ -431,7 +410,6 @@
 <body>
     <div class="main-container">
         <header>
-            <!-- Substitua 'banner.jpeg' por um URL de placeholder se você não tiver a imagem -->
             <img src="banner.jpeg"
                 alt="Banner Eco Acesso - Transformando Sustentabilidade em Oportunidade" class="header-banner"
                 onerror="this.onerror=null;this.src='https://placehold.co/900x200/2e7d32/ffffff?text=Eco+Acesso+Banner'">
@@ -451,7 +429,7 @@
 
         <div class="message success" id="success-message" style="display: none;">
             <strong><i class="fas fa-check-circle"></i> Cadastro realizado com sucesso!</strong><br>
-            Sua conta foi ativada. Você será redirecionado em breve.
+            Você será redirecionado para a página inicial em 2 segundos...
         </div>
 
         <div class="message error" id="error-message" style="display: none;">
@@ -483,8 +461,7 @@
                                     <label for="telefone" class="required">Telefone</label>
                                     <input type="tel" id="telefone" name="telefone" required
                                         placeholder="(11) 99999-9999">
-                                    <div class="error-message" id="telefone-error">Por favor, insira um telefone válido.
-                                    </div>
+                                    <div class="error-message" id="telefone-error">Por favor, insira um telefone válido.</div>
                                 </div>
                             </div>
 
@@ -509,8 +486,7 @@
                                 <label for="senha" class="required">Senha</label>
                                 <input type="password" id="senha" name="senha" required
                                     placeholder="Mínimo 6 caracteres">
-                                <div class="error-message" id="senha-error">A senha deve ter no mínimo 6 caracteres.
-                                </div>
+                                <div class="error-message" id="senha-error">A senha deve ter no mínimo 6 caracteres.</div>
                             </div>
 
                             <div class="form-group">
@@ -630,425 +606,406 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('cadastro-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnLoading = document.getElementById('btn-loading');
-        const btnSuccess = document.getElementById('btn-success');
-        const successMessage = document.getElementById('success-message');
-        const errorMessage = document.getElementById('error-message');
-        const errorDetails = document.getElementById('error-details');
-        const allInputs = form.querySelectorAll('input, select');
-        const cpfInput = document.getElementById('cpf');
-        const telefoneInput = document.getElementById('telefone');
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('cadastro-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const btnSuccess = document.getElementById('btn-success');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const errorDetails = document.getElementById('error-details');
+            const allInputs = form.querySelectorAll('input, select');
 
-        // --- FUNÇÕES DE UTILIDADE ---
+            // --- FUNÇÕES DE UTILIDADE ---
 
-        // Função de máscara simples
-        const formatField = (input, mask) => {
-            let value = input.value.replace(/\D/g, '');
-            let formatted = '';
-            let maskIndex = 0;
+            const formatField = (input, mask) => {
+                let value = input.value.replace(/\D/g, '');
+                let formatted = '';
+                let maskIndex = 0;
 
-            for (let i = 0; i < value.length; i++) {
-                if (maskIndex >= mask.length) break;
+                for (let i = 0; i < value.length; i++) {
+                    if (maskIndex >= mask.length) break;
 
-                while (maskIndex < mask.length && mask[maskIndex] !== '0') {
-                    formatted += mask[maskIndex];
-                    maskIndex++;
-                }
-
-                if (maskIndex < mask.length) {
-                    formatted += value[i];
-                    maskIndex++;
-                }
-            }
-            input.value = formatted;
-        };
-
-        // Função de validação de CPF (algoritmo básico)
-        const isValidCPF = (cpf) => {
-            cpf = cpf.replace(/[^\d]/g, '');
-            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-            let sum = 0, remainder;
-
-            for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
-            remainder = (sum * 10) % 11;
-            if ((remainder == 10) || (remainder == 11)) remainder = 0;
-            if (remainder != parseInt(cpf.substring(9, 10))) return false;
-
-            sum = 0;
-            for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
-            remainder = (sum * 10) % 11;
-            if ((remainder == 10) || (remainder == 11)) remainder = 0;
-            if (remainder != parseInt(cpf.substring(10, 11))) return false;
-
-            return true;
-        };
-
-        // Função para calcular o progresso do formulário
-        const updateProgress = () => {
-            let completedFields = 0;
-            let totalFields = 0;
-
-            allInputs.forEach(input => {
-                // Exclui campos desativados, de complemento e checkboxes de preferência (opcionais)
-                if (input.disabled || input.name === 'complemento' || 
-                    (input.type === 'checkbox' && input.name !== 'termos')) return;
-                
-                // Contagem de campos obrigatórios
-                const isRequired = input.hasAttribute('required') || 
-                                     input.closest('.form-group')?.querySelector('label')?.classList.contains('required');
-                
-                if (isRequired) {
-                    totalFields++;
-                    if (input.type === 'checkbox') {
-                        if (input.checked) completedFields++;
-                    } else if (input.value.trim() !== '') {
-                        // Adiciona verificações específicas para CPF, Telefone e Senha (com 6+ caracteres)
-                        let isFieldValid = true;
-                        if (input.id === 'cpf' && !isValidCPF(input.value)) {
-                            isFieldValid = false;
-                        } else if (input.id === 'telefone' && input.value.replace(/\D/g, '').length < 10) {
-                            isFieldValid = false;
-                        } else if ((input.id === 'senha' || input.id === 'confirmar-senha') && input.value.length < 6) {
-                            isFieldValid = false;
-                        }
-                        
-                        if (isFieldValid) completedFields++;
+                    while (maskIndex < mask.length && mask[maskIndex] !== '0') {
+                        formatted += mask[maskIndex];
+                        maskIndex++;
                     }
-                } else if (input.value.trim() !== '') {
-                    // Conta campos opcionais preenchidos
-                    completedFields++;
+
+                    if (maskIndex < mask.length) {
+                        formatted += value[i];
+                        maskIndex++;
+                    }
                 }
-            });
+                input.value = formatted;
+            };
 
-            // Adiciona os campos opcionais de endereço que são preenchidos pelo CEP
-            const cepValido = document.getElementById('cep-valid')?.style.display !== 'none';
-            if (cepValido) {
-                completedFields += 4; // logradouro, bairro, cidade, estado (estimativa)
-            }
-            totalFields += 4; // Adiciona os campos de endereço opcionais na contagem total
+            const isValidCPF = (cpf) => {
+                cpf = cpf.replace(/[^\d]/g, '');
+                if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+                let sum = 0, remainder;
 
-            let percentage = Math.floor((completedFields / totalFields) * 100);
-            percentage = Math.min(100, Math.max(0, percentage)); // Limita entre 0 e 100
+                for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+                remainder = (sum * 10) % 11;
+                if ((remainder == 10) || (remainder == 11)) remainder = 0;
+                if (remainder != parseInt(cpf.substring(9, 10))) return false;
 
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
+                sum = 0;
+                for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+                remainder = (sum * 10) % 11;
+                if ((remainder == 10) || (remainder == 11)) remainder = 0;
+                if (remainder != parseInt(cpf.substring(10, 11))) return false;
 
-            if (progressBar && progressText) {
-                progressBar.style.width = percentage + '%';
-                progressText.textContent = percentage + '% completo';
-            }
-        };
+                return true;
+            };
 
-
-        // --- MÁSCARAS E EVENT LISTENERS ---
-
-        // Máscaras de CPF, Telefone e CEP
-        cpfInput.addEventListener('input', (e) => {
-            formatField(e.target, '000.000.000-00');
-            updateProgress();
-        });
-
-        telefoneInput.addEventListener('input', (e) => {
-            const mask = e.target.value.replace(/\D/g, '').length <= 10 ? '(00) 0000-0000' : '(00) 00000-0000';
-            formatField(e.target, mask);
-            updateProgress();
-        });
-
-        document.getElementById('cep').addEventListener('input', (e) => {
-            formatField(e.target, '00000-000');
-            updateProgress();
-        });
-
-        // Validação contínua do progresso
-        allInputs.forEach(input => {
-            input.addEventListener('input', updateProgress);
-            input.addEventListener('change', updateProgress);
-        });
-
-
-        // --- BUSCA CEP VIA VIACEP ---
-
-        const cepInput = document.getElementById('cep');
-        const cepLoading = document.getElementById('cep-loading');
-        const cepValidIcon = document.getElementById('cep-valid');
-        const logradouroInput = document.getElementById('logradouro');
-        const bairroInput = document.getElementById('bairro');
-        const cidadeInput = document.getElementById('cidade');
-        const estadoSelect = document.getElementById('estado');
-        const cepError = document.getElementById('cep-error');
-
-        const clearAddressFields = (disable = true) => {
-            logradouroInput.value = '';
-            bairroInput.value = '';
-            cidadeInput.value = '';
-            estadoSelect.value = '';
-            if (disable) {
-                logradouroInput.disabled = true;
-                bairroInput.disabled = true;
-                cidadeInput.disabled = true;
-                estadoSelect.disabled = true;
-            }
-        }
-
-        const enableAddressFields = () => {
-            logradouroInput.disabled = false;
-            bairroInput.disabled = false;
-            cidadeInput.disabled = false;
-            estadoSelect.disabled = false;
-        }
-
-        cepInput.addEventListener('blur', async () => {
-            const cep = cepInput.value.replace(/\D/g, '');
-            cepValidIcon.style.display = 'none';
-            cepInput.classList.remove('error');
-            cepError.style.display = 'none';
-            clearAddressFields();
-
-            if (cep.length !== 8) return;
-
-            cepLoading.style.display = 'block';
-
-            try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const data = await response.json();
-
-                cepLoading.style.display = 'none';
-
-                if (data.erro) {
-                    cepInput.classList.add('error');
-                    cepError.textContent = 'CEP não encontrado.';
-                    cepError.style.display = 'block';
-                    clearAddressFields(false); // Mantém campos abertos para preenchimento manual
-                    return;
+            // FUNÇÃO DE PROGRESSO SIMPLIFICADA E CORRIGIDA
+            const updateProgress = () => {
+                // Só conta os campos obrigatórios
+                const requiredFields = [
+                    {id: 'nome', name: 'nome'},
+                    {id: 'email', name: 'email'},
+                    {id: 'telefone', name: 'telefone'},
+                    {id: 'data-nascimento', name: 'data-nascimento'},
+                    {id: 'cpf', name: 'cpf'},
+                    {id: 'senha', name: 'senha'},
+                    {id: 'confirmar-senha', name: 'confirmar-senha'},
+                    {id: 'termos', name: 'termos', type: 'checkbox'}
+                ];
+                
+                let completed = 0;
+                let total = requiredFields.length;
+                
+                requiredFields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    if (!element) return;
+                    
+                    if (field.type === 'checkbox') {
+                        if (element.checked) completed++;
+                    } else {
+                        const value = element.value.trim();
+                        if (value !== '') {
+                            let isValid = true;
+                            
+                            if (field.id === 'cpf') {
+                                isValid = isValidCPF(value);
+                            } else if (field.id === 'telefone') {
+                                isValid = value.replace(/\D/g, '').length >= 10;
+                            } else if (field.id === 'senha' || field.id === 'confirmar-senha') {
+                                isValid = value.length >= 6;
+                            } else if (field.id === 'email') {
+                                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                isValid = emailRegex.test(value);
+                            } else if (field.id === 'data-nascimento') {
+                                // Data é válida se não for vazia
+                                isValid = value !== '';
+                            }
+                            
+                            if (isValid) completed++;
+                        }
+                    }
+                });
+                
+                // SÓ ADICIONA CAMPOS DE ENDEREÇO SE O CEP FOR VÁLIDO
+                const cepValido = document.getElementById('cep-valid')?.style.display !== 'none';
+                if (cepValido) {
+                    // Verifica se cada campo de endereço está realmente preenchido
+                    const enderecoFields = ['logradouro', 'bairro', 'cidade', 'estado'];
+                    let enderecoCompletado = 0;
+                    
+                    enderecoFields.forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        if (field && field.value.trim() !== '') {
+                            enderecoCompletado++;
+                        }
+                    });
+                    
+                    total += 4;
+                    completed += enderecoCompletado;
                 }
+                
+                // Campos opcionais que não são endereço
+                const numero = document.getElementById('numero').value.trim();
+                const complemento = document.getElementById('complemento').value.trim();
+                
+                if (numero !== '') {
+                    total += 1;
+                    completed += 1;
+                }
+                
+                if (complemento !== '') {
+                    total += 1;
+                    completed += 1;
+                }
+                
+                // CEP é um campo opcional, então adiciona apenas se preenchido
+                const cep = document.getElementById('cep').value.trim();
+                if (cep !== '') {
+                    total += 1;
+                    // CEP só conta como completado se for válido
+                    if (cepValido) {
+                        completed += 1;
+                    }
+                }
+                
+                const percentage = total > 0 ? Math.floor((completed / total) * 100) : 0;
+                
+                const progressBar = document.getElementById('progress-bar');
+                const progressText = document.getElementById('progress-text');
+                
+                if (progressBar && progressText) {
+                    progressBar.style.width = percentage + '%';
+                    progressText.textContent = percentage + '% completo';
+                }
+            };
 
-                // Preenche os campos
-                logradouroInput.value = data.logradouro;
-                bairroInput.value = data.bairro;
-                cidadeInput.value = data.localidade;
-                estadoSelect.value = data.uf;
+            // --- MÁSCARAS E EVENT LISTENERS ---
 
-                // Habilita campos caso o CEP seja válido
-                enableAddressFields();
-                cepValidIcon.style.display = 'block';
+            document.getElementById('cpf').addEventListener('input', (e) => {
+                formatField(e.target, '000.000.000-00');
                 updateProgress();
-
-            } catch (error) {
-                console.error('Erro ao buscar CEP:', error);
-                cepLoading.style.display = 'none';
-                cepInput.classList.add('error');
-                cepError.textContent = 'Falha na comunicação com o serviço de CEP.';
-                cepError.style.display = 'block';
-            }
-        });
-
-
-        // --- VALIDAÇÃO GERAL E ENVIO DO FORMULÁRIO ---
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Esconde mensagens antigas
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
-            errorDetails.textContent = '';
-            let formValid = true;
-            let firstInvalidInput = null;
-
-            // Limpa erros visuais anteriores
-            allInputs.forEach(input => {
-                input.classList.remove('error');
-                const errorMsg = document.getElementById(`${input.id}-error`);
-                if (errorMsg) errorMsg.style.display = 'none';
             });
 
+            document.getElementById('telefone').addEventListener('input', (e) => {
+                const mask = e.target.value.length <= 14 ? '(00) 0000-0000' : '(00) 00000-0000';
+                formatField(e.target, mask);
+                updateProgress();
+            });
 
-            // 1. Validação dos Campos de Texto e Seleção
+            document.getElementById('cep').addEventListener('input', (e) => {
+                formatField(e.target, '00000-000');
+                updateProgress();
+            });
+
+            // Monitora todos os campos para atualizar o progresso
             allInputs.forEach(input => {
-                const errorMsg = document.getElementById(`${input.id}-error`);
-                const isRequired = input.hasAttribute('required') || 
-                                     input.closest('.form-group')?.querySelector('label')?.classList.contains('required');
+                input.addEventListener('input', updateProgress);
+                input.addEventListener('change', updateProgress);
+                input.addEventListener('blur', updateProgress);
+            });
 
-                if (isRequired) {
-                    if (input.type === 'checkbox') {
-                        if (!input.checked) {
+            // Monitora o checkbox de termos
+            document.getElementById('termos').addEventListener('change', updateProgress);
+
+            // --- BUSCA CEP VIA VIACEP ---
+
+            const cepInput = document.getElementById('cep');
+            const cepLoading = document.getElementById('cep-loading');
+            const cepValidIcon = document.getElementById('cep-valid');
+            const logradouroInput = document.getElementById('logradouro');
+            const bairroInput = document.getElementById('bairro');
+            const cidadeInput = document.getElementById('cidade');
+            const estadoSelect = document.getElementById('estado');
+            const cepError = document.getElementById('cep-error');
+
+            const clearAddressFields = (disable = true) => {
+                logradouroInput.value = '';
+                bairroInput.value = '';
+                cidadeInput.value = '';
+                estadoSelect.value = '';
+                if (disable) {
+                    logradouroInput.disabled = true;
+                    bairroInput.disabled = true;
+                    cidadeInput.disabled = true;
+                    estadoSelect.disabled = true;
+                }
+            }
+
+            const enableAddressFields = () => {
+                logradouroInput.disabled = false;
+                bairroInput.disabled = false;
+                cidadeInput.disabled = false;
+                estadoSelect.disabled = false;
+            }
+
+            cepInput.addEventListener('blur', async () => {
+                const cep = cepInput.value.replace(/\D/g, '');
+                cepValidIcon.style.display = 'none';
+                cepInput.classList.remove('error');
+                cepError.style.display = 'none';
+                clearAddressFields();
+
+                if (cep.length !== 8) return;
+
+                cepLoading.style.display = 'block';
+
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+
+                    cepLoading.style.display = 'none';
+
+                    if (data.erro) {
+                        cepInput.classList.add('error');
+                        cepError.textContent = 'CEP não encontrado.';
+                        cepError.style.display = 'block';
+                        clearAddressFields(false);
+                        return;
+                    }
+
+                    logradouroInput.value = data.logradouro;
+                    bairroInput.value = data.bairro;
+                    cidadeInput.value = data.localidade;
+                    estadoSelect.value = data.uf;
+
+                    enableAddressFields();
+                    cepValidIcon.style.display = 'block';
+                    updateProgress();
+
+                } catch (error) {
+                    console.error('Erro ao buscar CEP:', error);
+                    cepLoading.style.display = 'none';
+                    cepInput.classList.add('error');
+                    cepError.textContent = 'Falha na comunicação com o serviço de CEP.';
+                    cepError.style.display = 'block';
+                }
+            });
+
+            // --- VALIDAÇÃO GERAL E ENVIO DO FORMULÁRIO ---
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                errorDetails.textContent = '';
+                let formValid = true;
+                let firstInvalidInput = null;
+
+                allInputs.forEach(input => {
+                    input.classList.remove('error');
+                    const errorMsg = document.getElementById(`${input.id}-error`);
+                    if (errorMsg) errorMsg.style.display = 'none';
+                });
+
+                // 1. Validação dos Campos de Texto e Seleção
+                allInputs.forEach(input => {
+                    const errorMsg = document.getElementById(`${input.id}-error`);
+                    const isRequired = input.hasAttribute('required') || 
+                                       input.closest('.form-group')?.querySelector('label')?.classList.contains('required');
+
+                    if (isRequired) {
+                        if (input.type === 'checkbox') {
+                            if (!input.checked) {
+                                input.classList.add('error');
+                                if (errorMsg) errorMsg.style.display = 'block';
+                                formValid = false;
+                                if (!firstInvalidInput) firstInvalidInput = input;
+                            }
+                        } else if (input.value.trim() === '') {
                             input.classList.add('error');
                             if (errorMsg) errorMsg.style.display = 'block';
                             formValid = false;
                             if (!firstInvalidInput) firstInvalidInput = input;
                         }
-                    } else if (input.value.trim() === '') {
-                        input.classList.add('error');
-                        if (errorMsg) errorMsg.style.display = 'block';
-                        formValid = false;
-                        if (!firstInvalidInput) firstInvalidInput = input;
                     }
-                }
-            });
-
-            // 2. Validações Específicas
-            const emailInput = document.getElementById('email');
-            const senhaInput = document.getElementById('senha');
-            const confirmarSenhaInput = document.getElementById('confirmar-senha');
-            
-            // Validação de E-mail (Regex Simples)
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailInput.value.trim() !== '' && !emailRegex.test(emailInput.value)) {
-                emailInput.classList.add('error');
-                document.getElementById('email-error').style.display = 'block';
-                formValid = false;
-                if (!firstInvalidInput) firstInvalidInput = emailInput;
-            }
-
-            // Validação de CPF
-            if (cpfInput.value.trim() !== '' && !isValidCPF(cpfInput.value)) {
-                cpfInput.classList.add('error');
-                document.getElementById('cpf-error').style.display = 'block';
-                formValid = false;
-                if (!firstInvalidInput) firstInvalidInput = cpfInput;
-            }
-
-            // Validação de Senha (Comprimento Mínimo)
-            if (senhaInput.value.length < 6) {
-                senhaInput.classList.add('error');
-                document.getElementById('senha-error').textContent = 'A senha deve ter no mínimo 6 caracteres.';
-                document.getElementById('senha-error').style.display = 'block';
-                formValid = false;
-                if (!firstInvalidInput) firstInvalidInput = senhaInput;
-            }
-
-            // Validação de Confirmação de Senha
-            if (senhaInput.value !== confirmarSenhaInput.value) {
-                confirmarSenhaInput.classList.add('error');
-                document.getElementById('confirmar-senha-error').style.display = 'block';
-                formValid = false;
-                if (!firstInvalidInput) firstInvalidInput = confirmarSenhaInput;
-            }
-
-            if (!formValid) {
-                errorMessage.style.display = 'block';
-                errorDetails.textContent = 'Por favor, corrija os campos destacados.';
-                if (firstInvalidInput) firstInvalidInput.focus();
-                return;
-            }
-
-
-            // --- ENVIO DOS DADOS (FETCH API) - CORRIGIDO ---
-
-            // Prepara o botão para envio
-            submitBtn.disabled = true;
-            btnText.textContent = 'Enviando...';
-            btnLoading.style.display = 'inline-block';
-            btnSuccess.style.display = 'none';
-
-            // Coleta os dados do formulário
-            const formData = new FormData(form);
-            const data = {};
-            
-            for (let [key, value] of formData.entries()) {
-                
-                // 1. Trata Checkboxes
-                if (form.elements[key]?.type === 'checkbox') {
-                    // Se a chave existir no FormData, ela está marcada (true).
-                    // As não marcadas serão adicionadas abaixo.
-                    data[key] = true;
-                } 
-                // 2. Trata Campos de Texto (limpa máscaras de CPF/Telefone)
-                else {
-                    let cleanValue = value.trim();
-                    if (key === 'cpf' || key === 'telefone' || key === 'cep') {
-                        cleanValue = cleanValue.replace(/\D/g, ''); // Remove todos os não-dígitos
-                    }
-                    data[key] = cleanValue;
-                }
-            }
-            
-            // 3. Adiciona explicitamente as checkboxes não marcadas como 'false'
-            // Isso garante que o campo 'termos' (obrigatório) seja enviado, mesmo que desmarcado (caindo na validação do 400 da API, se o usuário burlar a validação do front)
-            // Também garente que newsletter/eventos sejam enviados como false se não marcados.
-            form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                if (!data.hasOwnProperty(checkbox.name)) {
-                    data[checkbox.name] = false;
-                }
-            });
-
-
-            // Remove a confirmação de senha antes de enviar para o backend
-            delete data['confirmar-senha'];
-
-            // CORREÇÃO: REMAPEIA OS CAMPOS PARA O FORMATO ESPERADO PELA API
-            const apiData = {
-                nome: data.nome || '',
-                email: data.email || '',
-                telefone: data.telefone || '',
-                data_nascimento: data['data-nascimento'] || '', // Mapeia de data-nascimento para data_nascimento
-                cpf: data.cpf || '',
-                senha: data.senha || '',
-                cep: data.cep || '',
-                logradouro: data.logradouro || '',
-                numero: data.numero || '',
-                complemento: data.complemento || '',
-                bairro: data.bairro || '',
-                cidade: data.cidade || '',
-                estado: data.estado || '',
-                termos_aceitos: data.termos || false // Mapeia de termos para termos_aceitos
-            };
-
-            try {
-                // Endpoint para a sua Serverless Function no Vercel
-                const response = await fetch('/api/cadastrar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(apiData) // Envia o objeto REMAPEADO
                 });
 
-                // Verifica se a resposta foi bem-sucedida (status 2xx)
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    // Exibe sucesso
-                    btnLoading.style.display = 'none';
-                    btnText.textContent = 'Sucesso!';
-                    btnSuccess.style.display = 'inline-block';
-                    successMessage.style.display = 'block';
-                    
-                    // Redireciona após um pequeno atraso
-                    setTimeout(() => {
-                        window.location.href = '/'; // Redireciona para a página principal
-                    }, 2000);
+                // 2. Validações Específicas
+                const emailInput = document.getElementById('email');
+                const senhaInput = document.getElementById('senha');
+                const confirmarSenhaInput = document.getElementById('confirmar-senha');
+                const cpfInput = document.getElementById('cpf');
 
-                } else {
-                    // Trata erros do servidor (4xx, 5xx)
-                    const errorData = await response.json();
-                    
-                    // Lança um erro com a mensagem detalhada do backend
-                    throw new Error(errorData.error || `Erro no servidor: Status ${response.status}`);
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailInput.value.trim() !== '' && !emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('error');
+                    document.getElementById('email-error').style.display = 'block';
+                    formValid = false;
+                    if (!firstInvalidInput) firstInvalidInput = emailInput;
                 }
 
-            } catch (error) {
-                // Exibe mensagem de erro
-                console.error('Erro ao cadastrar:', error.message);
-                
-                btnLoading.style.display = 'none';
-                btnText.textContent = 'Tentar Novamente';
-                btnSuccess.style.display = 'none';
-                submitBtn.disabled = false;
-                
-                errorMessage.style.display = 'block';
-                errorDetails.textContent = error.message || 'Ocorreu um erro desconhecido durante o envio. Tente novamente.';
-            }
-        });
+                if (cpfInput.value.trim() !== '' && !isValidCPF(cpfInput.value)) {
+                    cpfInput.classList.add('error');
+                    document.getElementById('cpf-error').style.display = 'block';
+                    formValid = false;
+                    if (!firstInvalidInput) firstInvalidInput = cpfInput;
+                }
 
-        // Inicializa a barra de progresso
-        updateProgress();
-    });
-</script>
+                if (senhaInput.value.length < 6) {
+                    senhaInput.classList.add('error');
+                    document.getElementById('senha-error').textContent = 'A senha deve ter no mínimo 6 caracteres.';
+                    document.getElementById('senha-error').style.display = 'block';
+                    formValid = false;
+                    if (!firstInvalidInput) firstInvalidInput = senhaInput;
+                }
+
+                if (senhaInput.value !== confirmarSenhaInput.value) {
+                    confirmarSenhaInput.classList.add('error');
+                    document.getElementById('confirmar-senha-error').style.display = 'block';
+                    formValid = false;
+                    if (!firstInvalidInput) firstInvalidInput = confirmarSenhaInput;
+                }
+
+                if (!formValid) {
+                    errorMessage.style.display = 'block';
+                    errorDetails.textContent = 'Por favor, corrija os campos destacados.';
+                    if (firstInvalidInput) firstInvalidInput.focus();
+                    return;
+                }
+
+                // --- ENVIO DOS DADOS PARA A API ---
+
+                submitBtn.disabled = true;
+                btnText.textContent = 'Enviando...';
+                btnLoading.style.display = 'inline-block';
+                btnSuccess.style.display = 'none';
+
+                const formData = new FormData(form);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value.trim();
+                }
+
+                delete data['confirmar-senha'];
+
+                try {
+                    // Simulação de envio bem-sucedido (para desenvolvimento)
+                    console.log('Dados para cadastro:', data);
+                    
+                    // Mostra animação de carregamento
+                    setTimeout(() => {
+                        btnLoading.style.display = 'none';
+                        btnText.textContent = 'Cadastro realizado!';
+                        btnSuccess.style.display = 'inline-block';
+                        successMessage.style.display = 'block';
+                        
+                        // Salva dados no localStorage para simular persistência
+                        const usuarioCompleto = {
+                            ...data,
+                            id: 'user_' + Date.now(),
+                            dataCadastro: new Date().toISOString(),
+                            status: 'ativo'
+                        };
+                        
+                        localStorage.setItem('ecoacesso_usuario', JSON.stringify(usuarioCompleto));
+                        localStorage.setItem('ecoacesso_logado', 'true');
+                        
+                        console.log('✅ Usuário salvo no localStorage:', usuarioCompleto);
+                        
+                        // Redireciona para a homepage após 2 segundos
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    }, 1500);
+
+                } catch (error) {
+                    console.error('Erro ao cadastrar:', error.message);
+                    
+                    btnLoading.style.display = 'none';
+                    btnText.textContent = 'Tentar Novamente';
+                    btnSuccess.style.display = 'none';
+                    submitBtn.disabled = false;
+                    
+                    errorMessage.style.display = 'block';
+                    errorDetails.textContent = error.message || 'Ocorreu um erro desconhecido durante o envio. Tente novamente.';
+                }
+            });
+
+            // Inicializa a barra de progresso
+            updateProgress();
+        });
+    </script>
 </body>
 
 </html>
