@@ -1,264 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protótipo de Login e Cadastro</title>
-    <!-- Carrega Tailwind CSS para estilização rápida -->
+    <title>Eco Acesso - Login</title>
+    <!-- Carrega Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Carrega Tailwind CSS para utilitários de estilo -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.fonts.google.com/specimen/Inter');
+        /* Variáveis e Estilos baseados no seu cadastro.html */
+        :root {
+            --verde-principal: #2e7d32;
+            --verde-escuro: #1b5e20;
+            --verde-claro: #4caf50;
+            --verde-muito-claro: #c8e6c9;
+            --verde-super-claro: #e8f5e9;
+            --branco: #ffffff;
+            --cinza-escuro: #424242;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
+            background-color: var(--verde-super-claro);
         }
+
+        .container-main {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
         .card {
+            background-color: var(--branco);
             box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
         }
+
         .btn-primary {
+            background-color: var(--verde-principal);
             transition: background-color 0.3s, transform 0.1s;
         }
+
         .btn-primary:hover:not(:disabled) {
-            background-color: #3b82f6;
+            background-color: var(--verde-escuro);
             transform: translateY(-1px);
         }
+
         .btn-primary:disabled {
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.7;
         }
-        .tab-active {
-            border-bottom: 2px solid #3b82f6;
-            color: #3b82f6;
-            font-weight: 600;
+
+        .input-field {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--verde-principal);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+            outline: none;
+        }
+
+        /* Estilo para ícone de carregamento */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--branco);
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
 
-    <!-- Card de Login/Cadastro -->
-    <div class="card bg-white p-8 rounded-xl w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Acesso ao Protótipo</h1>
+<body>
 
-        <!-- Seletor de Formulário (Login / Cadastro) -->
-        <div class="flex border-b border-gray-200 mb-6">
-            <button id="tab-login" class="flex-1 py-2 text-gray-600 tab-active" onclick="switchForm('login')">
-                Login
-            </button>
-            <button id="tab-register" class="flex-1 py-2 text-gray-600" onclick="switchForm('register')">
-                Cadastro
-            </button>
-        </div>
+    <div class="container-main">
+        <div class="card p-6 sm:p-8">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Acesso Eco Acesso</h1>
+            <p class="text-center text-gray-600 mb-6">Entre com suas credenciais.</p>
 
-        <!-- AVISO DE SEGURANÇA CRÍTICO -->
-        <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-sm">
-            <p class="font-bold">⚠️ ALERTA DE SEGURANÇA CRÍTICO</p>
-            <p>Este protótipo armazena e compara senhas em **texto simples (inseguro)**. NÃO use em produção.</p>
-        </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                    <input type="email" id="email" name="email" required
+                           placeholder="usuario@exemplo.com"
+                           class="input-field">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Senha"
+                           class="input-field">
+                </div>
 
-        <!-- Formulário de LOGIN -->
-        <form id="login-form" class="space-y-4">
-            <p class="text-gray-500 text-sm text-center">Use um e-mail já cadastrado (ou crie um novo na aba Cadastro).</p>
-            <div>
-                <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input type="email" id="login-email" name="email" required
-                       placeholder="Seu e-mail"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-                <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                <input type="password" id="login-password" name="password" required
-                       placeholder="Sua senha"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            </div>
+                <!-- Botão de Login com Ícones de Feedback -->
+                <button type="submit" id="login-button" disabled
+                        class="w-full h-12 flex items-center justify-center text-white font-semibold rounded-lg btn-primary focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
+                    <span id="btnLoading" class="spinner mr-2" style="display: none;"></span>
+                    <span id="btnText">Aguardando Inicialização...</span>
+                    <i id="btnSuccess" class="fas fa-check ml-2" style="display: none;"></i>
+                </button>
+            </form>
 
-            <button type="submit" id="login-button" disabled
-                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                Aguardando Inicialização...
-            </button>
-        </form>
-
-        <!-- Formulário de CADASTRO (Oculto por padrão) -->
-        <form id="register-form" class="space-y-4 hidden">
-            <p class="text-gray-500 text-sm text-center">Preencha para criar uma nova conta.</p>
-            <div>
-                <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                <input type="text" id="register-name" name="name" required
-                       placeholder="Seu nome"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-                <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input type="email" id="register-email" name="email" required
-                       placeholder="Seu e-mail"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div>
-                <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                <input type="password" id="register-password" name="password" required minlength="6"
-                       placeholder="Mínimo 6 caracteres"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <!-- Área de Mensagens de Erro -->
+            <div id="errorMessage" class="mt-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-lg" style="display: none;">
+                <p class="font-bold">Erro de Login</p>
+                <p id="errorDetails" class="text-sm"></p>
             </div>
 
-            <button type="submit" id="register-button" disabled
-                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                Aguardando Inicialização...
-            </button>
-        </form>
+            <!-- Área de Mensagens de Sucesso -->
+            <div id="successMessage" class="mt-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-lg" style="display: none;">
+                <p class="font-bold">Login bem-sucedido!</p>
+                <p class="text-sm">Acesso concedido. Bem-vindo(a) de volta.</p>
+            </div>
 
-        <!-- Área de Status e Mensagens -->
-        <div id="status-message" class="mt-4 p-3 rounded-lg text-center bg-gray-100 text-gray-800">Aguardando inicialização do Firebase...</div>
+            <!-- Área de Status de Inicialização -->
+            <div id="status-message" class="mt-4 text-center text-sm text-gray-500">Aguardando inicialização do Supabase...</div>
 
-        <!-- ID do Usuário Autenticado (para referência) -->
-        <div class="mt-4 text-center text-xs text-gray-500">
-            <p>ID do Usuário Atual (para Debug): <span id="current-user-id" class="font-mono">...</span></p>
+            <!-- ID do Usuário Autenticado (para referência) -->
+            <div class="mt-2 text-center text-xs text-gray-400">
+                <p>ID do Usuário: <span id="current-user-id" class="font-mono">...</span></p>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Script de lógica de Login -->
+    <script type="module" src="./login.js"></script>
 
-        // Configurações Globais do Canvas (MANDATÓRIO)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+</body>
 
-        let db = null;
-        let auth = null;
-        let isAuthReady = false;
-
-        // Elementos do DOM
-        const statusMessage = document.getElementById('status-message');
-        const currentUserIdDisplay = document.getElementById('current-user-id');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const loginButton = document.getElementById('login-button');
-        const registerButton = document.getElementById('register-button');
-        const tabLogin = document.getElementById('tab-login');
-        const tabRegister = document.getElementById('tab-register');
-
-        // Caminho da Coleção Pública de Usuários
-        const usersCollectionPath = `artifacts/${appId}/public/data/users`;
-
-        // --- UI FUNÇÕES ---
-
-        // Função para alternar entre as abas de Login e Cadastro
-        window.switchForm = function(mode) {
-            if (mode === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabLogin.classList.add('tab-active');
-                tabRegister.classList.remove('tab-active');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabLogin.classList.remove('tab-active');
-                tabRegister.classList.add('tab-active');
-            }
-            // Limpa o status ao alternar
-            showStatus(isAuthReady ? "Pronto para Login ou Cadastro." : "Aguardando inicialização do Firebase...", 'info');
-        }
-
-        // Função para exibir mensagens de status
-        function showStatus(message, type = 'info') {
-            statusMessage.textContent = message;
-            statusMessage.classList.remove('bg-red-100', 'bg-green-100', 'bg-gray-100', 'text-red-800', 'text-green-800', 'text-gray-800');
-            if (type === 'error') {
-                statusMessage.classList.add('bg-red-100', 'text-red-800');
-            } else if (type === 'success') {
-                statusMessage.classList.add('bg-green-100', 'text-green-800');
-            } else {
-                statusMessage.classList.add('bg-gray-100', 'text-gray-800');
-            }
-        }
-
-        // Função para habilitar/desabilitar botões
-        function setButtonsEnabled(enabled, text = 'Entrar / Cadastrar') {
-            loginButton.disabled = !enabled;
-            registerButton.disabled = !enabled;
-            loginButton.textContent = enabled ? 'Entrar' : 'Aguardando Inicialização...';
-            registerButton.textContent = enabled ? 'Cadastrar' : 'Aguardando Inicialização...';
-        }
-
-
-        // --- FIREBASE FUNÇÕES ---
-
-        /**
-         * 1. Inicialização e Autenticação do Firebase
-         */
-        async function initializeFirebase() {
-            if (!firebaseConfig) {
-                showStatus("Erro: Configuração do Firebase indisponível.", 'error');
-                return;
-            }
-
-            try {
-                setLogLevel('debug');
-                
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Autenticar o usuário
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Listener para atualizar o ID do usuário no UI
-                onAuthStateChanged(auth, (user) => {
-                    const userId = user ? user.uid : 'Não Autenticado';
-                    currentUserIdDisplay.textContent = userId;
-                });
-
-                // TUDO PRONTO: Habilita os botões de ação
-                isAuthReady = true;
-                setButtonsEnabled(true);
-                showStatus("Firebase e autenticação prontos. Pode fazer Login ou Cadastro.", 'success');
-
-            } catch (error) {
-                console.error("Erro na inicialização do Firebase ou autenticação:", error);
-                showStatus(`Erro de inicialização: ${error.message}. Recarregue a página.`, 'error');
-                setButtonsEnabled(false, `ERRO: ${error.message}`);
-            }
-        }
-
-        /**
-         * 2. Lógica de LOGIN (consulta manual insegura)
-         */
-        async function handleLogin(event) {
-            event.preventDefault();
-
-            if (!isAuthReady || !db) {
-                showStatus("Aguarde, o Firebase ainda não está pronto para consultas.", 'info');
-                return;
-            }
-
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value; 
-            
-            setButtonsEnabled(false);
-            loginButton.textContent = 'Verificando...';
-            showStatus('A procurar utilizador na base de dados...');
-
-            try {
-                const usersCollectionRef = collection(db, usersCollectionPath);
-
-                // Consulta para encontrar o documento pelo e-mail
-                const q = query(usersCollectionRef, where("email", "==", email));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    showStatus("Erro de Login: E-mail não encontrado.", 'error');
-                    return;
-                }
-
-                const userDoc = querySnapshot.docs[0];
-                const userData = userDoc.data();
-                
-                // --- LÓGICA DE PROTÓTIPO INSEGURA (Comparação de Senha) ---
-                if (password === userData.senha_hash) {
-                    showStatus(`Sucesso! Bem-vindo(a), ${userData.nome_completo || email}. (PROT
+</html>
