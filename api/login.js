@@ -5,8 +5,8 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // ==========================================================
 
 // Variáveis globais do Canvas (ou defina como placeholders se estiver fora)
-const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE"; // Substitua pela sua URL do Supabase
-const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE"; // Substitua pela sua Chave Anon do Supabase
+const SUPABASE_URL = "https://nbumhujecfjmtxgxtcxx.supabase.co"; // Substitua pela sua URL do Supabase
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8"; // Substitua pela sua Chave Anon do Supabase
 
 // Se o ambiente Canvas fornecer variáveis, use-as
 const supabaseUrl = typeof __supabase_url !== 'undefined' ? __supabase_url : SUPABASE_URL;
