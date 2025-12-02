@@ -3,224 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação de Credenciais Supabase</title>
-    <!-- Carrega Tailwind CSS para estilização responsiva -->
+    <title>Protótipo de Login</title>
+    <!-- Carrega Tailwind CSS para estilização rápida -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #f7f9fb;
         }
-        .container {
-            max-width: 90%;
-            width: 450px;
+        .card {
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .btn-primary:hover {
+            background-color: #3b82f6;
+            transform: translateY(-1px);
         }
     </style>
-    <!-- Carrega o cliente Supabase como um módulo ES via CDN -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-        // ----------------------------------------------------
-        // ATENÇÃO: Credenciais Supabase (fornecidas pelo utilizador)
-        // ----------------------------------------------------
-        const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8';
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Referências DOM
-        const appContainer = document.getElementById('app-container');
-        const loginForm = document.getElementById('login-form');
-        const loggedInView = document.getElementById('logged-in-view');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const messageDisplay = document.getElementById('message-display');
-        const userEmailDisplay = document.getElementById('user-email-display');
-
-        // Função para exibir mensagens de status
-        function showMessage(message, isError = false) {
-            messageDisplay.textContent = message;
-            messageDisplay.className = `p-3 rounded-lg text-sm transition duration-300 ${
-                isError ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-            }`;
-            messageDisplay.classList.remove('hidden');
-        }
-
-        // Função para alternar a interface entre login e logado
-        function updateUI(user) {
-            if (user) {
-                loginForm.classList.add('hidden');
-                loggedInView.classList.remove('hidden');
-                userEmailDisplay.textContent = user.email || 'Usuário sem e-mail';
-            } else {
-                loginForm.classList.remove('hidden');
-                loggedInView.classList.add('hidden');
-            }
-        }
-
-        // ----------------------------------------------------
-        // Lógica de Login (Verificação de Credenciais)
-        // ----------------------------------------------------
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            messageDisplay.classList.add('hidden'); // Limpa mensagens
-            
-            const submitButton = document.getElementById('submit-btn');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Verificando...';
-
-            // O método signInWithPassword verifica o email e a senha de forma segura no backend
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password,
-            });
-
-            submitButton.disabled = false;
-            submitButton.textContent = 'Verificar Credenciais e Entrar';
-
-            if (error) {
-                console.error('Erro de Login:', error);
-                let errorMessage = `Falha no Login: ${error.message}`;
-                
-                // Trata erro de credenciais inválidas especificamente
-                if (error.status === 400 && error.message.includes('Invalid login credentials')) {
-                    errorMessage = 'Erro: Credenciais de login inválidas. Verifique seu email e senha.';
-                }
-                showMessage(errorMessage, true);
-                updateUI(null);
-            } else if (data.user) {
-                // Sucesso: credenciais verificadas e login realizado.
-                showMessage('Sucesso! Credenciais verificadas e login realizado.', false);
-                // O listener onAuthStateChange irá atualizar a UI
-            }
-        });
-
-        // ----------------------------------------------------
-        // Lógica de Logout
-        // ----------------------------------------------------
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                showMessage(`Erro ao fazer logout: ${error.message}`, true);
-            } else {
-                showMessage('Logout realizado com sucesso.', false);
-                // O listener onAuthStateChange irá atualizar a UI
-            }
-        });
-
-        // ----------------------------------------------------
-        // Inicialização e Listener de Autenticação
-        // ----------------------------------------------------
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Escuta mudanças no estado de autenticação (login/logout)
-            supabase.auth.onAuthStateChange((event, session) => {
-                updateUI(session?.user ?? null);
-            });
-
-            // 2. Checa o usuário atual ao carregar
-            const { data: { session } } = await supabase.auth.getSession();
-            updateUI(session?.user ?? null);
-        });
-
-    </script>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <!-- A div config-error foi removida pois as credenciais foram fornecidas. -->
+    <!-- Card de Login -->
+    <div class="card bg-white p-8 rounded-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Acesso ao Protótipo</h1>
 
-    <div id="app-container" class="container bg-white p-8 rounded-2xl shadow-xl space-y-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
-            Verificação de Credenciais Supabase
-        </h1>
-        
-        <!-- Interface de Usuário Logado -->
-        <div id="logged-in-view" class="space-y-4 hidden">
-            <p class="text-lg text-green-600 font-medium p-3 bg-green-50 rounded-lg">
-                🎉 Você está logado como:
-                <br/>
-                <span id="user-email-display" class="font-mono text-sm break-all"></span>
-            </p>
-            <p class="text-sm text-gray-500">
-                O Supabase verificou suas credenciais com sucesso usando o hash da senha armazenado.
-            </p>
-            <button
-                id="logout-btn"
-                class="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
-            >
-                Sair (Logout)
-            </button>
+        <!-- AVISO DE SEGURANÇA CRÍTICO -->
+        <div id="security-warning" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 text-sm">
+            <p class="font-bold">⚠️ ALERTA DE SEGURANÇA CRÍTICO</p>
+            <p>Este protótipo realiza a comparação da senha em texto simples (inseguro), conforme solicitado. **ISSO NÃO DEVE SER USADO EM PRODUÇÃO.** Para um sistema real, use o Firebase Authentication ou hashes seguros (como bcrypt).</p>
         </div>
 
-        <!-- Formulário de Login (Verificação de Credenciais) -->
-        <form id="login-form" class="space-y-6">
-            <p class="text-gray-600 text-sm">
-                Entre com as credenciais de um usuário já registrado no seu projeto Supabase.
-            </p>
+        <form id="login-form" class="space-y-4">
             <div>
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="seu.email@exemplo.com"
-                required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                autocomplete="email"
-              />
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                <input type="email" id="email" name="email" required
+                       placeholder="Seu e-mail"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
-            
             <div>
-              <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                Senha
-              </label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Sua senha secreta"
-                required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                autocomplete="current-password"
-              />
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                <input type="password" id="password" name="password" required
+                       placeholder="Sua senha em texto simples (noizypapocai)"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
             </div>
-            
-            <button
-              id="submit-btn"
-              type="submit"
-              class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 disabled:opacity-50"
-            >
-              Verificar Credenciais e Entrar
+
+            <button type="submit" id="login-button"
+                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg btn-primary hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
+                Entrar
             </button>
-            
-            <!-- Exibição de Mensagem -->
-            <div id="message-display" class="hidden"></div>
-            
-            <div class="pt-4 border-t border-gray-100">
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">
-                    Como a verificação funciona?
-                </h3>
-                <ol class="list-disc pl-5 text-gray-600 space-y-2 text-sm">
-                    <li>O cliente envia o **email** e a **senha** (em texto puro) ao Supabase via <code class="font-mono">signInWithPassword</code>.</li>
-                    <li>O servidor do Supabase (PostgreSQL) procura o usuário pelo email.</li>
-                    <li>Ele pega o **hash armazenado** (e o salt, se usado) do banco de dados.</li>
-                    <li>Ele gera um novo hash da **senha em texto puro** recebida, usando o mesmo algoritmo e salt.</li>
-                    <li>Ele **compara** o novo hash gerado com o hash armazenado.</li>
-                    <li>Se forem idênticos, a **verificação é bem-sucedida**, e o Supabase retorna um token de sessão.</li>
-                </ol>
-            </div>
         </form>
-      </div>
-      <p class="mt-4 text-xs text-gray-400">
-          Feito com HTML, JS e Supabase Auth
-      </p>
+
+        <!-- Área de Status e Mensagens -->
+        <div id="status-message" class="mt-4 p-3 rounded-lg text-center hidden"></div>
+
+        <!-- ID do Usuário Autenticado (para referência) -->
+        <div class="mt-4 text-center text-xs text-gray-500">
+            <p>ID do Usuário Atual (para Debug): <span id="current-user-id" class="font-mono">...</span></p>
+        </div>
     </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Configurações Globais do Canvas (MANDATÓRIO)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db;
+        let auth;
+        let currentUserId = null;
+        let isAuthReady = false;
+
+        const statusMessage = document.getElementById('status-message');
+        const currentUserIdDisplay = document.getElementById('current-user-id');
+        const loginForm = document.getElementById('login-form');
+        const loginButton = document.getElementById('login-button');
+
+        // Função para exibir mensagens de status
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-800', 'text-green-800');
+            if (type === 'error') {
+                statusMessage.classList.add('bg-red-100', 'text-red-800');
+            } else if (type === 'success') {
+                statusMessage.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                statusMessage.classList.add('bg-gray-100', 'text-gray-800');
+            }
+        }
+
+        // 1. Inicialização do Firebase e Autenticação
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                showStatus("Erro: Configuração do Firebase indisponível.", 'error');
+                return;
+            }
+
+            try {
+                // Ativar logs de debug para depuração
+                setLogLevel('debug');
+                
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Listener de estado de autenticação
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        currentUserIdDisplay.textContent = currentUserId;
+                        isAuthReady = true;
+                        showStatus("Firebase e autenticação prontos (Usuário Anônimo).", 'success');
+                    } else {
+                        currentUserId = 'Não Autenticado';
+                        currentUserIdDisplay.textContent = currentUserId;
+                        isAuthReady = true;
+                    }
+                    // Tenta autenticar ou usa anonimamente
+                    if (auth && !user) {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro na inicialização do Firebase ou autenticação:", error);
+                showStatus(`Erro de inicialização: ${error.message}`, 'error');
+            }
+        }
+
+        // 2. Lógica de Login (Usando Consulta Manual Insegura)
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            if (!isAuthReady || !db) {
+                showStatus("Aguarde, o Firebase ainda não está pronto.", 'info');
+                return;
+            }
+
+            const email = document.getElementById('email').value.trim();
+            // A senha submetida pelo usuário
+            const password = document.getElementById('password').value; 
+            
+            loginButton.disabled = true;
+            loginButton.textContent = 'Verificando...';
+            showStatus('A procurar utilizador na base de dados...');
+
+            try {
+                // O caminho da coleção pública para a demonstração
+                // (assumindo que a tabela da imagem corresponde a uma coleção 'users' pública)
+                const usersCollectionPath = `artifacts/${appId}/public/data/users`;
+                const usersCollectionRef = collection(db, usersCollectionPath);
+
+                // Consulta para encontrar o documento pelo e-mail
+                const q = query(usersCollectionRef, where("email", "==", email));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    showStatus("Erro de Login: E-mail não encontrado.", 'error');
+                    console.warn(`Tentativa de login falhou: Email ${email} não encontrado.`);
+                    return;
+                }
+
+                // Deve haver apenas um resultado para o email
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                // --- AQUI ESTÁ A LÓGICA DE PROTÓTIPO INSEGURA ---
+                // Compara a senha submetida (plaintext) com a senha armazenada (plaintext)
+                const storedPassword = userData.senha_hash; // O valor é "noizypapocai" ou similar
+                
+                if (password === storedPassword) {
+                    showStatus(`Sucesso! Bem-vindo, ${userData.nome_completo || email}.`, 'success');
+                    console.log("Login bem-sucedido (PROTÓTIPO INSEGURO). Dados do Usuário:", userData);
+                    
+                    // Nota: Em um aplicativo real, você faria um login real aqui (ex: signInWithCustomToken)
+                    // Mas para o protótipo, apenas mostramos o sucesso da consulta.
+                } else {
+                    showStatus("Erro de Login: Senha inválida.", 'error');
+                    console.warn("Tentativa de login falhou: Senha não corresponde ao valor armazenado em texto simples.");
+                }
+
+            } catch (error) {
+                console.error("Erro ao tentar fazer login:", error);
+                showStatus(`Erro no acesso ao BD: ${error.message}`, 'error');
+            } finally {
+                loginButton.disabled = false;
+                loginButton.textContent = 'Entrar';
+            }
+        }
+
+        // Inicializa a aplicação e atribui o manipulador de formulário
+        initializeFirebase();
+        loginForm.addEventListener('submit', handleLogin);
+    </script>
 </body>
 </html>
