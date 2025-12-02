@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Variáveis de ambiente
-// ATENÇÃO: Use a CHAVE DE SERVIÇO (service_role key) se precisar de permissão total 
-// para inserir no Auth E na tabela de perfil ao mesmo tempo no backend.
+// ATENÇÃO CRÍTICA: 
+// 1. Em um ambiente de backend (como uma função serverless), você DEVE usar a 
+//    CHAVE DE SERVIÇO (SERVICE_ROLE KEY), pois ela tem permissão para ignorar as 
+//    regras de RLS (Row Level Security) e realizar o `auth.signUp` de forma segura.
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY; 
 
@@ -12,7 +13,7 @@ const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 let supabase = null;
 
 /**
- * Função de validação de CPF (mantida a sua implementação)
+ * Função de validação de CPF
  */
 function isValidCPF(cpf) {
     if (!cpf) return false;
@@ -47,14 +48,13 @@ export default async (req, res) => {
 
     // 2. Inicialização e Verificação de Configuração
     if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: As variáveis SUPABASE_URL ou SUPABASE_SERVICE_KEY não foram encontradas.");
+        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: A Chave de Serviço (SUPABASE_SERVICE_KEY) não foi encontrada. É obrigatória para operações de Auth no backend.");
         return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
     }
 
-    // Inicializa o cliente Supabase com a CHAVE DE SERVIÇO para ter permissão de escrever no Auth e na tabela.
+    // Inicializa o cliente Supabase com a CHAVE DE SERVIÇO
     if (!supabase) {
         try {
-            // Este cliente é o superusuário no seu backend para operações administrativas.
             supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
         } catch (e) {
             console.error("Erro ao inicializar o cliente Supabase:", e.message);
@@ -90,7 +90,7 @@ export default async (req, res) => {
         termos_aceitos 
     } = data;
     
-    // ... Validações (continuam aqui)
+    // Validações
     if (!nome || !email || !senha || !rawCpf || !termos_aceitos) {
         return res.status(400).json({ error: "Campos obrigatórios (Nome, E-mail, Senha, CPF, Termos) não preenchidos." });
     }
@@ -107,23 +107,25 @@ export default async (req, res) => {
 
     let interessesArray = null;
     if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
+        // Converte a string de interesses separada por vírgula em um array
         interessesArray = interesses.split(',').map(s => s.trim()).filter(s => s.length > 0);
         if (interessesArray.length === 0) {
              interessesArray = null;
         }
     }
 
-    let authUser = null;
-    let authError = null;
 
     // =========================================================
     // 4. PASSO CRUCIAL: CRIA O USUÁRIO NO SISTEMA DE AUTENTICAÇÃO
+    //    Isto criptografa a senha e armazena de forma segura.
     // =========================================================
+    let authUser = null;
+    let authError = null;
+    
     try {
-        // O Supabase Auth faz o hashing da senha e armazena.
         const { data: authData, error } = await supabase.auth.signUp({
             email: email,
-            password: senha,
+            password: senha, // A senha é criptografada e salva aqui.
             options: { data: { full_name: nome } }
         });
 
@@ -143,7 +145,8 @@ export default async (req, res) => {
         return res.status(500).json({ message: authError.message || "Erro no serviço de autenticação." });
     }
     
-    // Se a confirmação de e-mail estiver ativa, o usuário será criado mas não logado.
+    // Se precisar de confirmação de e-mail (configurado no Supabase), a resposta é 202.
+    // O usuário é criado, mas não está logado automaticamente.
     if (!authUser || !authUser.id) {
         return res.status(202).json({ 
             message: "Conta de login criada. Verifique seu e-mail para confirmar o cadastro e, em seguida, faça o login.", 
@@ -152,16 +155,16 @@ export default async (req, res) => {
     }
 
     // ========================================================
-    // 5. INSERE O PERFIL NO BANCO DE DADOS USANDO O NOVO ID
+    // 5. INSERE O PERFIL NO BANCO DE DADOS USANDO O ID DE AUTH
     // ========================================================
     const cadastroData = {
-        // CHAVE ESTRANGEIRA OBRIGATÓRIA: Este campo liga à tabela auth.users
+        // CHAVE ESTRANGEIRA OBRIGATÓRIA: Liga o perfil à conta de login segura
         user_id: authUser.id, 
         
-        // Mapeamentos de dados de perfil (o resto dos seus dados)
+        // Dados de perfil
         nome_completo: nome,
         email: email,
-        // NÃO SALVE A SENHA CRIPTOGRAFADA AQUI. Ela está no Auth Service!
+        // *** NÃO HÁ CAMPO 'senha' AQUI *** A senha está armazenada criptografada no Auth Service.
         cpf: cleanCpf,
         
         data_nascimento: data_nascimento || null, 
@@ -175,10 +178,11 @@ export default async (req, res) => {
         cidade: cidade || null,
         estado: estado || null,
         
-        interesses: interessesArray, 
+        interesses: interessesArray, // Array de strings
         receber_newsletter: receber_newsletter || false,
         receber_eventos: receber_eventos || false,
         termos_aceitos: termos_aceitos, 
+        email_confirmado: authUser.email_confirmed_at ? true : false // Opcional: reflete o status do Auth
     };
     
     const { error: dbError } = await supabase
@@ -186,18 +190,17 @@ export default async (req, res) => {
         .insert([cadastroData]);
 
     if (dbError) {
-        console.error('Erro ao inserir perfil na tabela "cadastro":', dbError);
+        console.error('Erro ao inserir perfil na tabela "cadastro". O usuário no Auth foi criado, mas o perfil falhou. Você deve limpar o usuário no Auth se isso for crítico:', dbError);
         
-        // Se a inserção do perfil falhar, você tem uma conta órfã no Auth.
         return res.status(500).json({ 
-            message: "Conta de login criada, mas falha ao salvar dados de perfil. Tente fazer login mais tarde.", 
+            message: "Conta de login criada, mas falha ao salvar dados de perfil. Tente fazer login mais tarde ou contate o suporte.", 
             details: dbError.message 
         });
     }
 
     // 6. Resposta de sucesso (Status 201: Created)
     res.status(201).json({ 
-        message: "Usuário e perfil cadastrados com sucesso!", 
+        message: "Usuário e perfil cadastrados com sucesso! Agora você pode usar o endpoint de login.", 
         user_id: authUser.id 
     });
 };
