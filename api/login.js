@@ -1,118 +1,203 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-// Variáveis de ambiente (Configuradas no seu ambiente de hospedagem)
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY; // A chave pública do Supabase
+// ==========================================================
+// 1. CONFIGURAÇÃO INICIAL (Substitua pelos valores reais)
+// ==========================================================
 
-let supabase;
+// Variáveis globais do Canvas (ou defina como placeholders se estiver fora)
+const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE"; // Substitua pela sua URL do Supabase
+const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY_HERE"; // Substitua pela sua Chave Anon do Supabase
 
-try {
-  // 1. Verificar se as variáveis de ambiente estão definidas ANTES de inicializar
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error("As variáveis de ambiente SUPABASE_URL ou SUPABASE_KEY estão em falta. Por favor, configure-as no seu ambiente de hospedagem.");
-  }
-  
-  // 2. Inicializar o cliente Supabase usando a SUPABASE_KEY
-  supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: {
-      // Desabilitar o refresh e a persistência é importante para funções serverless
-      autoRefreshToken: false,
-      persistSession: false,
-    }
-  });
+// Se o ambiente Canvas fornecer variáveis, use-as
+const supabaseUrl = typeof __supabase_url !== 'undefined' ? __supabase_url : SUPABASE_URL;
+const supabaseAnonKey = typeof __supabase_anon_key !== 'undefined' ? __supabase_anon_key : SUPABASE_KEY;
 
-} catch (e) {
-  // Capturar erros de inicialização (principalmente missing env vars)
-  console.error("ERRO DE INICIALIZAÇÃO DO SUPABASE:", e.message);
-  // Define uma função de erro de fallback para ser usada no handler
-  supabase = { initializationError: e.message };
+// Inicializa o cliente Supabase
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// ==========================================================
+// 2. ELEMENTOS DO DOM
+// ==========================================================
+const loginForm = document.getElementById('login-form');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginButton = document.getElementById('login-button');
+const statusMessage = document.getElementById('status-message');
+const currentUserElement = document.getElementById('current-user-id');
+
+// Elementos de Feedback do Botão
+const btnText = document.getElementById('btnText');
+const btnLoading = document.getElementById('btnLoading');
+const btnSuccess = document.getElementById('btnSuccess');
+
+// Elementos de Mensagem
+const errorMessageDiv = document.getElementById('errorMessage');
+const errorDetailsP = document.getElementById('errorDetails');
+const successMessageDiv = document.getElementById('successMessage');
+
+// ==========================================================
+// 3. FUNÇÕES DE UTILIDADE E INTERFACE
+// ==========================================================
+
+/**
+ * Exibe uma mensagem de erro na interface.
+ * @param {string} message - A mensagem de erro a ser exibida.
+ */
+function displayError(message) {
+    errorMessageDiv.style.display = 'block';
+    errorDetailsP.textContent = message;
+    successMessageDiv.style.display = 'none';
 }
 
-// Usamos 'export default' para módulos ES6, substituindo 'module.exports'
-export default async (req, res) => {
-  // Configurações CORS (Manter antes de qualquer retorno para garantir que o pre-flight funcione)
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+/**
+ * Atualiza o estado visual do botão de login.
+ * @param {string} state - 'ready', 'loading', 'success', 'error'
+ */
+function updateButtonState(state) {
+    loginButton.disabled = true; // Desabilita por padrão ao mudar o estado
 
-  // Lida com a requisição OPTIONS (pré-voo do CORS)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  // Apenas aceita requisições POST
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: 'Método não permitido.' });
-  }
-
-  // 3. Verificar o erro de inicialização capturado
-  if (supabase.initializationError) {
-    console.error("FALHA CRÍTICA DE SETUP:", supabase.initializationError);
-    // Retorna 500 em formato JSON
-    return res.status(500).json({ 
-      error: 'Erro de configuração no servidor. As chaves do Supabase estão em falta.', 
-      details: supabase.initializationError 
-    });
-  }
-
-  try {
-    // --- NOVO: Logging para diagnóstico ---
-    console.log('DEBUG BODY (API): Recebendo body:', req.body);
-    // -------------------------------------
-
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      console.log('DEBUG ERROR (API): Email ou senha ausentes no corpo da requisição.');
-      return res.status(400).json({ 
-        error: 'Email e senha são obrigatórios.',
-        details: 'Verifique se o Content-Type é application/json e se o corpo da requisição está formatado corretamente.'
-      });
-    }
-
-    console.log(`DEBUG LOGIN (API): Tentativa de login com Email: "${email}"`);
-
-    // Chamada de login do Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      console.error('Erro de Autenticação do Supabase:', error.message);
-      
-      // Mapeamento de erro para resposta do cliente
-      let errorMessage = 'Credenciais inválidas. Verifique seu email e senha.';
-      let status = 401; // Unauthorized
-      
-      if (!error.message.includes('Invalid login credentials')) {
-        errorMessage = 'Falha no login: ' + error.message;
-        status = 400; // Bad Request para outros erros de validação
-      }
-
-      return res.status(status).json({ 
-        error: errorMessage
-      });
-    }
-
-    // Login bem-sucedido
-    const user = {
-      id: data.user.id,
-      email: data.user.email,
-    };
+    btnLoading.style.display = 'none';
+    btnSuccess.style.display = 'none';
+    btnText.textContent = '';
     
-    // Retorna o token de sessão e informações básicas do usuário.
-    res.status(200).json({ 
-      message: 'Login bem-sucedido!',
-      user: user,
-      token: data.session?.access_token
-    });
+    // Esconde as mensagens ao mudar o estado
+    errorMessageDiv.style.display = 'none';
+    successMessageDiv.style.display = 'none';
 
-  } catch (error) {
-    // 4. Tratamento de erro geral (o último recurso)
-    console.error('Erro inesperado na lógica de autenticação:', error);
-    // Garante que SEMPRE retorna um JSON
-    res.status(500).json({ error: 'Erro interno do servidor. Não foi possível processar a requisição.', details: error.message });
-  }
-};
+    switch (state) {
+        case 'ready':
+            loginButton.disabled = false;
+            btnText.textContent = 'Entrar';
+            break;
+        case 'loading':
+            btnLoading.style.display = 'inline-block';
+            btnText.textContent = 'Autenticando...';
+            break;
+        case 'success':
+            btnSuccess.style.display = 'inline-block';
+            btnText.textContent = 'Sucesso!';
+            break;
+        case 'error':
+            loginButton.disabled = false;
+            btnText.textContent = 'Tentar Novamente';
+            break;
+        case 'initializing':
+        default:
+            btnText.textContent = 'Aguardando Inicialização...';
+            break;
+    }
+}
+
+// ==========================================================
+// 4. LÓGICA DE AUTENTICAÇÃO
+// ==========================================================
+
+/**
+ * Função principal para lidar com o login do usuário.
+ * @param {Event} event - O evento de submissão do formulário.
+ */
+async function handleLogin(event) {
+    event.preventDefault(); // Impede o envio padrão do formulário
+
+    updateButtonState('loading');
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    // Validação básica
+    if (!email || !password) {
+        displayError('Por favor, preencha o e-mail e a senha.');
+        updateButtonState('error');
+        return;
+    }
+
+    try {
+        // 1. Chama o método signInWithPassword do Supabase Auth
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            // Se houver um erro, lança para o bloco catch
+            throw new Error(error.message);
+        }
+
+        // 2. Login bem-sucedido
+        updateButtonState('success');
+        successMessageDiv.style.display = 'block';
+        
+        console.log('Login bem-sucedido:', data.user);
+        currentUserElement.textContent = data.user.id;
+
+        // 3. Redirecionamento após o sucesso
+        setTimeout(() => {
+            // Redirecione para a página principal (ou painel do usuário)
+            window.location.href = '/dashboard.html'; // Altere conforme necessário
+        }, 1500);
+
+    } catch (error) {
+        console.error('Erro durante o login:', error.message);
+        
+        // Mapeia mensagens de erro comuns para serem amigáveis ao usuário
+        let userFriendlyMessage = 'Ocorreu um erro desconhecido.';
+        
+        if (error.message.includes('Invalid login credentials')) {
+            userFriendlyMessage = 'Credenciais inválidas. Verifique seu e-mail e senha.';
+        } else if (error.message.includes('Email not confirmed')) {
+            userFriendlyMessage = 'Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.';
+        } else {
+            userFriendlyMessage = `Erro: ${error.message}`;
+        }
+
+        displayError(userFriendlyMessage);
+        updateButtonState('error');
+    }
+}
+
+// ==========================================================
+// 5. REGISTRO DE EVENTOS E INICIALIZAÇÃO
+// ==========================================================
+
+// Adiciona o listener para a submissão do formulário
+if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+}
+
+// Habilita o botão apenas quando ambos os campos estiverem preenchidos
+function checkFormValidity() {
+    const emailValid = emailInput.value.trim().length > 0;
+    const passwordValid = passwordInput.value.trim().length > 0;
+    
+    if (emailValid && passwordValid) {
+        updateButtonState('ready');
+    } else {
+        updateButtonState('initializing'); // Mantém o estado de inicialização/aguardando
+    }
+}
+
+// Adiciona listeners para os campos de entrada
+emailInput.addEventListener('input', checkFormValidity);
+passwordInput.addEventListener('input', checkFormValidity);
+
+
+// Escuta as mudanças de estado de autenticação (opcional, mas bom para interface)
+supabase.auth.onAuthStateChange((event, session) => {
+    console.log(`Supabase Auth Event: ${event}`);
+    
+    if (event === 'INITIAL_SESSION' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        // Quando o Supabase é inicializado, habilita o botão (se os campos estiverem preenchidos)
+        checkFormValidity();
+        statusMessage.textContent = 'Serviço de autenticação pronto.';
+    }
+
+    if (session) {
+        currentUserElement.textContent = session.user.id;
+        console.log('Usuário logado:', session.user);
+    } else {
+        currentUserElement.textContent = 'Nenhum';
+    }
+});
+
+// Inicializa o estado do botão
+updateButtonState('initializing');
