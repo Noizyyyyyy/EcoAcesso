@@ -1,82 +1,187 @@
-// Configurações do Supabase (Substitua pelos seus dados)
-// Nota: Certifique-se de que sua chave de API seja uma "Chave Anon" ou "Chave de Serviço" com permissão de inserção.
-const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co'; // Ex: 'https://xyz1234.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8'; // Chave pública ou de serviço
+import { createClient } from '@supabase/supabase-js';
+// O bcryptjs foi removido do package.json para evitar falhas de build/runtime no Vercel.
+// import bcrypt from 'bcryptjs'; 
 
-// Inicialização do cliente Supabase (requer a biblioteca Supabase na sua página HTML)
-// No seu index.html: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+// IMPORTANTE: Este código usa o sistema de módulos ES (import/export)
+// O seu package.json DEVE ter "type": "module" para isso funcionar.
+
+// 1. Variáveis de ambiente
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+// Expressão Regular para validação de formato de e-mail
+const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+// Declara a variável supabase no escopo do módulo para reutilização
+let supabase = null;
 
 /**
- * Função para registrar um novo usuário na tabela 'cadastro'.
- * @param {object} dados - Os dados do cadastro do usuário.
- * @returns {object} Um objeto contendo o usuário inserido ou um erro.
+ * Função de validação de CPF (Substitui a biblioteca node-cpf)
+ * Implementação nativa para maior compatibilidade em ambientes Serverless.
  */
-async function cadastrarUsuario(dados) {
-    console.log("Iniciando cadastro do usuário...");
-    console.log("Dados recebidos:", dados);
-    
-    // 1. Mapeamento de dados e garantia de campos NOT NULL
-    // O CPF e termos_aceitos são OBRIGATÓRIOS (NOT NULL) conforme seu esquema SQL.
-    const cadastroData = {
-        // Campos NOT NULL (Obrigatórios)
-        email: dados.email,
-        cpf: dados.cpf, // Adicionado e garantido, pois é NOT NULL
-        senha_hash: dados.senhaHash,
-        termos_aceitos: true, // Assumindo que o usuário aceitou os termos para chegar aqui (NOT NULL)
+function isValidCPF(cpf) {
+    if (!cpf) return false;
+    cpf = cpf.replace(/[^\d]/g, ""); // Remove caracteres não numéricos
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false; // Verifica tamanho e sequências repetidas
 
-        // Campos Opcionais (Permitem NULL)
-        nome_completo: dados.nomeCompleto || null,
-        telefone: dados.telefone || null,
-        data_nascimento: dados.dataNascimento || null,
-        cep: dados.cep || null,
-        logradouro: dados.logradouro || null,
-        numero: dados.numero || null,
-        complemento: dados.complemento || null,
-        bairro: dados.bairro || null,
-        cidade: dados.cidade || null,
-        estado: dados.estado || null,
+    let sum = 0;
+    let remainder;
+
+    for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+
+    sum = 0;
+    for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+    
+    return true;
+}
+
+// Exporta a função Serverless principal para ES Modules
+export default async (req, res) => {
+    // 1. Apenas aceite requisições POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: "Método não permitido. Apenas POST é aceito." });
+    }
+
+    // 2. Inicialização e Verificação de Configuração
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: As variáveis SUPABASE_URL ou SUPABASE_KEY não foram encontradas.");
+        return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
+    }
+
+    // Inicializa o cliente Supabase se ainda não foi inicializado (para otimizar cold starts)
+    if (!supabase) {
+        try {
+            supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error("Erro ao inicializar o cliente Supabase:", e.message);
+            return res.status(500).json({ error: "Falha na conexão com o banco de dados. Verifique o URL e a Chave." });
+        }
+    }
+
+
+    let data;
+    try {
+        // Assume que o corpo da requisição é JSON
+        data = req.body; 
+    } catch (e) {
+        return res.status(400).json({ error: "Corpo da requisição deve ser JSON válido." });
+    }
+
+    // 3. Extrai e valida os dados
+    const { 
+        nome, 
+        email, 
+        senha, 
+        cpf: rawCpf, 
+        data_nascimento,
+        genero,
+        telefone,
+        cep,
+        logradouro,
+        numero,
+        bairro,
+        cidade,
+        estado,
+        interesses,
+        receber_newsletter,
+        receber_eventos,
+        termos_aceitos 
+    } = data;
+    
+    // 4. Validação de campos obrigatórios
+    if (!nome || !email || !senha || !rawCpf || !termos_aceitos) {
+        return res.status(400).json({ error: "Campos obrigatórios (Nome, E-mail, Senha, CPF, Termos) não preenchidos." });
+    }
+
+    // Validação de formato de E-mail
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "O formato do e-mail é inválido." });
+    }
+
+    // Validação de tamanho da senha (mínimo 6 caracteres)
+    if (senha.length < 6) {
+        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres." });
+    }
+    
+    // Limpa e valida o CPF usando a função embutida
+    const cleanCpf = rawCpf.replace(/\D/g, ''); // Remove máscara
+    if (!isValidCPF(cleanCpf)) { // Uso da função nativa
+        return res.status(400).json({ error: "O CPF fornecido é inválido. Por favor, verifique." });
+    }
+
+    // 5. Tratamento e Preparação dos Dados
+    
+    // ***** ATENÇÃO: A CRIPTOGRAFIA DE SENHA FOI REMOVIDA *****
+    const senhaParaSalvar = senha;
+    
+    // Converte a string de interesses para Array (separado por vírgulas) ou null
+    let interessesArray = null;
+    if (interesses && typeof interesses === 'string' && interesses.trim() !== '') {
+        // Converte a string (Ex: "Reflorestamento, Energia Solar") em array
+        interessesArray = interesses.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        // Se o array resultante for vazio, volta para null
+        if (interessesArray.length === 0) {
+             interessesArray = null;
+        }
+    }
+
+
+    // 6. Estrutura de dados para o Supabase
+    const cadastroData = {
+        // Mapeamentos obrigatórios
+        nome_completo: nome,
+        email: email,
+        senha_hash: senhaParaSalvar, // Salva a senha em texto simples (APENAS PARA TESTES/DEMONSTRAÇÃO)
+        cpf: cleanCpf,
+        
+        // Mapeamentos de dados pessoais
+        data_nascimento: data_nascimento || null, // Se vazio, salva NULL
+        genero: genero || null,
+        
+        // Mapeamentos de endereço e preferências
+        telefone: telefone ? telefone.replace(/\D/g, '') : null, // Salva apenas números
+        cep: cep ? cep.replace(/\D/g, '') : null,
+        logradouro: logradouro || null,
+        numero: numero || null,
+        bairro: bairro || null,
+        cidade: cidade || null,
+        estado: estado || null,
+        
+        // Campos de Array/Booleano
+        interesses: interessesArray, 
+        receber_newsletter: receber_newsletter || false,
+        receber_eventos: receber_eventos || false,
+        termos_aceitos: termos_aceitos, 
+        
+        // Campo padrão que você pode ter no seu DB
+        email_confirmado: true
     };
     
-    console.log("Dados formatados para inserção:", cadastroData);
+    // 7. Insere no Supabase
+    const { error } = await supabase
+        .from('cadastro') 
+        .insert([cadastroData]);
 
-    try {
-        const { data, error } = await supabaseClient
-            .from('cadastro')
-            .insert([cadastroData]);
-
-        if (error) {
-            console.error("Erro detalhado do Supabase na inserção:", error);
-            // Retorna um erro amigável baseado no código do erro (ex: 23505 para duplicidade)
-            if (error.code === '23505') {
-                // Erro de violação de UNIQUE (cpf ou email já existem)
-                return { 
-                    success: false, 
-                    message: "Cadastro falhou. Este CPF ou E-mail já está em uso.",
-                    details: error.message
-                };
-            }
-            return { 
-                success: false, 
-                message: "Ocorreu um erro desconhecido ao cadastrar.", 
-                details: error.message 
-            };
+    if (error) {
+        console.error('Erro no Supabase:', error);
+        
+        // Trata erro de duplicidade (código 23505 - key constraint violation)
+        if (error.code === '23505') {
+            return res.status(409).json({ message: "O e-mail ou CPF já está cadastrado. Por favor, utilize outro." });
         }
-
-        console.log("Usuário cadastrado com sucesso:", data);
-        return { 
-            success: true, 
-            message: "Usuário cadastrado com sucesso!", 
-            usuario: data[0] 
-        };
-
-    } catch (e) {
-        console.error("Exceção geral na função cadastrarUsuario:", e);
-        return { 
-            success: false, 
-            message: "Ocorreu uma falha na comunicação com o servidor.", 
-            details: e.message 
-        };
+        
+        // Retorna o erro detalhado do Supabase
+        return res.status(500).json({ message: error.message || "Falha ao cadastrar no banco de dados. Verifique a configuração RLS e o esquema da tabela." });
     }
-}
+
+    // 8. Resposta de sucesso (Status 201: Created)
+    res.status(201).json({ message: "Usuário cadastrado com sucesso!", email: email });
+};
