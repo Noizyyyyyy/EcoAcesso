@@ -1,159 +1,172 @@
-// =========================================================================
-// 1. CONFIGURAÇÃO DO SUPABASE
-// IMPORTANTE: Você deve substituir estas chaves pelas suas chaves reais do Supabase!
-// Elas podem ser encontradas nas configurações do seu projeto Supabase (Settings -> API)
-// =========================================================================
-const SUPABASE_URL = 'https://nbumhujecfjmtxgxtcxx.supabase.co'; // Ex: https://abcdefg1234.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idW1odWplY2ZqbXR4Z3h0Y3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMTM0OTAsImV4cCI6MjA3OTg4OTQ5MH0.U_ZwNa4h2Zv8WHA7njSz55G0bC3XteK3wnHwHm0JXv8'; // Ex: eyJhbGciOiJIUzI1NiI...
+import { createClient } from '@supabase/supabase-js';
+// O bcryptjs foi removido do package.json para evitar falhas de build/runtime no Vercel.
+// import bcrypt from 'bcryptjs'; 
 
-// Inicializa o cliente Supabase (usa o objeto 'supabase' globalmente injetado pelo script na tag HTML)
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// IMPORTANTE: Este código usa o sistema de módulos ES (import/export)
+// O seu package.json DEVE ter "type": "module" para isso funcionar.
 
-// =========================================================================
-// 2. REFERÊNCIAS AO DOM E CONFIGURAÇÃO
-// AQUI VOCÊ DEVE CONFIGURAR OS IDs DOS SEUS ELEMENTOS HTML
-// =========================================================================
-const form = document.getElementById('signup-form'); // ID do seu formulário
-const messageArea = document.getElementById('message-area'); // ID da área para mensagens de feedback
-const submitButton = document.getElementById('submit-button'); // ID do seu botão de submissão
-const emailInput = document.getElementById('email'); // ID do campo de E-mail
-const passwordInput = document.getElementById('password'); // ID do campo de Senha
+// 1. Variáveis de ambiente
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-// URL para onde redirecionar após o login bem-sucedido
-const DASHBOARD_URL = 'dashboard.html'; 
+// Expressão Regular para validação de formato de e-mail
+const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-// =========================================================================
-// 3. FUNÇÕES AUXILIARES
-// =========================================================================
+// Declara a variável supabase no escopo do módulo para reutilização
+let supabase = null;
 
 /**
- * Exibe uma mensagem de feedback na interface.
- * @param {string} text - O texto da mensagem a ser exibida.
- * @param {boolean} isError - Se a mensagem é um erro.
+ * Função de validação de CPF (Substitui a biblioteca node-cpf)
+ * Implementação nativa para maior compatibilidade em ambientes Serverless.
  */
-function showMessage(text, isError = false) {
-    if (!messageArea) return;
+function isValidCPF(cpf) {
+    if (!cpf) return false;
+    cpf = cpf.replace(/[^\d]/g, ""); // Remove caracteres não numéricos
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false; // Verifica tamanho e sequências repetidas
 
-    messageArea.textContent = text;
-    // Remove todas as classes de estado
-    messageArea.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+    let sum = 0;
+    let remainder;
+
+    for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+
+    sum = 0;
+    for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
     
-    if (isError) {
-        messageArea.classList.add('bg-red-100', 'text-red-700');
-    } else {
-        messageArea.classList.add('bg-green-100', 'text-green-700');
-    }
+    return true;
 }
 
-/**
- * Tenta fazer o login com as credenciais e redireciona.
- * @param {string} email - O e-mail do usuário.
- * @param {string} password - A senha do usuário.
- */
-async function signInUser(email, password) {
-    const { error } = await supabase.auth.signInWithPassword({
+// Exporta a função Serverless principal para ES Modules
+export default async (req, res) => {
+    // 1. Apenas aceite requisições POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: "Método não permitido. Apenas POST é aceito." });
+    }
+
+    // 2. Inicialização e Verificação de Configuração
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+        console.error("ERRO CRÍTICO DE CONFIGURAÇÃO: As variáveis SUPABASE_URL ou SUPABASE_KEY não foram encontradas.");
+        return res.status(500).json({ error: "Configuração do servidor inválida. Chaves da base de dados ausentes." });
+    }
+
+    // Inicializa o cliente Supabase se ainda não foi inicializado (para otimizar cold starts)
+    if (!supabase) {
+        try {
+            supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error("Erro ao inicializar o cliente Supabase:", e.message);
+            return res.status(500).json({ error: "Falha na conexão com o banco de dados. Verifique o URL e a Chave." });
+        }
+    }
+
+
+    let data;
+    try {
+        // Assume que o corpo da requisição é JSON
+        data = req.body; 
+    } catch (e) {
+        return res.status(400).json({ error: "Corpo da requisição deve ser JSON válido." });
+    }
+
+    // 3. Extrai e valida os dados
+    const { 
+        nome, 
+        email, 
+        senha, 
+        cpf: rawCpf, 
+        data_nascimento,
+        genero, 
+        telefone,
+        cep,
+        logradouro,
+        numero,
+        bairro,
+        cidade,
+        estado,
+        interesses, // Extraído, mas não será usado na inserção
+        receber_newsletter, // Extraído, mas não será usado na inserção
+        receber_eventos, // Extraído, mas não será usado na inserção
+        termos_aceitos 
+    } = data;
+    
+    // 4. Validação de campos obrigatórios
+    if (!nome || !email || !senha || !rawCpf || !termos_aceitos) {
+        return res.status(400).json({ error: "Campos obrigatórios (Nome, E-mail, Senha, CPF, Termos) não preenchidos." });
+    }
+
+    // Validação de formato de E-mail
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "O formato do e-mail é inválido." });
+    }
+
+    // Validação de tamanho da senha (mínimo 6 caracteres)
+    if (senha.length < 6) {
+        return res.status(400).json({ error: "A senha deve ter pelo menos 6 caracteres." });
+    }
+    
+    // Limpa e valida o CPF usando a função embutida
+    const cleanCpf = rawCpf.replace(/\D/g, ''); // Remove máscara
+    if (!isValidCPF(cleanCpf)) { // Uso da função nativa
+        return res.status(400).json({ error: "O CPF fornecido é inválido. Por favor, verifique." });
+    }
+
+    // 5. Tratamento e Preparação dos Dados
+    
+    // ***** ATENÇÃO: A CRIPTOGRAFIA DE SENHA FOI REMOVIDA *****
+    const senhaParaSalvar = senha;
+    
+    // 6. Estrutura de dados para o Supabase
+    // ESTA LISTA DEVE CORRESPONDER EXATAMENTE ÀS COLUNAS DO SEU SQL.
+    const cadastroData = {
+        // Mapeamentos obrigatórios
+        nome_completo: nome,
         email: email,
-        password: password,
-    });
+        senha_hash: senhaParaSalvar, // Salva a senha em texto simples (APENAS PARA TESTES/DEMONSTRAÇÃO)
+        cpf: cleanCpf,
+        
+        // Mapeamentos de dados pessoais
+        data_nascimento: data_nascimento || null, // Se vazio, salva NULL
+        
+        // Mapeamentos de endereço
+        telefone: telefone ? telefone.replace(/\D/g, '') : null, // Salva apenas números
+        cep: cep ? cep.replace(/\D/g, '') : null,
+        logradouro: logradouro || null,
+        numero: numero || null,
+        bairro: bairro || null,
+        cidade: cidade || null,
+        estado: estado || null,
+        
+        // Campos de Array/Booleano
+        termos_aceitos: termos_aceitos, 
+        
+        // Campo padrão que você pode ter no seu DB
+        email_confirmado: true
+    };
+    
+    // 7. Insere no Supabase
+    const { error } = await supabase
+        .from('cadastro') 
+        .insert([cadastroData]);
 
     if (error) {
-        console.error('Erro no Login Imediato:', error);
-        // Se houver falha de login, exibe o erro e sugere login manual
-        showMessage(`Registo OK, mas falha no login automático: ${error.message}.`, true);
-    } else {
-        // Redireciona o usuário
-        showMessage('Registo e Login Automático OK! Redirecionando...', false);
-        setTimeout(() => {
-            window.location.href = DASHBOARD_URL; 
-        }, 800);
-    }
-}
-
-// =========================================================================
-// 4. LÓGICA DE REGISTRO PRINCIPAL
-// =========================================================================
-
-/**
- * Lida com o evento de submissão do formulário.
- */
-async function handleSignUp(event) {
-    event.preventDefault();
-
-    // Verificação inicial dos elementos DOM
-    if (!form || !messageArea || !submitButton || !emailInput || !passwordInput) {
-        console.error("ERRO: Um ou mais elementos DOM necessários não foram encontrados. Verifique seus IDs.");
-        return;
-    }
-
-    // Desabilita o botão e mostra que está processando
-    submitButton.disabled = true;
-    submitButton.textContent = 'A Processar...';
-    messageArea.classList.add('hidden');
-
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-
-    // Verificação de segurança de configuração
-    if (SUPABASE_URL.includes('SUA_URL') || SUPABASE_ANON_KEY.includes('SUA_CHAVE')) {
-         showMessage('ERRO DE CONFIGURAÇÃO: Por favor, substitua os placeholders de URL e Chave ANÔNIMA no arquivo cadastro.js.', true);
-         submitButton.disabled = false;
-         submitButton.textContent = 'Registrar e Entrar';
-         return;
-    }
-
-    try {
-        // 1. Tenta Registrar o Usuário
-        const { data, error: signUpError } = await supabase.auth.signUp({
-            email: email,
-            password: password
-        });
-
-        if (signUpError) {
-            console.error('Erro de Registo:', signUpError);
-            showMessage(`Erro ao registrar: ${signUpError.message}.`, true);
-        } else {
-            // 2. Se o Registro foi bem-sucedido, tenta fazer o Login Imediato
-            // ESTA É A PARTE QUE SÓ FUNCIONA COM "EMAIL CONFIRMATIONS" DESATIVADO.
-            
-            // O Supabase retorna `data.session` se a confirmação estiver desligada e o login automático for bem-sucedido.
-            if (data.session) {
-                showMessage('Registo bem-sucedido e login automático OK! Redirecionando...', false);
-                 setTimeout(() => {
-                    window.location.href = DASHBOARD_URL; 
-                 }, 800);
-            } else {
-                // Se a confirmação estiver ligada, o Supabase envia o e-mail, mas não retorna a sessão.
-                showMessage(
-                    'Registo OK! A confirmação por e-mail está ATIVA. Verifique sua caixa de entrada.',
-                    false
-                );
-            }
-            
-            form.reset();
+        console.error('Erro no Supabase:', error);
+        
+        // Trata erro de duplicidade (código 23505 - key constraint violation)
+        if (error.code === '23505') {
+            return res.status(409).json({ message: "O e-mail ou CPF já está cadastrado. Por favor, utilize outro." });
         }
-
-    } catch (err) {
-        console.error('Erro geral inesperado:', err);
-        showMessage('Ocorreu um erro inesperado. Tente novamente.', true);
-    } finally {
-        // Restaura o botão apenas se não houver redirecionamento imediato
-        if (window.location.href.includes('registro.html')) {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Registrar e Entrar';
-        }
+        
+        // Se o erro for de coluna (PGRST204) ou outro problema de RLS/Esquema
+        return res.status(500).json({ message: error.message || "Falha ao cadastrar no banco de dados. Verifique a configuração RLS e o esquema da tabela." });
     }
-}
 
-// =========================================================================
-// 5. EVENT LISTENERS
-// =========================================================================
-
-// Adiciona o listener ao formulário
-// Adicione um listener DOMContentLoaded para garantir que os elementos já existem
-document.addEventListener('DOMContentLoaded', () => {
-    if (form) {
-        form.addEventListener('submit', handleSignUp);
-    } else {
-        console.error("ERRO: O formulário com ID 'signup-form' não foi encontrado.");
-    }
-});
+    // 8. Resposta de sucesso (Status 201: Created)
+    res.status(201).json({ message: "Usuário cadastrado com sucesso!", email: email });
+};
